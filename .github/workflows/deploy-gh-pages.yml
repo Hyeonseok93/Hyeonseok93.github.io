@@ -38,11 +38,6 @@ jobs:
       - name: Build Tistory skin
         run: npm run build:tistory:ci
 
-      - name: Package Tistory skin
-        run: |
-          cd dist/tistory
-          zip -r ../../tistory-skin.zip .
-
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -52,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tistory-skin
-          path: tistory-skin.zip
+          path: dist/tistory/
           retention-days: 30
 
   deploy:
