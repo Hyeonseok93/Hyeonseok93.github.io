@@ -13,6 +13,10 @@
 }
 
 /* Sidebar category tree */
+.category-tree {
+  --category-tree-indent: 0.85rem;
+}
+
 .category-tree__item {
   margin-bottom: 0.15rem;
 }
@@ -51,15 +55,11 @@
 
 .category-tree__item--root > .category-tree__children {
   margin-top: 0.15rem;
-  padding-left: 1.25rem;
+  padding-left: var(--category-tree-indent);
 }
 
 .category-tree__item--root > .category-tree__children > .category-tree__item--branch > .category-tree__children {
-  padding-left: 0.9rem;
-}
-
-.category-tree__link--branch-level {
-  padding-left: 0.5rem;
+  padding-left: var(--category-tree-indent);
 }
 
 .category-tree__label {
@@ -83,10 +83,6 @@
 .category-tree__link:hover {
   color: #fff;
   background-color: rgba(255, 255, 255, 0.05);
-}
-
-.category-tree__link--child {
-  padding-left: 0.5rem;
 }
 
 .category-tree__children {
