@@ -24,6 +24,16 @@ function normalizePost(raw) {
   };
 }
 
+function readListEntryTitle(entry) {
+  const titleLink = entry.querySelector('.post-card-title a');
+  if (titleLink) return titleLink.textContent?.trim() || '';
+  return entry.querySelector('.post-card-title')?.textContent?.trim() || '';
+}
+
+function readListEntryLink(entry) {
+  return entry.querySelector('.post-card-title a')?.getAttribute('href') || '';
+}
+
 function parseTistoryListHtml(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   const entries = doc.querySelectorAll('[data-tistory-list-entry]');
@@ -34,10 +44,10 @@ function parseTistoryListHtml(html) {
       const thumbImg = thumbHost?.querySelector('img');
 
       return normalizePost({
-        title: entry.dataset.postTitle || entry.querySelector('.post-card-title')?.textContent?.trim(),
-        link: entry.dataset.postLink || entry.querySelector('.post-card-title a')?.getAttribute('href'),
-        date: entry.dataset.postDate || entry.querySelector('.post-card-meta')?.textContent?.trim(),
-        excerpt: entry.dataset.postSummary || '',
+        title: readListEntryTitle(entry),
+        link: readListEntryLink(entry),
+        date: entry.querySelector('.post-card-meta')?.textContent?.trim(),
+        excerpt: '',
         thumbnail: thumbImg?.getAttribute('src') || '',
       });
     });
@@ -45,11 +55,11 @@ function parseTistoryListHtml(html) {
 
   return Array.from(doc.querySelectorAll('.post-card-item')).map((entry) =>
     normalizePost({
-      title: entry.querySelector('.post-card-title')?.textContent?.trim(),
-      link: entry.querySelector('.post-card-title a')?.getAttribute('href'),
+      title: readListEntryTitle(entry),
+      link: readListEntryLink(entry),
       date: entry.querySelector('.post-card-meta')?.textContent?.trim(),
       excerpt: '',
-      thumbnail: entry.querySelector('img')?.getAttribute('src') || '',
+      thumbnail: entry.querySelector('.tistory-list-entry__thumb img')?.getAttribute('src') || '',
     })
   );
 }

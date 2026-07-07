@@ -15,14 +15,17 @@ function parseCategoryAnchor(anchor) {
   if (cntNode) {
     const countMatch = cntNode.textContent.match(/(\d+)/);
     const label = anchor.cloneNode(true);
-    label.querySelectorAll('.c_cnt, .cnt, span').forEach((node) => node.remove());
+    label.querySelectorAll('.c_cnt, .cnt, span, img').forEach((node) => node.remove());
     const parsed = parseCategoryText(label.textContent);
     return {
       label: parsed.label,
       count: countMatch ? countMatch[1] : parsed.count,
     };
   }
-  return parseCategoryText(anchor.textContent);
+
+  const label = anchor.cloneNode(true);
+  label.querySelectorAll('img').forEach((node) => node.remove());
+  return parseCategoryText(label.textContent);
 }
 
 function renderCount(count) {
@@ -147,48 +150,104 @@ function buildCategoryLink(anchor, { child = false, branch = false } = {}) {
   return link;
 }
 
+function transformTistoryItem(li, { nested = false } = {}) {
+  const anchor = li.querySelector(':scope > a');
+  const childList = li.querySelector(':scope > ul');
+  if (!anchor) return null;
+
+  if (childList) {
+    const item = document.createElement('li');
+    item.className = 'category-tree__item category-tree__item--branch';
+    item.dataset.categoryBranch = '';
+
+    const row = document.createElement('div');
+    row.className = 'category-tree__row';
+    row.append(buildCategoryLink(anchor, { branch: true }));
+
+    childList.classList.add('category-tree__children', 'list-none');
+    const nextChildren = Array.from(childList.children)
+      .filter((childItem) => childItem.tagName === 'LI')
+      .map((childItem) => transformTistoryItem(childItem, { nested: true }))
+      .filter(Boolean);
+    childList.replaceChildren(...nextChildren);
+
+    item.append(row, childList);
+    return item;
+  }
+
+  const item = document.createElement('li');
+  item.classList.add('category-tree__item', nested ? 'category-tree__item--leaf' : 'category-tree__item--leaf');
+  item.replaceChildren(buildCategoryLink(anchor, nested ? { child: true } : {}));
+  return item;
+}
+
+function buildTistoryCategoryRoot(rootLabel, items) {
+  const rootList = document.createElement('ul');
+  rootList.className = 'category-tree sidebar-menu list-none';
+  rootList.dataset.categoryTree = 'tistory';
+
+  const rootItem = document.createElement('li');
+  rootItem.className = 'category-tree__item category-tree__item--root category-tree__item--branch is-open';
+  rootItem.dataset.categoryRoot = '';
+  rootItem.dataset.categoryBranch = '';
+
+  const row = document.createElement('div');
+  row.className = 'category-tree__row';
+
+  const rootLink = document.createElement('a');
+  rootLink.href = '#';
+  rootLink.className = 'category-tree__link category-tree__link--root category-tree__link--branch';
+  rootLink.setAttribute('aria-expanded', 'true');
+  rootLink.innerHTML = `
+    <i class="${folderIconClass({ root: true })} text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+    <span class="category-tree__label">${escapeHtml(rootLabel)}</span>
+    <span class="category-tree__count"></span>
+  `;
+
+  const childList = document.createElement('ul');
+  childList.className = 'category-tree__children list-none';
+  childList.append(...items);
+
+  row.append(rootLink);
+  rootItem.append(row, childList);
+  rootList.append(rootItem);
+  return rootList;
+}
+
 function enhanceTistoryCategoryList(host) {
   if (host.querySelector('[data-category-tree]')) return;
 
-  const rootList = host.querySelector('ul');
-  if (!rootList) return;
+  const ttCategory = host.querySelector('ul.tt_category');
+  let rootLabel = getPostsRootLabel(host);
+  let sourceItems = [];
 
-  rootList.classList.add('category-tree', 'sidebar-menu', 'list-none');
-  rootList.dataset.categoryTree = 'tistory';
+  if (ttCategory) {
+    const rootLi = ttCategory.querySelector(':scope > li');
+    const rootAnchor = rootLi?.querySelector(':scope > a');
+    const categoryList = rootLi?.querySelector(':scope > ul.category_list, :scope > ul');
 
-  Array.from(rootList.children).forEach((item) => {
-    if (item.tagName !== 'LI') return;
-
-    const childList = item.querySelector(':scope > ul');
-    const originalLink = item.querySelector(':scope > a');
-    if (!originalLink) return;
-
-    if (childList) {
-      item.classList.add('category-tree__item', 'category-tree__item--branch');
-      item.dataset.categoryBranch = '';
-      item.innerHTML = '';
-
-      const row = document.createElement('div');
-      row.className = 'category-tree__row';
-      row.append(buildCategoryLink(originalLink, { branch: true }));
-
-      childList.classList.add('category-tree__children', 'list-none');
-
-      Array.from(childList.children).forEach((childItem) => {
-        if (childItem.tagName !== 'LI') return;
-        const childLink = childItem.querySelector(':scope > a');
-        if (!childLink) return;
-        childItem.classList.add('category-tree__item', 'category-tree__item--leaf');
-        childItem.replaceChildren(buildCategoryLink(childLink, { child: true }));
-      });
-
-      item.append(row, childList);
-    } else {
-      item.classList.add('category-tree__item', 'category-tree__item--leaf');
-      item.replaceChildren(buildCategoryLink(originalLink));
+    if (rootAnchor) {
+      const parsed = parseCategoryAnchor(rootAnchor);
+      if (parsed.label) rootLabel = parsed.label;
     }
-  });
 
+    if (categoryList) {
+      sourceItems = Array.from(categoryList.children).filter((item) => item.tagName === 'LI');
+    }
+  } else {
+    const fallbackList = host.querySelector('ul');
+    if (!fallbackList) return;
+    sourceItems = Array.from(fallbackList.children).filter((item) => item.tagName === 'LI');
+  }
+
+  const transformedItems = sourceItems
+    .map((item) => transformTistoryItem(item))
+    .filter(Boolean);
+
+  if (!transformedItems.length) return;
+
+  const rootList = buildTistoryCategoryRoot(rootLabel, transformedItems);
+  host.replaceChildren(rootList);
   bindCategoryBranches(rootList);
 }
 
@@ -196,7 +255,10 @@ function finalizeCategoryTree(host) {
   const rootList = host.querySelector('[data-category-tree]') || host.querySelector('ul');
   if (!rootList) return;
 
-  wrapCategoryTreeRoot(rootList, getPostsRootLabel(host));
+  if (rootList.dataset.categoryTree !== 'tistory') {
+    wrapCategoryTreeRoot(rootList, getPostsRootLabel(host));
+  }
+
   bindCategoryBranches(rootList);
   updateBranchCounts(rootList);
 }

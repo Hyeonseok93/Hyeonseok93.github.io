@@ -110,3 +110,17 @@ body {
     font-size: clamp(0.75rem, 3.2vw, 0.95rem);
   }
 }
+
+/* Tistory renders s_article_rep on every page type — show only on permalink view */
+#tt-body-index .article-page,
+#tt-body-category .article-page,
+#tt-body-tag .article-page,
+#tt-body-archive .article-page {
+  display: none !important;
+}
+
+/* Article permalink: hide dashboard shell, show post only */
+#tt-body-page #dashboard-scroll-area,
+#tt-body-page #dashboard-scroll-header {
+  display: none !important;
+}

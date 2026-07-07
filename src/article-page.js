@@ -148,7 +148,8 @@ function initArticleScrollHeader() {
 }
 
 function isArticlePage() {
-  return document.body.id === 'article' || Boolean(document.querySelector('.article-page'));
+  const bodyId = document.body.id;
+  return bodyId === 'article' || bodyId === 'tt-body-page';
 }
 
 function initPostNavTitles() {

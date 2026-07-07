@@ -11,10 +11,19 @@ export function isGhPagesSite() {
   return document.body.dataset.site === 'gh-pages';
 }
 
+const NON_DASHBOARD_BODY_IDS = new Set([
+  'article',
+  'category',
+  'tag',
+  'tt-body-page',
+  'tt-body-category',
+  'tt-body-tag',
+  'tt-body-archive',
+]);
+
 export function isDashboardIndexPage() {
   if (!document.getElementById('dashboard-scroll-area')) return false;
-  const bodyId = document.body.id;
-  return bodyId !== 'category' && bodyId !== 'article' && bodyId !== 'tag';
+  return !NON_DASHBOARD_BODY_IDS.has(document.body.id);
 }
 
 export function shouldHandleCategoryInApp(link) {
