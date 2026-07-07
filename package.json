@@ -14,6 +14,7 @@
     "dev": "npm run build:posts && npm run build:html:preview && vite",
     "build:tistory": "npm run build:assets && npm run build:tistory:js && npm run build:html:tistory",
     "build:tistory:ci": "npm run build:tistory:js && npm run build:html:tistory",
+    "tistory:upload-list": "node scripts/print-tistory-upload.js",
     "build:gh-pages": "npm run build:posts && npm run build:assets && npm run build:html:gh-pages && pagefind --site dist/gh-pages",
     "build:all": "npm run build:gh-pages && npm run build:tistory:ci"
   },

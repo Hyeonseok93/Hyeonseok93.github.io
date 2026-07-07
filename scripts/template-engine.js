@@ -124,7 +124,7 @@ function compileLayout(options = {}) {
   if (target === 'tistory') {
     html = html.replace(
       /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
-      '<link rel="stylesheet" href="./style.css">\n  <script src="./tistory.js" defer></script>'
+      '<link rel="stylesheet" href="./style.css">\n  <script src="./images/tistory.js" defer></script>'
     );
     html = replaceTokens(html, {
       './src/assets/profile.png': '[##_image_##]',

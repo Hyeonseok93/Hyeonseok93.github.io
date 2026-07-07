@@ -83,6 +83,22 @@ function ensurePostsUpToDate() {
   }
 }
 
+function writeTistoryPreviewGif(outDir) {
+  const customPreview = path.join(SRC_DIR, 'assets', 'preview.gif');
+  const previewDest = path.join(outDir, 'preview.gif');
+
+  if (fs.existsSync(customPreview)) {
+    fs.copyFileSync(customPreview, previewDest);
+    console.log(`Copied preview.gif to: ${previewDest}`);
+    return;
+  }
+
+  // 1x1 placeholder — Tistory requires preview.gif to register a skin.
+  const placeholderGif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+  fs.writeFileSync(previewDest, placeholderGif);
+  console.log(`Wrote placeholder preview.gif to: ${previewDest}`);
+}
+
 function compile() {
   const categoryTreeHtml = getGhPagesCategoryTree();
   let htmlContent;
@@ -115,13 +131,16 @@ function compile() {
 
   if (target === 'tistory') {
     const jsSrc = path.join(PROJECT_ROOT, 'dist', 'tistory.js');
-    const jsDest = path.join(outDir, 'tistory.js');
+    const jsDest = path.join(outDir, 'images', 'tistory.js');
     if (fs.existsSync(jsSrc)) {
+      fs.mkdirSync(path.join(outDir, 'images'), { recursive: true });
       fs.copyFileSync(jsSrc, jsDest);
       console.log(`Copied Tistory JS bundle to: ${jsDest}`);
     } else {
       console.warn('Warning: dist/tistory.js not found. Run vite build --config vite.config.tistory.js first.');
     }
+
+    writeTistoryPreviewGif(outDir);
   }
 
   if (target === 'tistory' || target === 'gh-pages') {
