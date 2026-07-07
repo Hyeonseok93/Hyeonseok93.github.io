@@ -135,7 +135,7 @@ function compile() {
     }
 
     if (target === 'tistory') {
-      const xmlSrc = path.join(PROJECT_ROOT, 'index.xml');
+      const xmlSrc = path.join(PROJECT_ROOT, 'skin', 'index.xml');
       const xmlDest = path.join(outDir, 'index.xml');
       if (fs.existsSync(xmlSrc)) {
         fs.copyFileSync(xmlSrc, xmlDest);
