@@ -1,0 +1,11 @@
+node_modules/
+dist/
+index.html
+public/posts/
+src/data/posts-manifest.js
+
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*

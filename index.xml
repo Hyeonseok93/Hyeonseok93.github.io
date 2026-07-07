@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<skin>
+  <information>
+    <name>Notion Dashboard Skin</name>
+    <version>1.0.0</version>
+    <description>A modern, Notion-style vertical sidebar developer dashboard skin with premium dark theme.</description>
+    <license>MIT License</license>
+    <author>
+      <name>Hyunm</name>
+      <homepage>https://bulldog93.tistory.com</homepage>
+    </author>
+  </information>
+  <default>
+    <recentEntries>8</recentEntries>
+    <recentComments>5</recentComments>
+    <recentTrackbacks>5</recentTrackbacks>
+  </default>
+  <variables>
+    <variable>
+      <name>themeColor</name>
+      <label>Accent Color</label>
+      <type>color</type>
+      <default>#d97706</default>
+    </variable>
+    <variable>
+      <name>githubUrl</name>
+      <label>GitHub Profile URL</label>
+      <type>string</type>
+      <default>https://github.com/hyeonseok93</default>
+    </variable>
+  </variables>
+</skin>

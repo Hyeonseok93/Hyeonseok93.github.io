@@ -1,0 +1,112 @@
+/* --- Reset & Core Variables --- */
+:root {
+  --bg-primary: #191919; /* Notion Content Dark */
+  --bg-secondary: #202020;
+  --bg-sidebar: #202020;  /* Notion Sidebar Dark */
+  --bg-glass: rgba(32, 32, 32, 0.7);
+  --border-color: rgba(255, 255, 255, 0.05);
+  
+  --text-primary: #e3e3e2; /* Notion text color */
+  --text-secondary: #9b9b9a;
+  --text-muted: #5a5a57;
+  
+  --accent-color: #d97706; /* Warm Amber */
+  --accent-secondary: #eab308; /* Yellow Accent */
+  --accent-hover: #f59e0b;
+  
+  --font-sans: 'Inter', 'Noto Sans KR', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  
+  --sidebar-width: 280px;
+  --border-radius: 8px; /* Slightly sharper Notion-style edges */
+  --transition-speed: 0.15s;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Custom Notion Layout Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+/* Force header subtext single line scaling */
+.about-header-clean,
+.connect-header-clean,
+.projects-header-clean,
+.tech-stack-header-clean {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+.about-header-clean h2,
+.connect-header-clean h2,
+.projects-header-clean h2,
+.tech-stack-header-clean h2 {
+  flex-shrink: 0;
+}
+.about-header-clean span,
+.connect-header-clean span,
+.projects-header-clean span,
+.tech-stack-header-clean span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mobile Sidebar transitions & state overrides */
+@media (max-width: 767px) {
+  #sidebar {
+    transform: translateX(-100%);
+    width: 280px !important;
+    max-width: 80%;
+    z-index: 50;
+  }
+  #sidebar.active {
+    transform: translateX(0) !important;
+  }
+}
+
+/* Slogan Text Controlled Line Wrap & Ellipsis */
+.slogan-details {
+  width: 100%;
+}
+.slogan-line-1 {
+  display: inline;
+}
+.slogan-line-2 {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 639px) {
+  .slogan-line-1 {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: clamp(0.7rem, 3vw, 0.95rem);
+  }
+  .slogan-line-2 {
+    font-size: clamp(0.75rem, 3.2vw, 0.95rem);
+  }
+}

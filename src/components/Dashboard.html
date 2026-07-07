@@ -1,0 +1,280 @@
+<s_list>
+  <div id="dashboard-scroll-area" class="w-full" data-pagefind-body>
+
+  <div id="dashboard-banner" class="banner-box w-full mb-6 rounded-xl overflow-hidden">
+    <img src="./src/assets/banner.png" alt="Hyeonseok's Github" draggable="false" class="dashboard-banner-media w-full h-auto object-cover">
+  </div>
+
+  <!-- Greeting GIF + Slogan -->
+  <div class="dashboard-welcome-container w-full flex flex-col items-center mb-10 text-center">
+    <div class="greeting-gif-box w-[450px] max-w-full mb-6 rounded-lg overflow-hidden">
+      <img src="./src/assets/greeting.gif" alt="Greeting Bulldog" class="w-full h-auto object-cover">
+    </div>
+
+    <div class="slogan-details max-w-[650px] px-4 mb-6">
+      <p class="text-[0.95rem] text-gray-200 font-semibold tracking-wide leading-relaxed">
+        <span class="slogan-line-1">Chewing and tearing through code,</span>
+        <span class="slogan-line-1">growing while having fun.</span>
+      </p>
+      <p class="text-[0.95rem] slogan-line-2 text-gray-200 font-semibold tracking-wide mt-1">
+        Welcome to the Bulldog's House! 🐶
+      </p>
+    </div>
+  </div>
+
+  <!-- Switchable content panels (banner above stays fixed) -->
+  <div id="dashboard-content-panels" class="w-full">
+
+  <!-- INTRODUCE ME Section Group (About Me + Connect) -->
+  <div id="introduce-me-anchor" data-dashboard-panel="introduce-me" class="w-full">
+    
+    <!-- Divider and About Me Section -->
+    <div class="about-section w-full border-t border-white/10 pt-5 mt-2">
+      <div class="about-header-clean w-full mb-6 flex items-baseline gap-3 text-left">
+        <h2 class="text-[1.8rem] max-sm:text-[1.3rem] font-bold tracking-wide flex items-center gap-1.5 text-accentAmber">
+          <span>👤</span>
+          <span>About Me</span>
+        </h2>
+        <span class="text-[0.78rem] max-sm:text-[0.62rem] text-textSecondary font-bold uppercase tracking-[0.12em]">Introduction & History</span>
+      </div>
+
+      <!-- Premium Interactive Split Layout: Left-side Vertical Tabs & Right-side SVG Graph + Cards -->
+      <div class="w-full mt-4 bg-gradient-to-br from-bgSecondary/80 to-bgSecondary/30 border border-white/5 rounded-2xl p-8 max-md:p-4 shadow-xl shadow-black/30">
+        
+        <div class="about-timeline-split">
+          
+          <!-- Left Column: chapter tabs rendered by chapters.js -->
+          <div id="chapter-tabs-list" class="chapter-tabs-list flex flex-col gap-1.5 flex-shrink-0 border-r border-white/5 pr-6 max-lg:border-r-0 max-lg:border-b max-lg:pb-6 max-lg:pr-0"></div>
+
+          <!-- Right Column: Curves and Cards Visualizer -->
+          <div class="about-timeline-visual flex flex-col min-w-0">
+            <!-- Life Curve SVG Area -->
+            <div id="chapter-timeline" class="relative w-full h-[320px] mb-6 select-none bg-radial-gradient bg-[#0d0e12] rounded-xl border border-[#d97706]/10 overflow-hidden shadow-[inset_0_0_20px_rgba(0,0,0,0.8),0_4px_30px_rgba(0,0,0,0.5)]">
+              <!-- Premium Cyber Grid Background -->
+              <div class="absolute inset-0 pointer-events-none opacity-25" style="background-image: linear-gradient(rgba(217,119,6,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(217,119,6,0.05) 1px, transparent 1px); background-size: 20px 20px;"></div>
+              
+              <!-- Subtle Radial Vignette Gradient -->
+              <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_30%,#090a0f_95%)] opacity-80"></div>
+
+              <!-- Horizontal/Vertical Metric Helper Guidelines -->
+              <div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-30 p-6">
+                <div class="w-full border-b border-white/5 h-0"></div>
+                <div class="w-full border-b border-white/5 h-0"></div>
+                <div class="w-full border-b border-white/5 h-0"></div>
+                <div class="w-full border-b border-white/5 h-0"></div>
+              </div>
+
+              <svg class="w-full h-full" viewBox="0 0 900 200" preserveAspectRatio="none">
+                <defs>
+                  <!-- Area Gradient Fill -->
+                  <linearGradient id="area-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#d97706" stop-opacity="0.15" />
+                    <stop offset="100%" stop-color="#d97706" stop-opacity="0.0" />
+                  </linearGradient>
+                  <!-- Neon Glow filter -->
+                  <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="6" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+                
+                <!-- Zero Baseline representing birth origin height (Y=145) -->
+                <line x1="30" y1="145" x2="870" y2="145" stroke="rgba(217,119,6,0.35)" stroke-width="1.8" stroke-dasharray="4 4" />
+
+                <polygon id="chapter-area-fill" fill="url(#area-grad)" opacity="0.85" />
+
+                <polyline id="chapter-base-path"
+                          fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+
+                <polyline id="active-path"
+                          fill="none" stroke="#d97706" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#neon-glow)"
+                          class="transition-all duration-700 ease-in-out" style="stroke-dasharray: 1200; stroke-dashoffset: 1200;" />
+              </svg>
+
+              <div id="chapter-dots-layer" class="absolute inset-0"></div>
+            </div>
+
+            <!-- Active Details Card Block -->
+            <div class="chapter-details-card relative bg-white/[0.02] border border-white/5 rounded-xl p-6 flex items-center backdrop-blur-md">
+              <div id="chapter-details" class="flex items-center gap-5 w-full transition-opacity duration-200">
+                <div id="chapter-icon-box" class="w-16 h-16 rounded-xl bg-[#d97706]/10 text-[#d97706] flex items-center justify-center text-[2.2rem] border border-[#d97706]/20 flex-shrink-0 shadow-lg shadow-[#d97706]/5"></div>
+                <div class="chapter-details-copy flex flex-col justify-center flex-1 min-w-0">
+                  <div id="chapter-title-box" class="text-[0.8rem] text-accentSecondary font-bold uppercase tracking-[0.15em] mb-1"></div>
+                  <div id="chapter-desc-box" class="chapter-desc-box text-[1.05rem] text-white font-medium leading-relaxed"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider and Connect Badges Section -->
+    <div id="connect-anchor" class="connect-section w-full border-t border-white/10 pt-5 mt-8 scroll-mt-20">
+      <div class="connect-header-clean w-full mb-6 flex items-baseline gap-3 text-left">
+        <h2 class="text-[1.8rem] max-sm:text-[1.3rem] font-bold tracking-wide flex items-center gap-1.5 text-accentAmber">
+          <span>🤝</span>
+          <span>Connect</span>
+        </h2>
+        <span class="text-[0.78rem] max-sm:text-[0.62rem] text-textSecondary font-bold uppercase tracking-[0.12em]">Where to find the bulldog</span>
+      </div>
+      <div class="connect-links flex flex-wrap items-center justify-center gap-6 w-full py-4">
+        <a href="https://www.instagram.com/harryharry.kim/" target="_blank" rel="noopener noreferrer" class="hover:scale-110 hover:-rotate-3 hover:brightness-125 transition-all duration-300 transform inline-block" title="Instagram">
+          <img src="./src/assets/badges/contact-instagram.png" alt="Instagram" class="w-24 h-24 object-contain">
+        </a>
+        <a href="https://github.com/hyeonseok93" target="_blank" rel="noopener noreferrer" class="hover:scale-110 hover:rotate-3 hover:brightness-125 transition-all duration-300 transform inline-block" title="GitHub Repository">
+          <img src="./src/assets/badges/contact-github.png" alt="GitHub Repository" class="w-24 h-24 object-contain">
+        </a>
+        <a href="https://hyeonseok93.github.io/" target="_blank" rel="noopener noreferrer" class="hover:scale-110 hover:-rotate-3 hover:brightness-125 transition-all duration-300 transform inline-block" title="GitHub Pages">
+          <img src="./src/assets/badges/contact-githubpages.png" alt="GitHub Pages" class="w-24 h-24 object-contain">
+        </a>
+        <a href="https://bulldog93.tistory.com/" target="_blank" rel="noopener noreferrer" class="hover:scale-110 hover:rotate-3 hover:brightness-125 transition-all duration-300 transform inline-block" title="Tistory">
+          <img src="./src/assets/badges/contact-tistory.png" alt="Tistory" class="w-24 h-24 object-contain">
+        </a>
+        <a href="https://www.linkedin.com/in/hyeonseok-kim-2a7a68413/" target="_blank" rel="noopener noreferrer" class="hover:scale-110 hover:-rotate-3 hover:brightness-125 transition-all duration-300 transform inline-block" title="LinkedIn">
+          <img src="./src/assets/badges/contact-linkedin.png" alt="LinkedIn" class="w-24 h-24 object-contain">
+        </a>
+      </div>
+    </div>
+
+    <!-- Tech Stack Section -->
+    <div id="tech-stack-section" class="tech-stack-section w-full border-t border-white/10 pt-5 mt-8" data-tech-asset-base="./src/assets/badges/tech/">
+      <div class="tech-stack-header-clean w-full mb-6 flex items-baseline gap-3 text-left">
+        <h2 class="text-[1.8rem] max-sm:text-[1.3rem] font-bold tracking-wide flex items-center gap-1.5 text-accentAmber">
+          <span>🛠</span>
+          <span>Tech Stack</span>
+        </h2>
+        <span class="text-[0.78rem] max-sm:text-[0.62rem] text-textSecondary font-bold uppercase tracking-[0.12em]">Tools & technologies I use</span>
+      </div>
+
+      <div class="tech-stack-tabs flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Tech stack categories">
+        <button type="button" role="tab" data-tech-filter="all" aria-selected="true" class="tech-stack-tab tech-stack-tab--active">All</button>
+        <button type="button" role="tab" data-tech-filter="languages" aria-selected="false" class="tech-stack-tab">🔧 Languages</button>
+        <button type="button" role="tab" data-tech-filter="frontend" aria-selected="false" class="tech-stack-tab">🖥️ Frontend</button>
+        <button type="button" role="tab" data-tech-filter="backend" aria-selected="false" class="tech-stack-tab">⚙️ Backend</button>
+        <button type="button" role="tab" data-tech-filter="database" aria-selected="false" class="tech-stack-tab">🗄️ Database</button>
+        <button type="button" role="tab" data-tech-filter="devops" aria-selected="false" class="tech-stack-tab">☁️ DevOps</button>
+        <button type="button" role="tab" data-tech-filter="data-science" aria-selected="false" class="tech-stack-tab">📊 Data Science</button>
+        <button type="button" role="tab" data-tech-filter="tools" aria-selected="false" class="tech-stack-tab">🧪 Tools & Testing</button>
+        <button type="button" role="tab" data-tech-filter="ai" aria-selected="false" class="tech-stack-tab">🤖 AI</button>
+      </div>
+
+      <div id="tech-stack-grid" class="tech-stack-grid flex flex-wrap gap-2 content-start w-full"></div>
+    </div>
+
+    <div class="introduce-panel-cta w-full border-t border-white/10 mt-6 pt-5 pb-2">
+      <a
+        href="#what-i-do"
+        data-nav-panel="what-i-do"
+        data-scroll-top="true"
+        class="panel-cta-link group w-full flex items-center justify-between gap-4 py-4 px-6 rounded-xl border border-accentAmber/25 bg-gradient-to-r from-accentAmber/10 via-white/[0.02] to-transparent hover:border-accentAmber/45 hover:from-accentAmber/15 transition-all duration-300"
+      >
+        <span class="flex items-center gap-3 min-w-0">
+          <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-accentAmber/15 text-accentAmber text-base shrink-0">
+            <i class="fa-solid fa-code"></i>
+          </span>
+          <span class="flex flex-col items-start gap-0.5 min-w-0">
+            <span class="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-textSecondary">Continue exploring</span>
+            <span class="text-[1.05rem] font-bold tracking-wide text-white group-hover:text-accentAmber transition-colors">What I Do</span>
+          </span>
+        </span>
+        <span class="panel-cta-arrow flex items-center gap-2 text-accentAmber font-bold text-[0.95rem] shrink-0">
+          <span class="hidden sm:inline uppercase tracking-[0.12em] text-[0.75rem]">Projects & Posts</span>
+          <i class="fa-solid fa-arrow-right transition-transform duration-300 group-hover:translate-x-1"></i>
+        </span>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- WHAT I DO Section Group (Projects + Recent Posts) -->
+  <div id="what-i-do-anchor" data-dashboard-panel="what-i-do" class="w-full hidden" hidden>
+
+    <!-- Divider and Projects Section -->
+    <div id="projects-anchor" class="projects-section w-full border-t border-b border-white/10 pt-5 pb-8 mt-8 scroll-mt-20">
+      <div class="projects-header-clean w-full mb-6 flex items-baseline gap-3 text-left">
+        <h2 class="text-[1.8rem] max-sm:text-[1.3rem] font-bold tracking-wide flex items-center gap-1.5 text-accentAmber">
+          <span>🚀</span>
+          <span>Projects</span>
+        </h2>
+        <span class="text-[0.78rem] max-sm:text-[0.62rem] text-textSecondary font-bold uppercase tracking-[0.12em]">My portfolio & workspace</span>
+      </div>
+      <!-- Project Items Content Placeholder (To be added later) -->
+      <div class="w-full flex justify-center text-textSecondary text-[0.9rem] italic py-8">
+        Coming soon...
+      </div>
+    </div>
+
+    <div id="posts-anchor" class="dashboard-grid w-full mt-12 mb-10 scroll-mt-20">
+      <!-- Dashboard Left: Recent Posts List -->
+      <div class="dashboard-card bg-bgSecondary/70 backdrop-blur-md border border-white/10 rounded-xl p-6">
+        <h2 class="card-title text-[1.1rem] font-semibold mb-5 pb-2 border-b border-white/10 flex items-center gap-2 text-white">
+          <i class="fa-solid fa-list text-accentAmber"></i> [##_list_confirm_##]
+        </h2>
+        <div class="post-list flex flex-col gap-4">
+          <s_list_rep>
+            <article
+              class="tistory-list-entry post-card-item flex flex-col gap-1 p-3 rounded-lg hover:bg-white/5 transition-all duration-200"
+              data-tistory-list-entry
+              data-post-title="[##_list_rep_title_##]"
+              data-post-link="[##_list_rep_link_##]"
+              data-post-date="[##_list_rep_date_##]"
+              data-post-summary="[##_list_rep_summary_##]"
+            >
+              <span class="post-card-meta text-[0.75rem] text-accentCyan font-medium">[##_list_rep_date_##]</span>
+              <h3 class="post-card-title text-[1.05rem] font-semibold text-white hover:text-accentAmber">
+                <a href="[##_list_rep_link_##]">[##_list_rep_title_##]</a>
+              </h3>
+              <div class="tistory-list-entry__thumb hidden" aria-hidden="true">[##_list_rep_thumbnail_##]</div>
+            </article>
+          </s_list_rep>
+        </div>
+      </div>
+    </div>
+
+    <div class="what-i-do-panel-cta w-full border-t border-white/10 mt-6 pt-5 pb-2">
+      <a
+        href="#introduce-me"
+        data-nav-panel="introduce-me"
+        data-scroll-top="true"
+        class="panel-cta-link group w-full flex items-center justify-between gap-4 py-4 px-6 rounded-xl border border-accentAmber/25 bg-gradient-to-l from-accentAmber/10 via-white/[0.02] to-transparent hover:border-accentAmber/45 hover:from-accentAmber/15 transition-all duration-300"
+      >
+        <span class="panel-cta-arrow flex items-center gap-2 text-accentAmber font-bold text-[0.95rem] shrink-0">
+          <i class="fa-solid fa-arrow-left transition-transform duration-300 group-hover:-translate-x-1"></i>
+          <span class="hidden sm:inline uppercase tracking-[0.12em] text-[0.75rem]">About Me & Connect</span>
+        </span>
+        <span class="flex items-center gap-3 min-w-0">
+          <span class="flex flex-col items-end gap-0.5 min-w-0 text-right">
+            <span class="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-textSecondary">Continue exploring</span>
+            <span class="text-[1.05rem] font-bold tracking-wide text-white group-hover:text-accentAmber transition-colors">Introduce Me</span>
+          </span>
+          <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-accentAmber/15 text-accentAmber text-base shrink-0">
+            <i class="fa-solid fa-user"></i>
+          </span>
+        </span>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- CATEGORY POSTS (sidebar category selection) -->
+  <div id="category-posts-anchor" data-dashboard-panel="category-posts" class="w-full hidden" hidden>
+    <div class="category-posts-section w-full pt-4 scroll-mt-20">
+      <header class="category-posts-hero w-full text-center mb-10 px-2 py-10 max-sm:py-8">
+        <h2 id="category-posts-title" class="category-posts-hero__title text-[2rem] max-sm:text-[1.55rem] font-bold tracking-tight text-white">
+          Category
+        </h2>
+        <p id="category-posts-desc" class="category-posts-hero__desc text-[0.92rem] max-sm:text-[0.85rem] text-textSecondary leading-relaxed mt-3 max-w-[560px] mx-auto"></p>
+      </header>
+
+      <div id="category-posts-list" class="category-posts-feed w-full"></div>
+      <nav id="category-posts-pagination" class="category-posts-pagination hidden" aria-label="Category posts pagination"></nav>
+    </div>
+  </div>
+
+  </div><!-- /dashboard-content-panels -->
+
+  </div><!-- /dashboard-scroll-area -->
+</s_list>

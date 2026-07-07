@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[##_page_title_##]</title>
+  <link rel="icon" type="image/png" href="./src/assets/favicon.png">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Prism.js Syntax Highlighting for Clean Code Blocks -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/prism-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+
+  <script type="module" src="./src/main.js"></script>
+</head>
+<body id="[##_body_id_##]">
+<s_t3>
+
+<div id="tistory-notion-layout" class="flex min-h-screen relative">
+
+  <!-- Mobile top toggle header bar -->
+  <header class="hidden max-md:flex w-full h-14 bg-bgSidebar border-b border-white/5 items-center justify-between px-4 fixed top-0 left-0 z-40">
+    <div class="flex items-center gap-3">
+      <img src="./src/assets/profile.png" alt="[##_blogger_##]" class="w-8 h-8 rounded-full border border-white/10">
+      <span class="text-white font-bold text-[0.95rem]">[##_blogger_##]</span>
+    </div>
+    <button id="sidebar-toggle-btn" class="w-9 h-9 rounded-lg hover:bg-white/5 flex items-center justify-center text-white text-lg">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </header>
+
+  <!-- Compact title bar (shows when banner scrolls out of view) -->
+  <div id="dashboard-scroll-header" class="dashboard-scroll-header" aria-hidden="true">
+    <div class="dashboard-scroll-header__inner">
+      <span class="dashboard-scroll-header__icon" aria-hidden="true">🐶</span>
+      <span class="dashboard-scroll-header__title">Bulldog's House</span>
+    </div>
+  </div>
+
+  <!-- Semi-transparent overlay backdrop for mobile -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+
+  <!-- --- SIDEBAR (Notion Style Component) --- -->
+  @include('./components/Sidebar.html')
+
+  <!-- --- MAIN CONTENT AREA --- -->
+  <main id="main-content" class="flex-1 ml-[280px] min-h-screen w-[calc(100%-280px)] max-md:ml-0 max-md:w-full flex justify-center">
+    <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
+
+    <!-- --- PAGE INDEX (Dashboard Component) --- -->
+    @include('./components/Dashboard.html')
+
+    <!-- Article + pagination: Tistory renders only on article/list pages -->
+    @include('./components/Article.html')
+
+    <s_paging>
+      <div class="pagination flex justify-center gap-2 my-8">
+        <a [##_prev_page_##] class="[##_no_more_prev_##] w-9 h-9 flex items-center justify-center rounded-lg border border-white/10 text-gray-400 hover:bg-white/5"><i class="fa-solid fa-chevron-left"></i></a>
+        <s_paging_rep>
+          <a [##_paging_rep_link_##] class="num w-9 h-9 flex items-center justify-center rounded-lg border border-white/10 text-gray-400 hover:bg-white/5">[##_paging_rep_link_num_##]</a>
+        </s_paging_rep>
+        <a [##_next_page_##] class="[##_no_more_next_##] w-9 h-9 flex items-center justify-center rounded-lg border border-white/10 text-gray-400 hover:bg-white/5"><i class="fa-solid fa-chevron-right"></i></a>
+      </div>
+    </s_paging>
+
+    </div>
+  </main>
+
+</div>
+
+</body>
+</html>

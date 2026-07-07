@@ -1,0 +1,191 @@
+/* Banner image drag prevention */
+.banner-box {
+  box-shadow: 0 8px 24px rgba(25, 25, 25, 0.85);
+}
+.dashboard-banner-media {
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Tech stack tabs & badges */
+.tech-stack-tab {
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #9b9b9a;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tech-stack-tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.07);
+}
+.tech-stack-tab--active {
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.12);
+  border-color: rgba(217, 119, 6, 0.35);
+}
+.tech-stack-grid {
+  transition: min-height 0.2s ease;
+  align-content: flex-start;
+}
+.tech-badge-img {
+  display: block;
+  height: 28px;
+  width: auto;
+  max-width: none;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.tech-badge-img:hover {
+  transform: translateY(-2px);
+}
+
+/* Compact scroll header (dashboard list page) */
+.dashboard-scroll-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 35;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-100%);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .dashboard-scroll-header {
+    left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    right: auto;
+  }
+}
+.dashboard-scroll-header.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.dashboard-scroll-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3rem;
+  min-width: 0;
+  padding: 0 1rem;
+  background: rgba(25, 25, 25, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(217, 119, 6, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.dashboard-scroll-header__icon {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.dashboard-scroll-header__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+@media (max-width: 767px) {
+  .dashboard-scroll-header {
+    top: 3.5rem;
+    left: 0;
+    width: 100%;
+  }
+
+  .dashboard-scroll-header.is-category-mode .dashboard-scroll-header__title {
+    max-width: calc(100% - 3rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .dashboard-scroll-header.is-category-mode .dashboard-scroll-header__title {
+    max-width: min(720px, calc(100% - 3rem));
+  }
+}
+
+/* Chapter details — fixed 4-line height, vertically centered */
+.chapter-details-card {
+  height: calc(3rem + 1.25rem + 1.05rem * 1.625 * 4);
+}
+
+.chapter-details-copy {
+  min-height: calc(1.25rem + 1.05rem * 1.625 * 4);
+}
+
+.chapter-desc-box {
+  display: block;
+  line-height: 1.625;
+}
+
+/* About timeline — layout lives here, not Tailwind utilities on the same node.
+   style.css loads this file before @tailwind utilities (PostCSS @import rule),
+   so never add flex/grid utilities to .about-timeline-split in HTML. */
+.about-timeline-split {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.chapter-tabs-list {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .about-timeline-split {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    align-items: stretch;
+    gap: 2rem;
+  }
+
+  .chapter-tabs-list {
+    width: auto;
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* Evenly fill the column height; min-height prevents the old text-overlap crush. */
+  .chapter-tabs-list .chapter-tab {
+    flex: 1 1 0;
+    min-height: 2.75rem;
+  }
+}
+
+/* Pagefind (GitHub Pages client search) */
+.pagefind-search-host .pagefind-ui {
+  --pagefind-ui-scale: 0.85;
+  --pagefind-ui-primary: #d97706;
+  --pagefind-ui-text: #e3e3e2;
+  --pagefind-ui-background: #202020;
+  --pagefind-ui-border: rgba(255, 255, 255, 0.08);
+  --pagefind-ui-tag: rgba(255, 255, 255, 0.06);
+  width: 100%;
+}
+
+.pagefind-search-host .pagefind-ui__search-input {
+  font-size: 0.8rem;
+  border-radius: 0.375rem;
+  background: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pagefind-search-host .pagefind-ui__form {
+  width: 100%;
+}
+
+.pagefind-search-host .pagefind-ui__drawer {
+  z-index: 60;
+}

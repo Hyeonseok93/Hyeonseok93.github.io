@@ -1,0 +1,31 @@
+{
+  "name": "tistory-notion-dashboard-skin",
+  "version": "1.0.0",
+  "description": "Vite-based modern Tistory development framework with TailwindCSS.",
+  "scripts": {
+    "build:posts": "node scripts/build-posts.js",
+    "build:html:dev": "node build-html.js --target=dev",
+    "build:html:article": "node build-html.js --target=dev-article",
+    "build:html:vite-index": "node build-html.js --target=vite-index",
+    "build:html:gh-pages": "node build-html.js --target=gh-pages",
+    "build:html:tistory": "node build-html.js --target=tistory",
+    "build:assets": "npm run build:html:vite-index && vite build",
+    "build:tistory:js": "vite build --config vite.config.tistory.js",
+    "dev": "npm run build:posts -- --target=dev && npm run build:html:dev && vite",
+    "dev:article": "npm run build:posts -- --target=dev && npm run build:html:article && vite",
+    "build:tistory": "npm run build:assets && npm run build:tistory:js && npm run build:html:tistory",
+    "build:gh-pages": "npm run build:posts -- --target=gh-pages && npm run build:assets && npm run build:html:gh-pages && pagefind --site dist/gh-pages"
+  },
+  "keywords": [],
+  "author": "Hyunm",
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.0.5",
+    "pagefind": "^1.5.2",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "vite": "^8.1.3"
+  }
+}

@@ -1,0 +1,47 @@
+<aside id="sidebar" class="w-[280px] bg-bgSidebar border-r border-white/5 p-4 flex flex-col fixed top-0 bottom-0 left-0 z-50 overflow-y-auto transition-transform duration-300 ease-in-out">
+  <!-- Profile Section with full width image -->
+  <div class="profile-section flex flex-col w-full mb-6 rounded-lg overflow-hidden border border-white/5 bg-white/[0.01]">
+    <!-- Full-width Profile Image -->
+    <img src="./src/assets/profile.png" alt="[##_blogger_##]" class="w-full h-48 object-cover">
+    
+    <!-- Profile Info -->
+    <div class="profile-info p-3 flex flex-col">
+      <span class="profile-name text-[1.1rem] font-bold text-white tracking-wide">[##_blogger_##]</span>
+      <span class="profile-desc text-[0.75rem] text-gray-500 mt-2 leading-relaxed">
+        <span class="block mt-1 font-bold text-accentAmber text-[0.7rem] uppercase tracking-wider">[##_desc_##]</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Search Box -->
+  <div class="search-container mb-4 w-full">
+    <s_search>
+      <div class="search-box flex items-center bg-bgSecondary border border-white/5 rounded py-1.5 px-3.5 gap-2">
+        <i class="fa-solid fa-magnifying-glass text-gray-500 text-xs"></i>
+        <input type="text" name="[##_search_name_##]" value="" placeholder="Search..." onkeypress="if(event.key === 'Enter') { [##_search_onclick_submit_##] }" class="bg-transparent border-none outline-none text-white w-full text-[0.8rem]">
+      </div>
+    </s_search>
+  </div>
+
+  <nav class="w-full">
+    <ul class="sidebar-menu list-none">
+      <li class="sidebar-menu-item mb-1 active">
+        <a href="#introduce-me" data-nav-panel="introduce-me" role="tab" aria-selected="true" class="flex items-center gap-3 py-1.5 px-2 rounded hover:text-white hover:bg-white/5 text-[0.85rem] text-gray-400">
+          <i class="fa-solid fa-user text-accentAmber w-4 text-center"></i> 
+          <span>INTRODUCE ME</span>
+        </a>
+      </li>
+      <li class="sidebar-menu-item mb-1">
+        <a href="#what-i-do" data-nav-panel="what-i-do" role="tab" aria-selected="false" class="flex items-center gap-3 py-1.5 px-2 rounded hover:text-white hover:bg-white/5 text-[0.85rem] text-gray-400">
+          <i class="fa-solid fa-code text-accentAmber w-4 text-center"></i> 
+          <span>WHAT I DO</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-title text-[0.7rem] font-bold uppercase text-gray-600 tracking-wider my-3 mx-1">Categories</div>
+    <div id="sidebar-category-host" class="sidebar-category-host sidebar-menu text-[0.85rem] text-gray-400">
+      [##_category_list_##]
+    </div>
+  </nav>
+</aside>
