@@ -108,7 +108,7 @@ function getCategorySlug(href) {
 
   try {
     const url = new URL(href, window.location.origin);
-    const match = url.pathname.match(/\/category\/([^/]+)/);
+    const match = url.pathname.match(/\/category\/(.+?)\/?$/);
     return match ? decodeURIComponent(match[1]) : null;
   } catch {
     return null;

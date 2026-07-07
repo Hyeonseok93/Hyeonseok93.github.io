@@ -186,7 +186,7 @@ function writeManifest(posts) {
       title: post.title,
       date: post.date,
       excerpt: post.excerpt,
-      link: `./posts/${post.slug}/`,
+      link: `/posts/${post.slug}/`,
       thumbnail: post.listThumbnail,
     });
   }

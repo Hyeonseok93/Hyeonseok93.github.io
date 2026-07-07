@@ -121,6 +121,8 @@ body {
 
 /* Article permalink: hide dashboard shell, show post only */
 #tt-body-page #dashboard-scroll-area,
-#tt-body-page #dashboard-scroll-header {
+#tt-body-page #dashboard-scroll-header,
+body#article #dashboard-scroll-area,
+body#article #dashboard-scroll-header {
   display: none !important;
 }

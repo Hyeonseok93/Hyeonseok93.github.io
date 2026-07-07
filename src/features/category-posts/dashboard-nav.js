@@ -9,6 +9,8 @@ function getSiteRoot() {
   return './';
 }
 
+export { getSiteRoot };
+
 function navigateToSiteHash(hash) {
   const root = getSiteRoot();
   closeSidebar();

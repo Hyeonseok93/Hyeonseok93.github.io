@@ -26,11 +26,44 @@ export function isDashboardIndexPage() {
   return !NON_DASHBOARD_BODY_IDS.has(document.body.id);
 }
 
+export function getTistoryHomeUrl() {
+  return `${window.location.origin}/`;
+}
+
+export function findCategoryIdByPath(pathname = window.location.pathname) {
+  for (const link of document.querySelectorAll('[data-category-id][data-category-url]')) {
+    try {
+      const linkPath = new URL(link.dataset.categoryUrl, window.location.origin).pathname;
+      if (linkPath === pathname) {
+        return link.dataset.categoryId;
+      }
+    } catch {
+      // ignore malformed category URLs
+    }
+  }
+  return null;
+}
+
+export function redirectTistoryNativeCategoryToSpa() {
+  if (document.body.id !== 'tt-body-category' || !isTistoryMode()) return false;
+
+  const categoryId = findCategoryIdByPath();
+  if (!categoryId) return false;
+
+  const page = Number(new URLSearchParams(window.location.search).get('page')) || 1;
+  const hash = `category-${categoryId}${page > 1 ? `-p${page}` : ''}`;
+  window.location.replace(`${getTistoryHomeUrl()}#${hash}`);
+  return true;
+}
+
 export function shouldHandleCategoryInApp(link) {
   if (link.classList.contains('category-tree__link--branch')) return false;
 
+  if (isTistoryMode()) {
+    return Boolean(link.dataset.categoryId && link.dataset.categoryUrl);
+  }
+
   if (isDashboardIndexPage()) {
-    if (isTistoryMode()) return Boolean(link.dataset.categoryUrl);
     const href = link.getAttribute('href') || '';
     return href === '#' || href === '' || href.startsWith('#category-');
   }
