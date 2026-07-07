@@ -52,8 +52,48 @@ function bindCategoryBranches(root) {
   });
 }
 
-function folderIconClass(child = false) {
-  return child ? 'fa-regular fa-folder' : 'fa-solid fa-folder';
+function folderIconClass({ root = false, branch = false, child = false } = {}) {
+  if (root) return 'fa-solid fa-folder';
+  if (child) return 'fa-regular fa-folder-open';
+  if (branch) return 'fa-regular fa-folder';
+  return 'fa-regular fa-folder';
+}
+
+function getPostsRootLabel(host) {
+  return host?.dataset.postsRootLabel?.trim() || "Bulldog's Posts";
+}
+
+function wrapCategoryTreeRoot(rootList, rootLabel) {
+  if (!rootList || rootList.querySelector('[data-category-root]')) return;
+
+  const wrapper = document.createElement('li');
+  wrapper.className = 'category-tree__item category-tree__item--root category-tree__item--branch is-open';
+  wrapper.dataset.categoryRoot = '';
+  wrapper.dataset.categoryBranch = '';
+
+  const row = document.createElement('div');
+  row.className = 'category-tree__row';
+
+  const rootLink = document.createElement('a');
+  rootLink.href = '#';
+  rootLink.className = 'category-tree__link category-tree__link--root category-tree__link--branch';
+  rootLink.setAttribute('aria-expanded', 'true');
+  rootLink.innerHTML = `
+    <i class="${folderIconClass({ root: true })} text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+    <span class="category-tree__label">${escapeHtml(rootLabel)}</span>
+    <span class="category-tree__count"></span>
+  `;
+
+  const childList = document.createElement('ul');
+  childList.className = 'category-tree__children list-none';
+
+  while (rootList.firstChild) {
+    childList.appendChild(rootList.firstChild);
+  }
+
+  row.append(rootLink);
+  wrapper.append(row, childList);
+  rootList.appendChild(wrapper);
 }
 
 function getCategoryId(label) {
@@ -87,10 +127,10 @@ function buildCategoryLink(anchor, { child = false, branch = false } = {}) {
   } else if (child) {
     link.className = 'category-tree__link category-tree__link--child';
   } else {
-    link.className = 'category-tree__link';
+    link.className = 'category-tree__link category-tree__link--branch-level';
   }
   link.innerHTML = `
-    <i class="${folderIconClass(child)} text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+    <i class="${folderIconClass({ branch, child })} text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
     <span class="category-tree__label">${escapeHtml(label)}</span>
     ${renderCount(count)}
   `;
@@ -152,6 +192,15 @@ function enhanceTistoryCategoryList(host) {
   bindCategoryBranches(rootList);
 }
 
+function finalizeCategoryTree(host) {
+  const rootList = host.querySelector('[data-category-tree]') || host.querySelector('ul');
+  if (!rootList) return;
+
+  wrapCategoryTreeRoot(rootList, getPostsRootLabel(host));
+  bindCategoryBranches(rootList);
+  updateBranchCounts(rootList);
+}
+
 function updateBranchCounts(root) {
   root.querySelectorAll('[data-category-branch]').forEach((branch) => {
     const countEl = branch.querySelector(':scope > .category-tree__row .category-tree__count');
@@ -173,6 +222,26 @@ function updateBranchCounts(root) {
       countEl.textContent = `(${total})`;
     }
   });
+
+  const rootBranch = root.querySelector('[data-category-root]');
+  if (rootBranch) {
+    const rootCountEl = rootBranch.querySelector(':scope > .category-tree__row .category-tree__count');
+    if (!rootCountEl) return;
+
+    let total = 0;
+    let hasCounts = false;
+    rootBranch.querySelectorAll(':scope > .category-tree__children [data-category-id] .category-tree__count').forEach((el) => {
+      const match = el.textContent.match(/\((\d+)\)/);
+      if (match) {
+        total += Number(match[1]);
+        hasCounts = true;
+      }
+    });
+
+    if (hasCounts) {
+      rootCountEl.textContent = `(${total})`;
+    }
+  }
 }
 
 function syncStaticCategoryCounts(root) {
@@ -193,13 +262,13 @@ function initCategoryTree() {
   if (!host) return;
 
   if (host.querySelector('[data-category-tree]')) {
-    bindCategoryBranches(host);
+    finalizeCategoryTree(host);
     syncStaticCategoryCounts(host.querySelector('[data-category-tree]'));
     return;
   }
 
   enhanceTistoryCategoryList(host);
-  updateBranchCounts(host);
+  finalizeCategoryTree(host);
 }
 
 document.addEventListener('DOMContentLoaded', initCategoryTree);

@@ -47,10 +47,17 @@ Push to `main` — GitHub Actions runs `npm run build:all` and:
 1. **GitHub Pages** — deploys `dist/gh-pages/` automatically
 2. **Tistory skin** — builds `dist/tistory/` and uploads `tistory-skin.zip` as a workflow artifact
 
-Download the Tistory skin: repo **Actions** tab → latest run → **Artifacts** → `tistory-skin` → unzip once.  
-You should see `index.xml`, `skin.html`, `style.css`, `tistory.js`, `images/` at the top level. Zip those files for Tistory upload.
+Download the Tistory skin: repo **Actions** tab → latest run → **Artifacts** → `tistory-skin` (folder contents).
 
-> Tistory has no official upload API (Open API ended 2024). CI builds the skin; you upload the ZIP in Tistory admin (**꾸미기 → 스킨 업로드**).
+Upload in Tistory admin (**꾸미기 → 스킨 → 스킨 등록**). Do **not** zip; add files individually:
+
+1. **1st batch (root):** `index.xml`, `skin.html`, `style.css`, `preview.gif`
+2. **2nd batch:** all files under `images/` (including `images/tistory.js`)
+3. Click **저장**, enter a skin name → appears in **보관함**
+
+Run `npm run tistory:upload-list` locally for the full checklist.
+
+> Tistory has no official upload API (Open API ended 2024). CI builds the skin; you upload files manually.
 
 Site settings: **Source → GitHub Actions**.
 

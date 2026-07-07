@@ -83,6 +83,41 @@ function ensurePostsUpToDate() {
   }
 }
 
+/** Tistory serves skin files as flat images/* — nested badges/tech/ paths 404 on many blogs. */
+function flattenTistoryImages(imgDir) {
+  if (!fs.existsSync(imgDir)) return 0;
+
+  let flattened = 0;
+
+  function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(fullPath);
+        continue;
+      }
+
+      if (fullPath === path.join(imgDir, entry.name)) continue;
+
+      const dest = path.join(imgDir, entry.name);
+      if (!fs.existsSync(dest)) {
+        fs.copyFileSync(fullPath, dest);
+        flattened += 1;
+      }
+    }
+  }
+
+  walk(imgDir);
+
+  for (const entry of fs.readdirSync(imgDir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      fs.rmSync(path.join(imgDir, entry.name), { recursive: true, force: true });
+    }
+  }
+
+  return flattened;
+}
+
 function writeTistoryPreviewGif(outDir) {
   const customPreview = path.join(SRC_DIR, 'assets', 'preview.gif');
   const previewDest = path.join(outDir, 'preview.gif');
@@ -93,10 +128,53 @@ function writeTistoryPreviewGif(outDir) {
     return;
   }
 
-  // 1x1 placeholder — Tistory requires preview.gif to register a skin.
   const placeholderGif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
   fs.writeFileSync(previewDest, placeholderGif);
   console.log(`Wrote placeholder preview.gif to: ${previewDest}`);
+}
+
+const TISTORY_PREVIEW_FILES = ['preview.gif', 'preview256.jpg', 'preview560.jpg', 'preview1600.jpg'];
+
+function ensureTistoryPreviews() {
+  const script = path.join(PROJECT_ROOT, 'scripts', 'generate-tistory-previews.py');
+  const profile = path.join(SRC_DIR, 'assets', 'profile.png');
+  const greeting = path.join(SRC_DIR, 'assets', 'greeting.gif');
+  const skinDir = path.join(PROJECT_ROOT, 'skin');
+
+  if (!fs.existsSync(script) || !fs.existsSync(profile) || !fs.existsSync(greeting)) return;
+
+  const sourceMtime = Math.max(fs.statSync(profile).mtimeMs, fs.statSync(greeting).mtimeMs);
+  const outputs = TISTORY_PREVIEW_FILES.map((name) => path.join(skinDir, name));
+  const needsRegen =
+    outputs.some((filePath) => !fs.existsSync(filePath)) ||
+    outputs.some((filePath) => fs.existsSync(filePath) && fs.statSync(filePath).mtimeMs < sourceMtime);
+
+  if (!needsRegen) return;
+
+  try {
+    execSync(`python "${script}"`, { cwd: PROJECT_ROOT, stdio: 'inherit' });
+  } catch {
+    console.warn('Warning: could not generate Tistory previews (greeting.gif + profile.png)');
+  }
+}
+
+function copyTistoryPreviews(outDir) {
+  const skinDir = path.join(PROJECT_ROOT, 'skin');
+  let copied = 0;
+
+  for (const name of TISTORY_PREVIEW_FILES) {
+    const src = path.join(skinDir, name);
+    if (!fs.existsSync(src)) continue;
+    fs.copyFileSync(src, path.join(outDir, name));
+    copied += 1;
+  }
+
+  if (copied > 0) {
+    console.log(`Copied ${copied} Tistory preview file(s) from skin/ to dist/tistory/`);
+    return;
+  }
+
+  writeTistoryPreviewGif(outDir);
 }
 
 function compile() {
@@ -106,6 +184,7 @@ function compile() {
   let outFileName = target === 'tistory' ? 'skin.html' : 'index.html';
 
   if (target === 'tistory') {
+    ensureTistoryPreviews();
     htmlContent = compileLayout({ target: 'tistory' });
     outDir = path.join(PROJECT_ROOT, 'dist', 'tistory');
   } else if (target === 'vite-index' || target === 'preview') {
@@ -140,7 +219,7 @@ function compile() {
       console.warn('Warning: dist/tistory.js not found. Run vite build --config vite.config.tistory.js first.');
     }
 
-    writeTistoryPreviewGif(outDir);
+    copyTistoryPreviews(outDir);
   }
 
   if (target === 'tistory' || target === 'gh-pages') {
@@ -169,6 +248,11 @@ function compile() {
       const xmlDest = path.join(outDir, 'index.xml');
       if (fs.existsSync(xmlSrc)) {
         fs.copyFileSync(xmlSrc, xmlDest);
+      }
+
+      const flattened = flattenTistoryImages(imgDir);
+      if (flattened > 0) {
+        console.log(`Flattened ${flattened} nested image(s) into images/ (Tistory flat paths).`);
       }
     }
   }

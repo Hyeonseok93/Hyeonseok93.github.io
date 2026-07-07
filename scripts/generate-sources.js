@@ -27,8 +27,8 @@ function renderCategoryLeaf(id, labels) {
   }
 
   return `  <li class="category-tree__item category-tree__item--leaf">
-    <a href="#" data-category-id="${escapeHtml(id)}" data-category-label="${escapeHtml(label)}" class="category-tree__link">
-      <i class="fa-solid fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+    <a href="#" data-category-id="${escapeHtml(id)}" data-category-label="${escapeHtml(label)}" class="category-tree__link category-tree__link--branch-level">
+      <i class="fa-regular fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
       <span class="category-tree__label">${escapeHtml(label)}</span>
       <span class="category-tree__count"></span>
     </a>
@@ -43,7 +43,7 @@ function renderCategoryChild(id, labels) {
 
   return `      <li class="category-tree__item category-tree__item--leaf">
         <a href="#" data-category-id="${escapeHtml(id)}" data-category-label="${escapeHtml(label)}" class="category-tree__link category-tree__link--child">
-          <i class="fa-regular fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+          <i class="fa-regular fa-folder-open text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
           <span class="category-tree__label">${escapeHtml(label)}</span>
           <span class="category-tree__count"></span>
         </a>
@@ -57,7 +57,7 @@ function renderCategoryBranch(node, labels) {
   return `  <li class="category-tree__item category-tree__item--branch${openClass}" data-category-branch>
     <div class="category-tree__row">
       <a href="#" class="category-tree__link category-tree__link--branch">
-        <i class="fa-solid fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+        <i class="fa-regular fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
         <span class="category-tree__label">${escapeHtml(node.branch)}</span>
         <span class="category-tree__count"></span>
       </a>
@@ -69,7 +69,7 @@ ${children}
 }
 
 function generateCategoryTreeHtml() {
-  const { labels, tree } = readJson(CATEGORIES_PATH);
+  const { labels, tree, rootLabel = "Bulldog's Posts" } = readJson(CATEGORIES_PATH);
   if (!Array.isArray(tree) || !tree.length) {
     throw new Error('categories.json must include a non-empty "tree" array');
   }
@@ -85,7 +85,18 @@ function generateCategoryTreeHtml() {
   });
 
   return `${GENERATED_BANNER('src/data/categories.json')}<ul class="category-tree sidebar-menu list-none" data-category-tree>
+  <li class="category-tree__item category-tree__item--root category-tree__item--branch is-open" data-category-root data-category-branch>
+    <div class="category-tree__row">
+      <a href="#" class="category-tree__link category-tree__link--root category-tree__link--branch" aria-expanded="true">
+        <i class="fa-solid fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+        <span class="category-tree__label">${escapeHtml(rootLabel)}</span>
+        <span class="category-tree__count"></span>
+      </a>
+    </div>
+    <ul class="category-tree__children list-none">
 ${items.join('\n\n')}
+    </ul>
+  </li>
 </ul>
 `;
 }
@@ -112,13 +123,11 @@ const ARTICLE_VARIANTS = {
     TITLE: '[##_article_rep_title_##]',
     DATE: '[##_article_rep_date_##]',
     AUTHOR: '[##_blogger_##]',
-    TAGS: `<s_article_tag>
+    TAGS: `<s_tag_label>
       <div class="article-tags">
-        <s_tag_label>
-          <a href="[##_tag_link_##]" class="article-tag">#[##_tag_name_##]</a>
-        </s_tag_label>
+        [##_tag_label_rep_##]
       </div>
-    </s_article_tag>`,
+    </s_tag_label>`,
     THUMBNAIL: `<s_article_rep_thumbnail>
       <figure class="article-thumbnail">
         <div class="article-thumbnail__frame">

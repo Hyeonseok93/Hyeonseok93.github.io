@@ -111,7 +111,7 @@ function compileLayout(options = {}) {
     '\\[##_search_name_##\\]': 'search',
     '\\[##_search_text_##\\]': '',
     '\\[##_search_onclick_submit_##\\]': 'return false',
-    '\\[##_list_confirm_##\\]': 'Recent Posts',
+    '\\[##_list_conform_##\\]': 'Recent Posts',
     '\\[##_desc_##\\]': 'I LOVE BULLDOG',
     '<s_list>': '',
     '</s_list>': '',
@@ -124,10 +124,16 @@ function compileLayout(options = {}) {
   if (target === 'tistory') {
     html = html.replace(
       /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
-      '<link rel="stylesheet" href="./style.css">\n  <script src="./images/tistory.js" defer></script>'
+      '<link rel="stylesheet" href="./style.css">'
+    );
+    html = html.replace(
+      '</s_t3>',
+      '  <script src="./images/tistory.js" defer></script>\n</s_t3>'
     );
     html = replaceTokens(html, {
       './src/assets/profile.png': '[##_image_##]',
+      './src/assets/badges/tech/': './images/',
+      './src/assets/badges/': './images/',
       './src/assets/': './images/',
     });
     return html;

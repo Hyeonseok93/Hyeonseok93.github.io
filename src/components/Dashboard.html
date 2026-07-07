@@ -1,5 +1,4 @@
-<s_list>
-  <div id="dashboard-scroll-area" class="w-full" data-pagefind-body>
+<div id="dashboard-scroll-area" class="w-full" data-pagefind-body>
 
   <div id="dashboard-banner" class="banner-box w-full mb-6 rounded-xl overflow-hidden">
     <img src="./src/assets/banner.png" alt="Hyeonseok's Github" draggable="false" class="dashboard-banner-media w-full h-auto object-cover">
@@ -26,7 +25,7 @@
   <div id="dashboard-content-panels" class="w-full">
 
   <!-- INTRODUCE ME Section Group (About Me + Connect) -->
-  <div id="introduce-me-anchor" data-dashboard-panel="introduce-me" class="w-full">
+  <div id="introduce-me" data-dashboard-panel="introduce-me" class="w-full">
     
     <!-- Divider and About Me Section -->
     <div class="about-section w-full border-t border-white/10 pt-5 mt-2">
@@ -190,7 +189,7 @@
   </div>
 
   <!-- WHAT I DO Section Group (Projects + Recent Posts) -->
-  <div id="what-i-do-anchor" data-dashboard-panel="what-i-do" class="w-full hidden" hidden>
+  <div id="what-i-do" data-dashboard-panel="what-i-do" class="w-full hidden" hidden>
 
     <!-- Divider and Projects Section -->
     <div id="projects-anchor" class="projects-section w-full border-t border-b border-white/10 pt-5 pb-8 mt-8 scroll-mt-20">
@@ -207,11 +206,12 @@
       </div>
     </div>
 
+    <s_list>
     <div id="posts-anchor" class="dashboard-grid w-full mt-12 mb-10 scroll-mt-20">
       <!-- Dashboard Left: Recent Posts List -->
       <div class="dashboard-card bg-bgSecondary/70 backdrop-blur-md border border-white/10 rounded-xl p-6">
         <h2 class="card-title text-[1.1rem] font-semibold mb-5 pb-2 border-b border-white/10 flex items-center gap-2 text-white">
-          <i class="fa-solid fa-list text-accentAmber"></i> [##_list_confirm_##]
+          <i class="fa-solid fa-list text-accentAmber"></i> [##_list_conform_##]
         </h2>
         <div class="post-list flex flex-col gap-4">
           <s_list_rep>
@@ -220,19 +220,21 @@
               data-tistory-list-entry
               data-post-title="[##_list_rep_title_##]"
               data-post-link="[##_list_rep_link_##]"
-              data-post-date="[##_list_rep_date_##]"
-              data-post-summary="[##_list_rep_summary_##]"
+              data-post-date="[##_list_rep_regdate_##]"
             >
-              <span class="post-card-meta text-[0.75rem] text-accentCyan font-medium">[##_list_rep_date_##]</span>
+              <span class="post-card-meta text-[0.75rem] text-accentCyan font-medium">[##_list_rep_regdate_##]</span>
               <h3 class="post-card-title text-[1.05rem] font-semibold text-white hover:text-accentAmber">
                 <a href="[##_list_rep_link_##]">[##_list_rep_title_##]</a>
               </h3>
-              <div class="tistory-list-entry__thumb hidden" aria-hidden="true">[##_list_rep_thumbnail_##]</div>
+              <s_list_rep_thumbnail>
+                <div class="tistory-list-entry__thumb hidden" aria-hidden="true">[##_list_rep_thumbnail_##]</div>
+              </s_list_rep_thumbnail>
             </article>
           </s_list_rep>
         </div>
       </div>
     </div>
+    </s_list>
 
     <div class="what-i-do-panel-cta w-full border-t border-white/10 mt-6 pt-5 pb-2">
       <a
@@ -277,4 +279,3 @@
   </div><!-- /dashboard-content-panels -->
 
   </div><!-- /dashboard-scroll-area -->
-</s_list>
