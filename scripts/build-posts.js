@@ -1,3 +1,7 @@
+const { generateAllSources } = require('./generate-sources');
+
+generateAllSources({ log: false });
+
 const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');

@@ -12,5 +12,17 @@
     "personal-web": "블로그 스킨, 배포, 레이아웃처럼 웹 개발과 관련된 작업 기록입니다.",
     "personal-toy": "내가 만들어보고 싶은 것, 적용해보고 싶은 것 해보기",
     "papers": "학위 논문과 관련 리뷰, 요약 글을 정리하는 공간입니다."
-  }
+  },
+  "tree": [
+    {
+      "branch": "SK 쉴더스 루키즈 5기",
+      "defaultOpen": true,
+      "children": ["rookies-showcase", "rookies-offline"]
+    },
+    {
+      "branch": "개인 프로젝트",
+      "children": ["personal-web", "personal-toy"]
+    },
+    "papers"
+  ]
 }

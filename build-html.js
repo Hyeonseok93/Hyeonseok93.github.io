@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { generateAllSources } = require('./scripts/generate-sources');
 const {
   PROJECT_ROOT,
   SRC_DIR,
@@ -16,6 +17,8 @@ const targetArg = args.find((arg) => arg.startsWith('--target='));
 const target = targetArg ? targetArg.split('=')[1] : 'tistory';
 
 console.log(`Running template compiler target: ${target}`);
+
+generateAllSources({ log: false });
 
 function getGhPagesCategoryTree() {
   return readFile(path.join(SRC_DIR, 'components', 'CategoryTree.html')).trim();

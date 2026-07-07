@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Vite-based modern Tistory development framework with TailwindCSS.",
   "scripts": {
+    "generate:sources": "node scripts/generate-sources.js",
     "build:posts": "node scripts/build-posts.js",
     "build:html:preview": "node build-html.js --target=preview",
     "build:html:vite-index": "node build-html.js --target=vite-index",

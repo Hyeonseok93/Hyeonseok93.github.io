@@ -10,3 +10,5 @@ export const CATEGORY_ID_BY_LABEL = Object.fromEntries(
 );
 
 export const CATEGORY_DESCRIPTIONS = categories.descriptions;
+
+export const CATEGORY_TREE = categories.tree;

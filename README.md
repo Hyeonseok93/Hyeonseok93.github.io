@@ -26,12 +26,14 @@ Always use `npm run dev` or `npm run build:gh-pages`. Generated files (`index.ht
 ## Project layout
 
 ```
-content/posts/     Markdown source (category/slug/index.md)
-src/               HTML components, JS, styles, data
-scripts/           build-posts.js, template-engine.js
-build-html.js      Compiles layout → index.html / dist/
-public/posts/      Generated article HTML (gitignored)
-dist/gh-pages/     GitHub Pages deploy artifact
+content/posts/              Markdown source (category/slug/index.md)
+src/data/categories.json    Category labels, descriptions, sidebar tree
+src/templates/article-shell.source.html  Shared article layout source
+scripts/generate-sources.js Generates CategoryTree + article shells
+src/                        HTML components, JS, styles
+build-html.js               Compiles layout → index.html / dist/
+public/posts/               Generated article HTML (gitignored)
+dist/gh-pages/              GitHub Pages deploy artifact
 ```
 
 ## Writing posts

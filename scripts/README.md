@@ -2,6 +2,7 @@
 
 | Script | Purpose |
 |--------|---------|
+| `generate-sources.js` | `categories.json` + `article-shell.source.html` → CategoryTree / Article shells |
 | `template-engine.js` | HTML compile helpers (`@include`, block replace, layout targets) |
 | `build-posts.js` | `content/posts/{category}/{slug}/` → manifest + `public/posts/{slug}/` |
 
@@ -21,10 +22,20 @@ Partials must stay **before** `@tailwind` (PostCSS `@import` order rule).
 
 **Fresh clone:** `npm install` then `npm run dev`.
 
+## Source of truth
+
+| Edit this | Generates |
+|-----------|-----------|
+| `src/data/categories.json` (`tree` + `labels`) | `src/components/CategoryTree.html` |
+| `src/templates/article-shell.source.html` | `article-page.html`, `Article.html` |
+
+Run manually: `npm run generate:sources` (also runs automatically before `build-posts` / `build-html`).
+
 ## npm script map
 
 | Command | What it does |
 |---------|----------------|
+| `generate:sources` | Regenerate CategoryTree + article shells |
 | `build:posts` | Markdown → manifest + `public/posts/` (gh-pages paths) |
 | `build:html:preview` | Local dashboard shell → root `index.html` |
 | `build:html:vite-index` | Vite entry HTML (used by `build:assets`) |
@@ -55,5 +66,6 @@ Generated HTML includes `data-build-target="gh-pages"` on `<body>`. Preview rebu
 
 | File | Role |
 |------|------|
-| `src/templates/article-page.html` | Mustache shell for `build-posts.js` |
-| `src/components/Article.html` | Tistory `[##_…_##]` shell |
+| `src/templates/article-shell.source.html` | **Edit this** — shared article layout |
+| `src/templates/article-page.html` | Generated Mustache shell for `build-posts.js` |
+| `src/components/Article.html` | Generated Tistory `[##_…_##]` shell |
