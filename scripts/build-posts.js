@@ -242,7 +242,7 @@ function writePostPages(posts) {
       target: compileTarget,
       categoryTreeHtml,
       articleHtml,
-      pageTitle: `${post.title} — Bulldog's House`,
+      pageTitle: "Bulldog's House",
       bodyId: 'article',
       assetPrefix,
     });
