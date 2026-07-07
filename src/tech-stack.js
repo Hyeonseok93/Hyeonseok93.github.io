@@ -1,5 +1,6 @@
+import { escapeHtml } from './utils/escape-html.js';
+
 const TECH_BADGES = [
-  { id: 'java', category: 'languages', label: 'Java' },
   { id: 'typescript', category: 'languages', label: 'TypeScript' },
   { id: 'python', category: 'languages', label: 'Python' },
   { id: 'javascript', category: 'languages', label: 'JavaScript' },
@@ -117,10 +118,10 @@ function initTechStack() {
   grid.innerHTML = TECH_BADGES.map(
     (badge) => `
       <img
-        src="${resolveBadgeSrc(badge.id, assetBase)}"
-        alt="${badge.label}"
-        title="${badge.label}"
-        data-tech-category="${badge.category}"
+        src="${escapeHtml(resolveBadgeSrc(badge.id, assetBase))}"
+        alt="${escapeHtml(badge.label)}"
+        title="${escapeHtml(badge.label)}"
+        data-tech-category="${escapeHtml(badge.category)}"
         class="tech-badge-img"
         decoding="async"
         draggable="false"

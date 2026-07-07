@@ -70,6 +70,19 @@ function renderTemplate(templatePath, data) {
   return html;
 }
 
+function injectBodyDataAttrs(html, { assetPrefix, site, buildTarget, pagefind = false }) {
+  const attrs = [
+    `data-site-root="${assetPrefix}"`,
+    site ? `data-site="${site}"` : '',
+    buildTarget ? `data-build-target="${buildTarget}"` : '',
+    pagefind ? 'data-pagefind="true"' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  return html.replace('<body id="', `<body ${attrs} id="`);
+}
+
 function compileLayout(options = {}) {
   const {
     target,
@@ -135,30 +148,36 @@ function compileLayout(options = {}) {
   html = replacePatternMap(html, previewPatternMap);
   html = replaceTokens(html, extraTokens);
 
-  if (target === 'gh-pages') {
+  if (target === 'gh-pages' || target === 'preview') {
     html = configureGhPagesSearch(html);
-    html = html.replace(
-      /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
-      `<link rel="stylesheet" href="${asset('style.css')}">\n  <script type="module" src="${asset('assets/main.js')}"></script>`
-    );
-    html = replaceTokens(html, {
-      './src/assets/': asset('images/'),
-    });
-    html = replaceTokens(html, {
-      '<body id="': `<body data-site-root="${assetPrefix}" data-site="gh-pages" data-pagefind="true" id="`,
-    });
-  } else if (target === 'dev' || target === 'dev-article') {
-    html = html.replace(
-      /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
-      `<script type="module" src="${asset('src/main.js')}"></script>`
-    );
-    html = replaceTokens(html, {
-      './src/assets/': asset('src/assets/'),
-      '<body id="': `<body data-site-root="${assetPrefix}" id="`,
+
+    if (target === 'gh-pages') {
+      html = html.replace(
+        /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
+        `<link rel="stylesheet" href="${asset('style.css')}">\n  <script type="module" src="${asset('assets/main.js')}"></script>`
+      );
+      html = replaceTokens(html, {
+        './src/assets/': asset('images/'),
+      });
+    } else {
+      html = html.replace(
+        /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
+        `<script type="module" src="${asset('src/main.js')}"></script>`
+      );
+      html = replaceTokens(html, {
+        './src/assets/': asset('src/assets/'),
+      });
+    }
+
+    html = injectBodyDataAttrs(html, {
+      assetPrefix,
+      site: 'gh-pages',
+      buildTarget: 'gh-pages',
+      pagefind: target === 'gh-pages',
     });
   }
 
-  if (target !== 'tistory' && target !== 'gh-pages' && !html.includes('data-site-root=')) {
+  if (target !== 'tistory' && target !== 'gh-pages' && target !== 'preview' && !html.includes('data-site-root=')) {
     html = replaceTokens(html, {
       '<body id="': `<body data-site-root="${assetPrefix}" id="`,
     });

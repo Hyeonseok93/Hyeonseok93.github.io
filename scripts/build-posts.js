@@ -11,6 +11,7 @@ const {
   copyRecursiveSync,
 } = require('./template-engine');
 const { escapeHtml } = require(path.join(SRC_DIR, 'utils', 'escape-html.cjs'));
+const { sanitizeRichHtml } = require(path.join(SRC_DIR, 'utils', 'sanitize-rich-html.cjs'));
 
 const POSTS_DIR = path.join(PROJECT_ROOT, 'content', 'posts');
 const MANIFEST_PATH = path.join(SRC_DIR, 'data', 'posts-manifest.js');
@@ -20,9 +21,7 @@ const CATEGORIES_PATH = path.join(SRC_DIR, 'data', 'categories.json');
 
 const THUMBNAIL_CANDIDATES = ['thumbnail.png', 'thumbnail.jpg', 'thumbnail.webp', 'thumbnail.jpeg'];
 
-const args = process.argv.slice(2);
-const targetArg = args.find((arg) => arg.startsWith('--target='));
-const target = targetArg ? targetArg.split('=')[1] : 'dev';
+const SITE_BUILD_TARGET = 'gh-pages';
 
 marked.setOptions({ gfm: true, breaks: false });
 
@@ -166,7 +165,7 @@ function loadPosts() {
       pageThumbnail: thumbnailFile ? `./${thumbnailFile}` : '',
       author: data.author || 'Hyeonseok Kim',
       postDir,
-      html: marked.parse(content),
+      html: sanitizeRichHtml(marked.parse(content)),
     });
   }
 
@@ -210,7 +209,7 @@ function copyPostAssets(postDir, outDir) {
 function writePostPages(posts) {
   const categoryTreeHtml = readFile(path.join(SRC_DIR, 'components', 'CategoryTree.html')).trim();
   const assetPrefix = '../../';
-  const compileTarget = target === 'gh-pages' ? 'gh-pages' : 'dev';
+  const compileTarget = SITE_BUILD_TARGET;
 
   fs.rmSync(PUBLIC_POSTS_DIR, { recursive: true, force: true });
 

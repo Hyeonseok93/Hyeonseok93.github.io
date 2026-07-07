@@ -1,4 +1,6 @@
 import { CHAPTER_VIEWBOX, CHAPTER_FLOOR_Y, CHAPTERS } from './data/chapters.js';
+import { escapeHtml } from './utils/escape-html.js';
+import { sanitizeRichHtml } from './utils/sanitize-rich-html.js';
 
 const CHAPTER_TAB_CLASS =
   'chapter-tab flex items-center justify-between py-2.5 px-4 rounded-xl border border-white/5 text-[0.85rem] font-bold tracking-wide transition-all bg-white/[0.02] text-left text-gray-400 hover:text-white hover:bg-white/10 active:scale-[0.98] duration-200 select-none';
@@ -47,7 +49,7 @@ function renderChapterTabs() {
       : 'text-[0.62rem] font-normal opacity-50';
     return `
       <button type="button" data-chapter="${chapter.id}" class="${CHAPTER_TAB_CLASS}">
-        <span>${chapter.tabLabel}</span><span class="${tagClass}">${chapter.tabTag}</span>
+        <span>${escapeHtml(chapter.tabLabel)}</span><span class="${tagClass}">${escapeHtml(chapter.tabTag)}</span>
       </button>`;
   }).join('');
 }
@@ -132,7 +134,7 @@ function setActiveChapter(idx) {
   setTimeout(() => {
     iconBox.textContent = chapter.icon;
     titleBox.textContent = chapter.sub;
-    descBox.innerHTML = chapter.desc;
+    descBox.innerHTML = sanitizeRichHtml(chapter.desc);
     details.style.opacity = '1';
   }, 150);
 }
@@ -146,7 +148,7 @@ function initChapters() {
     btn.addEventListener('click', () => setActiveChapter(Number(btn.dataset.chapter)));
   });
 
-  requestAnimationFrame(() => setActiveChapter(9));
+  requestAnimationFrame(() => setActiveChapter(CHAPTERS.at(-1).id));
 }
 
 document.addEventListener('DOMContentLoaded', initChapters);

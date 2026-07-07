@@ -34,20 +34,13 @@ thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 ## 빌드
 
 ```bash
-npm run dev              # posts(dev) + dashboard
-npm run dev:article      # posts(dev) + 글 페이지 미리보기
-npm run build:gh-pages   # posts(gh-pages) + 배포 산출물
+npm run dev              # 로컬 미리보기
+npm run build:gh-pages   # 배포 산출물
 ```
 
-`public/posts/`와 `src/data/posts-manifest.js`는 **자동 생성**(gitignore)입니다.  
-타겟마다 글 HTML의 JS 경로가 다릅니다 — `vite`만 단독 실행하지 말고 위 명령을 쓰세요.
+`public/posts/`와 `src/data/posts-manifest.js`는 **자동 생성**(gitignore)입니다.
 
-| 타겟 | `build:posts --target` | 글 페이지 JS |
-|------|------------------------|--------------|
-| 로컬 dev | `dev` | `../../src/main.js` |
-| GitHub Pages | `gh-pages` | `../../assets/main.js` |
-
-빌드 시 `public/posts/{slug}/`로 HTML + 에셋이 복사됩니다.
+글 페이지 미리보기: `npm run dev` 후 `http://localhost:5173/posts/{slug}/`
 
 ## 새 글 추가
 

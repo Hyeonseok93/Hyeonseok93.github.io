@@ -1,6 +1,6 @@
 import { CATEGORY_ID_BY_LABEL } from './data/category-meta.js';
 import { POSTS_BY_CATEGORY } from './data/posts-manifest.js';
-
+import { escapeHtml } from './utils/escape-html.js';
 function parseCategoryText(text) {
   const trimmed = text.replace(/\s+/g, ' ').trim();
   const match = trimmed.match(/^(.*?)\s*\((\d+)\)\s*$/);
@@ -91,7 +91,7 @@ function buildCategoryLink(anchor, { child = false, branch = false } = {}) {
   }
   link.innerHTML = `
     <i class="${folderIconClass(child)} text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
-    <span class="category-tree__label">${label}</span>
+    <span class="category-tree__label">${escapeHtml(label)}</span>
     ${renderCount(count)}
   `;
 

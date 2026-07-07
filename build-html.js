@@ -9,6 +9,8 @@ const {
   readFile,
 } = require('./scripts/template-engine');
 
+const SITE_BUILD_TARGET = 'gh-pages';
+
 const args = process.argv.slice(2);
 const targetArg = args.find((arg) => arg.startsWith('--target='));
 const target = targetArg ? targetArg.split('=')[1] : 'tistory';
@@ -44,24 +46,38 @@ function copyBuildAssets(outDir) {
   }
 }
 
-function resolveDevArticleHtml(slug) {
-  const articlePath = path.join(PROJECT_ROOT, 'public', 'posts', slug, 'index.html');
-  if (fs.existsSync(articlePath)) {
-    return getAutoBanner('dev-article') + readFile(articlePath);
-  }
+function readPostBuildTarget(html) {
+  const match = html.match(/data-build-target="([^"]+)"/);
+  return match?.[1] ?? null;
+}
 
-  console.log(`Post page missing for "${slug}" — running build:posts --target=dev`);
-  execSync('node scripts/build-posts.js --target=dev', {
+function postsNeedRebuild() {
+  const postsDir = path.join(PROJECT_ROOT, 'public', 'posts');
+  if (!fs.existsSync(postsDir)) return true;
+
+  const sampleDir = fs
+    .readdirSync(postsDir, { withFileTypes: true })
+    .find((entry) => entry.isDirectory());
+  if (!sampleDir) return true;
+
+  const samplePath = path.join(postsDir, sampleDir.name, 'index.html');
+  if (!fs.existsSync(samplePath)) return true;
+
+  return readPostBuildTarget(readFile(samplePath)) !== SITE_BUILD_TARGET;
+}
+
+function ensurePostsBuilt() {
+  console.log(`Building posts (target=${SITE_BUILD_TARGET})...`);
+  execSync('node scripts/build-posts.js', {
     cwd: PROJECT_ROOT,
     stdio: 'inherit',
   });
+}
 
-  if (!fs.existsSync(articlePath)) {
-    console.error(`Failed to build post page: public/posts/${slug}/index.html`);
-    process.exit(1);
+function ensurePostsUpToDate() {
+  if (postsNeedRebuild()) {
+    ensurePostsBuilt();
   }
-
-  return getAutoBanner('dev-article') + readFile(articlePath);
 }
 
 function compile() {
@@ -73,19 +89,11 @@ function compile() {
   if (target === 'tistory') {
     htmlContent = compileLayout({ target: 'tistory' });
     outDir = path.join(PROJECT_ROOT, 'dist', 'tistory');
-  } else if (target === 'dev-article') {
-    const manifestPath = path.join(SRC_DIR, 'data', 'posts-manifest.js');
-    let slug = 'tmux-guide';
-    if (fs.existsSync(manifestPath)) {
-      const manifestSrc = readFile(manifestPath);
-      const match = manifestSrc.match(/slug:\s*'([^']+)'/);
-      if (match) slug = match[1];
+  } else if (target === 'vite-index' || target === 'preview') {
+    if (target === 'preview') {
+      ensurePostsUpToDate();
     }
-
-    htmlContent = resolveDevArticleHtml(slug);
-    outDir = PROJECT_ROOT;
-  } else if (target === 'vite-index' || target === 'dev') {
-    htmlContent = compileLayout({ target: 'dev', categoryTreeHtml });
+    htmlContent = compileLayout({ target: 'preview', categoryTreeHtml });
     htmlContent = getAutoBanner(target) + htmlContent;
     outDir = PROJECT_ROOT;
   } else if (target === 'gh-pages') {
