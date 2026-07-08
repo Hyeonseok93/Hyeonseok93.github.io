@@ -54,16 +54,6 @@
     <!-- Home SPA: Introduce Me, What I Do, category posts (Tistory: s_list pages only) -->
     @include('./components/Dashboard.html')
 
-    <s_paging>
-      <div class="pagination flex justify-center gap-2 my-8">
-        <a [##_prev_page_##] class="[##_no_more_prev_##] w-9 h-9 flex items-center justify-center rounded-lg border border-white/10 text-gray-400 hover:bg-white/5"><i class="fa-solid fa-chevron-left"></i></a>
-        <s_paging_rep>
-          <a [##_paging_rep_link_##] class="num w-9 h-9 flex items-center justify-center rounded-lg border border-white/10 text-gray-400 hover:bg-white/5">[##_paging_rep_link_num_##]</a>
-        </s_paging_rep>
-        <a [##_next_page_##] class="[##_no_more_next_##] w-9 h-9 flex items-center justify-center rounded-lg border border-white/10 text-gray-400 hover:bg-white/5"><i class="fa-solid fa-chevron-right"></i></a>
-      </div>
-    </s_paging>
-
     </div>
   </main>
   </s_list>

@@ -150,6 +150,11 @@ function bootstrapHomeSpa() {
   const boot = bootstrapDashboardRouting();
   if (boot.kind === 'redirected' || boot.kind === 'article' || boot.kind === 'no-dashboard') return;
 
+  if (boot.kind === 'native-list') {
+    if (boot.categoryId) setCategoryActive(boot.categoryId);
+    return;
+  }
+
   if (boot.kind === 'category') {
     showCategoryPosts(boot.categoryId, boot.page);
     return;

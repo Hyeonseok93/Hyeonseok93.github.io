@@ -77,7 +77,7 @@ One `src/layout.html` is compiled differently per target. Tistory skin tags defi
 
 | Region | Tistory tag | Rendered on | Contents |
 |--------|-------------|-------------|----------|
-| Home dashboard | `<s_list>` | Index, category, tag, archive | Introduce Me, What I Do, category SPA, paging |
+| Home dashboard | `<s_list>` | Index, category, tag, archive | Introduce Me, What I Do, category SPA |
 | Article | `<s_article_rep>` | Permalink only (`/1`, `/2`, …) | Post title, body, prev/next |
 
 GitHub Pages mirrors this at build time (`scripts/template-engine.js`):
@@ -101,13 +101,11 @@ Implementation: `src/features/category-posts/spa-router.js` (page detection, has
 
 ### Why hash URLs on Tistory?
 
-Tistory cannot serve custom paths (e.g. `/introduce-me`) from the skin. Native category URLs (`/category/...`) trigger a **full page load** with only `<s_list>` — fine for a plain blog, but this skin keeps the portfolio dashboard on home. So:
+Tistory cannot serve custom paths (e.g. `/introduce-me`) from the skin. **Introduce Me / What I Do** stay on the home hash SPA (`/#introduce-me`, `/#what-i-do`).
 
-1. **In-app navigation** — sidebar clicks stay on `/` and swap panels via hash (`history.replaceState` on home, full navigation from article pages).
-2. **Native Tistory URLs** — `/category/...`, `/tag/...`, or article pages with `#panel` hash redirect to `/#…` on boot (`redirectTistoryNativeUrlsToSpa`).
-3. **Shareable category links** — sidebar leaf `href` points to `/#category-{id}`; `data-category-url` keeps the native path for redirect matching.
+**Category posts on Tistory** use native list URLs (`/category/...?page=N`) with `<s_list_rep>` + `<s_paging>` — not the GitHub Pages JS pager. Sidebar category links go to the real Tistory category page.
 
-GH Pages uses the same hash scheme on `https://Hyeonseok93.github.io/` for a consistent UX. Post permalinks remain real paths: `/posts/{slug}/`.
+GitHub Pages keeps hash SPA + `category-posts-pagination` because there is no Tistory server. Post permalinks remain real paths: `/posts/{slug}/`.
 
 ## Security
 

@@ -90,6 +90,13 @@ ${articleHtml}
   </main>`;
 }
 
+function stripGhPagesRegions(html) {
+  return html.replace(
+    /<!-- gh-pages-strip-start:tistory-native-list -->[\s\S]*?<!-- gh-pages-strip-end:tistory-native-list -->\s*/g,
+    ''
+  );
+}
+
 function compileLayout(options = {}) {
   const {
     target,
@@ -158,6 +165,7 @@ function compileLayout(options = {}) {
 
   html = replacePatternMap(html, previewPatternMap);
   html = replaceTokens(html, extraTokens);
+  html = stripGhPagesRegions(html);
 
   if (target === 'gh-pages' || target === 'preview') {
     if (target === 'gh-pages') {

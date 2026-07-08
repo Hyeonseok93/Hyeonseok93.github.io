@@ -65,7 +65,6 @@ sidebar (always)
 <s_list>
   dashboard-scroll-header
   <main id="main-content"> … Introduce Me / What I Do / category SPA … </main>
-  <s_paging> … </s_paging>
 </s_list>
 <s_article_rep>
   <main id="article-content"> … post … </main>

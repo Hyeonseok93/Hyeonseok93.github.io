@@ -164,26 +164,6 @@ export function redirectTistoryNativeUrlsToSpa() {
     return true;
   }
 
-  if (document.body.id === 'tt-body-category') {
-    const categoryId = findCategoryIdByPath();
-    if (categoryId) {
-      const page = Number(new URLSearchParams(window.location.search).get('page')) || 1;
-      replaceHomeSpa(buildCategoryHash(categoryId, page));
-      return true;
-    }
-  }
-
-  const hash = location.hash.replace('#', '');
-  if (hash) {
-    replaceHomeSpa(hash);
-    return true;
-  }
-
-  if (isTistoryListPage()) {
-    replaceHomeSpa('introduce-me');
-    return true;
-  }
-
   return false;
 }
 
@@ -191,7 +171,7 @@ export function shouldHandleCategoryInApp(link) {
   if (link.classList.contains('category-tree__link--branch')) return false;
 
   if (isTistoryMode()) {
-    return Boolean(link.dataset.categoryId && link.dataset.categoryUrl);
+    return false;
   }
 
   if (isDashboardIndexPage()) {
@@ -215,9 +195,7 @@ export function bootstrapDashboardRouting() {
   if (!hasDashboardPanels()) return { kind: 'no-dashboard' };
 
   if (isTistoryMode() && isTistoryListPage()) {
-    const hash = location.hash.replace('#', '') || 'introduce-me';
-    replaceHomeSpa(hash);
-    return { kind: 'redirected' };
+    return { kind: 'native-list', categoryId: findCategoryIdByPath() };
   }
 
   const parsed = parseCategoryHash(location.hash);

@@ -1,7 +1,6 @@
 import { CATEGORY_ID_BY_LABEL } from './data/category-meta.js';
 import { POSTS_BY_CATEGORY } from './data/posts-manifest.js';
 import { escapeHtml } from './utils/escape-html.js';
-import { buildCategorySpaHref } from './features/category-posts/spa-router.js';
 function parseCategoryText(text) {
   const trimmed = text.replace(/\s+/g, ' ').trim();
   const match = trimmed.match(/^(.*?)\s*\((\d+)\)\s*$/);
@@ -252,16 +251,6 @@ function enhanceTistoryCategoryList(host) {
   bindCategoryBranches(rootList);
 }
 
-function applySpaCategoryHrefs(root) {
-  if (root.dataset.categoryTree !== 'tistory') return;
-
-  root.querySelectorAll('[data-category-id]').forEach((link) => {
-    const categoryId = link.dataset.categoryId;
-    if (!categoryId) return;
-    link.href = buildCategorySpaHref(categoryId);
-  });
-}
-
 function finalizeCategoryTree(host) {
   const rootList = host.querySelector('[data-category-tree]') || host.querySelector('ul');
   if (!rootList) return;
@@ -272,7 +261,6 @@ function finalizeCategoryTree(host) {
 
   bindCategoryBranches(rootList);
   updateBranchCounts(rootList);
-  applySpaCategoryHrefs(rootList);
 }
 
 function updateBranchCounts(root) {

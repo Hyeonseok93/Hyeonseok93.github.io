@@ -110,3 +110,24 @@ body {
     font-size: clamp(0.75rem, 3.2vw, 0.95rem);
   }
 }
+
+/* Tistory: home SPA hides native list/paging; category pages use s_list + s_paging */
+#tt-body-index #tistory-native-list,
+#tt-body-page #tistory-native-list {
+  display: none !important;
+}
+
+#tt-body-category #dashboard-banner,
+#tt-body-category .dashboard-welcome-container,
+#tt-body-category #dashboard-scroll-header,
+#tt-body-category #dashboard-content-panels,
+#tt-body-tag #dashboard-banner,
+#tt-body-tag .dashboard-welcome-container,
+#tt-body-tag #dashboard-scroll-header,
+#tt-body-tag #dashboard-content-panels,
+#tt-body-archive #dashboard-banner,
+#tt-body-archive .dashboard-welcome-container,
+#tt-body-archive #dashboard-scroll-header,
+#tt-body-archive #dashboard-content-panels {
+  display: none !important;
+}
