@@ -42,7 +42,7 @@ Run manually: `npm run generate:sources` (also runs automatically before `build-
 | `build:html:gh-pages` | Final site → `dist/gh-pages/index.html` |
 | `build:html:tistory` | Tistory skin → `dist/tistory/skin.html` |
 | `build:assets` | `vite-index` + `vite build` |
-| `build:gh-pages` | posts → assets → gh-pages HTML → pagefind |
+| `build:gh-pages` | posts → assets → gh-pages HTML |
 | `dev` | posts → preview HTML → vite |
 
 ## Layout targets

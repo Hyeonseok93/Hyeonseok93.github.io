@@ -163,29 +163,3 @@
     min-height: 2.75rem;
   }
 }
-
-/* Pagefind (GitHub Pages client search) */
-.pagefind-search-host .pagefind-ui {
-  --pagefind-ui-scale: 0.85;
-  --pagefind-ui-primary: #d97706;
-  --pagefind-ui-text: #e3e3e2;
-  --pagefind-ui-background: #202020;
-  --pagefind-ui-border: rgba(255, 255, 255, 0.08);
-  --pagefind-ui-tag: rgba(255, 255, 255, 0.06);
-  width: 100%;
-}
-
-.pagefind-search-host .pagefind-ui__search-input {
-  font-size: 0.8rem;
-  border-radius: 0.375rem;
-  background: var(--bg-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.pagefind-search-host .pagefind-ui__form {
-  width: 100%;
-}
-
-.pagefind-search-host .pagefind-ui__drawer {
-  z-index: 60;
-}

@@ -70,12 +70,11 @@ function renderTemplate(templatePath, data) {
   return html;
 }
 
-function injectBodyDataAttrs(html, { assetPrefix, site, buildTarget, pagefind = false }) {
+function injectBodyDataAttrs(html, { assetPrefix, site, buildTarget }) {
   const attrs = [
     `data-site-root="${assetPrefix}"`,
     site ? `data-site="${site}"` : '',
     buildTarget ? `data-build-target="${buildTarget}"` : '',
-    pagefind ? 'data-pagefind="true"' : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -161,8 +160,6 @@ function compileLayout(options = {}) {
   html = replaceTokens(html, extraTokens);
 
   if (target === 'gh-pages' || target === 'preview') {
-    html = configureGhPagesSearch(html);
-
     if (target === 'gh-pages') {
       html = html.replace(
         /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
@@ -185,7 +182,6 @@ function compileLayout(options = {}) {
       assetPrefix,
       site: 'gh-pages',
       buildTarget: 'gh-pages',
-      pagefind: target === 'gh-pages',
     });
   }
 
@@ -196,18 +192,6 @@ function compileLayout(options = {}) {
   }
 
   return html;
-}
-
-function configureGhPagesSearch(html) {
-  const withoutTistorySearch = html.replace(
-    /<div class="search-box[\s\S]*?<\/div>\s*/g,
-    ''
-  );
-
-  return withoutTistorySearch.replace(
-    '<div class="search-container mb-4 w-full">',
-    '<div class="search-container mb-4 w-full">\n    <div id="pagefind-search" class="pagefind-search-host w-full"></div>'
-  );
 }
 
 function copyRecursiveSync(src, dest) {

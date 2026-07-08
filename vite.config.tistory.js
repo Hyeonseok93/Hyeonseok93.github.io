@@ -11,10 +11,5 @@ export default defineConfig({
       fileName: () => 'tistory.js',
     },
     outDir: 'dist',
-    rollupOptions: {
-      output: {
-        inlineDynamicImports: true,
-      },
-    },
   },
 });

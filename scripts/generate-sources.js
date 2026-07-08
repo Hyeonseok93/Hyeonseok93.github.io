@@ -103,7 +103,7 @@ ${items.join('\n\n')}
 
 const ARTICLE_VARIANTS = {
   mustache: {
-    ARTICLE_ROOT_ATTRS: 'data-pagefind-body',
+    ARTICLE_ROOT_ATTRS: '',
     CATEGORY_LINK: '{{categoryLink}}',
     CATEGORY_LABEL: '{{categoryLabel}}',
     TITLE: '{{title}}',
