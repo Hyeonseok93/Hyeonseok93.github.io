@@ -119,6 +119,14 @@ body {
   display: none !important;
 }
 
+/* Native Tistory list/category URLs are routed to the home SPA — hide shell until redirect */
+#tt-body-category #dashboard-scroll-area,
+#tt-body-category #dashboard-scroll-header,
+#tt-body-tag #dashboard-scroll-area,
+#tt-body-archive #dashboard-scroll-area {
+  display: none !important;
+}
+
 /* Article permalink: hide dashboard shell, show post only */
 #tt-body-page #dashboard-scroll-area,
 #tt-body-page #dashboard-scroll-header,

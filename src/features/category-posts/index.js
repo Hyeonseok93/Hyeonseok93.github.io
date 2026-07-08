@@ -122,8 +122,6 @@ async function showCategoryPosts(categoryId, page = 1) {
 }
 
 function initCategoryPosts() {
-  if (redirectTistoryNativeCategoryToSpa()) return;
-
   const host = document.getElementById('sidebar-category-host');
   const paginationEl = document.getElementById('category-posts-pagination');
 
@@ -171,6 +169,8 @@ function initCategoryPosts() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (redirectTistoryNativeCategoryToSpa()) return;
+
   initDashboardNav(() => Boolean(parseCategoryHash(location.hash)));
   initCategoryPosts();
 });

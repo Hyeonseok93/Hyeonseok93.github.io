@@ -30,11 +30,21 @@ export function getTistoryHomeUrl() {
   return `${window.location.origin}/`;
 }
 
+function normalizePathname(pathname) {
+  try {
+    return decodeURIComponent(pathname).replace(/\/+$/, '') || '/';
+  } catch {
+    return pathname.replace(/\/+$/, '') || '/';
+  }
+}
+
 export function findCategoryIdByPath(pathname = window.location.pathname) {
+  const currentPath = normalizePathname(pathname);
+
   for (const link of document.querySelectorAll('[data-category-id][data-category-url]')) {
     try {
-      const linkPath = new URL(link.dataset.categoryUrl, window.location.origin).pathname;
-      if (linkPath === pathname) {
+      const linkPath = normalizePathname(new URL(link.dataset.categoryUrl, window.location.origin).pathname);
+      if (linkPath === currentPath) {
         return link.dataset.categoryId;
       }
     } catch {
@@ -45,15 +55,37 @@ export function findCategoryIdByPath(pathname = window.location.pathname) {
 }
 
 export function redirectTistoryNativeCategoryToSpa() {
-  if (document.body.id !== 'tt-body-category' || !isTistoryMode()) return false;
+  if (!isTistoryMode() || isDashboardIndexPage()) return false;
 
-  const categoryId = findCategoryIdByPath();
-  if (!categoryId) return false;
+  if (document.body.id === 'tt-body-page') {
+    const hash = location.hash.replace('#', '');
+    if (!hash) return false;
+    window.location.replace(`${getTistoryHomeUrl()}#${hash}`);
+    return true;
+  }
 
-  const page = Number(new URLSearchParams(window.location.search).get('page')) || 1;
-  const hash = `category-${categoryId}${page > 1 ? `-p${page}` : ''}`;
-  window.location.replace(`${getTistoryHomeUrl()}#${hash}`);
-  return true;
+  if (document.body.id === 'tt-body-category') {
+    const categoryId = findCategoryIdByPath();
+    if (categoryId) {
+      const page = Number(new URLSearchParams(window.location.search).get('page')) || 1;
+      const hash = `category-${categoryId}${page > 1 ? `-p${page}` : ''}`;
+      window.location.replace(`${getTistoryHomeUrl()}#${hash}`);
+      return true;
+    }
+  }
+
+  const hash = location.hash.replace('#', '');
+  if (hash) {
+    window.location.replace(`${getTistoryHomeUrl()}#${hash}`);
+    return true;
+  }
+
+  if (document.body.id === 'tt-body-category' || document.body.id === 'tt-body-tag' || document.body.id === 'tt-body-archive') {
+    window.location.replace(getTistoryHomeUrl());
+    return true;
+  }
+
+  return false;
 }
 
 export function shouldHandleCategoryInApp(link) {

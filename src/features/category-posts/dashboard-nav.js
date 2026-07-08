@@ -1,5 +1,6 @@
 import { closeSidebar } from '../../sidebar.js';
 import { resetScrollHeader } from '../../scroll-header.js';
+import { isTistoryMode, isDashboardIndexPage, getTistoryHomeUrl } from './category-context.js';
 
 let activeCategoryId = null;
 
@@ -77,6 +78,11 @@ export function setDashboardPanel(panelId, page = 1) {
       ? `category-${activeCategoryId}${page > 1 ? `-p${page}` : ''}`
       : panelId;
 
+  if (isTistoryMode() && !isDashboardIndexPage()) {
+    window.location.href = `${getTistoryHomeUrl()}#${hash}`;
+    return;
+  }
+
   if (history.replaceState) {
     history.replaceState(null, '', `#${hash}`);
   } else {
@@ -106,6 +112,12 @@ export function initDashboardNav(onCategoryHashFound) {
   });
 
   if (!hasDashboardPanels) return;
+
+  if (isTistoryMode() && !isDashboardIndexPage()) {
+    const hash = location.hash.replace('#', '') || 'introduce-me';
+    window.location.replace(`${getTistoryHomeUrl()}#${hash}`);
+    return;
+  }
 
   if (onCategoryHashFound?.()) return;
 
