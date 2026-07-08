@@ -7,7 +7,7 @@
     "build:posts": "node scripts/build-posts.js",
     "build:html:preview": "node build-html.js --target=preview",
     "build:html:vite-index": "node build-html.js --target=vite-index",
-    "build:html:gh-pages": "node build-html.js --target=gh-pages",
+    "build:html:gh-pages": "node build-html.js --target=gh-pages && node scripts/validate-gh-pages.js",
     "build:html:tistory": "node build-html.js --target=tistory && node scripts/validate-tistory-skin.js",
     "build:assets": "npm run build:html:vite-index && vite build",
     "build:tistory:js": "vite build --config vite.config.tistory.js",
@@ -16,6 +16,7 @@
     "build:tistory:ci": "npm run build:tistory:js && npm run build:html:tistory",
     "tistory:upload-list": "node scripts/print-tistory-upload.js",
     "build:gh-pages": "npm run build:posts && npm run build:assets && npm run build:html:gh-pages",
+    "validate:gh-pages": "node scripts/validate-gh-pages.js",
     "build:all": "npm run build:gh-pages && npm run build:tistory:ci"
   },
   "keywords": [],

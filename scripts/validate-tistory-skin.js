@@ -53,6 +53,22 @@ function main() {
     }
   }
 
+  if (skinHtml.includes('category-posts-anchor')) {
+    errors.push('skin.html must not include category-posts-anchor (GH-only SPA panel)');
+  }
+
+  if (!skinHtml.includes('tistory-native-list')) {
+    errors.push('skin.html must include tistory-native-list for category/tag/archive pages');
+  }
+
+  if (!/<s_paging[\s>]/i.test(skinHtml)) {
+    errors.push('skin.html must include <s_paging> for native list pagination');
+  }
+
+  if (/<!-- tistory-strip-start:/.test(skinHtml)) {
+    errors.push('skin.html contains unstripped tistory-strip markers');
+  }
+
   const opens = [...skinHtml.matchAll(/<(s_[a-z0-9_]+)>/gi)].map((match) => match[1].toLowerCase());
   const closes = [...skinHtml.matchAll(/<\/(s_[a-z0-9_]+)>/gi)].map((match) => match[1].toLowerCase());
   const balance = {};

@@ -1,4 +1,4 @@
-import { isTistoryMode, isKnownCategoryId } from './category-context.js';
+import { isTistoryMode, isKnownCategoryId, getCategoryUrl } from './category-context.js';
 
 const NON_DASHBOARD_BODY_IDS = new Set([
   'article',
@@ -71,9 +71,6 @@ export function buildHomeSpaUrl(hash, { baseUrl = getHomeSpaBaseUrl() } = {}) {
   return cleanHash ? `${baseUrl}#${cleanHash}` : baseUrl;
 }
 
-export function buildCategorySpaHref(categoryId, page = 1) {
-  return buildHomeSpaUrl(buildCategoryHash(categoryId, page));
-}
 
 export function parseCategoryHash(hash = location.hash) {
   const raw = String(hash).replace(/^#/, '');
@@ -150,9 +147,35 @@ export function findCategoryIdByPath(pathname = window.location.pathname) {
   return null;
 }
 
+export function buildNativeCategoryUrl(categoryId, page = 1) {
+  const href = getCategoryUrl(categoryId);
+  if (!href || href === '#') return null;
+
+  try {
+    const url = new URL(href, window.location.origin);
+    if (page > 1) url.searchParams.set('page', String(page));
+    else url.searchParams.delete('page');
+    return url.toString();
+  } catch {
+    return href;
+  }
+}
+
+export function redirectTistoryCategoryHashToNative() {
+  if (!isTistoryMode() || !isDashboardIndexPage()) return false;
+
+  const parsed = parseCategoryHash(location.hash);
+  if (!parsed) return false;
+
+  const target = buildNativeCategoryUrl(parsed.categoryId, parsed.page);
+  if (!target) return false;
+
+  window.location.replace(target);
+  return true;
+}
+
 /**
- * Tistory serves native list/category/article URLs as separate HTML responses.
- * Redirect them to the home SPA hash so one dashboard shell owns navigation.
+ * Tistory article pages with a panel hash still route to the home SPA.
  */
 export function redirectTistoryNativeUrlsToSpa() {
   if (!isTistoryMode() || isDashboardIndexPage()) return false;

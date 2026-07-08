@@ -77,7 +77,7 @@ One `src/layout.html` is compiled differently per target. Tistory skin tags defi
 
 | Region | Tistory tag | Rendered on | Contents |
 |--------|-------------|-------------|----------|
-| Home dashboard | `<s_list>` | Index, category, tag, archive | Introduce Me, What I Do, category SPA |
+| Home dashboard | `<s_list>` | Index (SPA), category/tag/archive (native list) | Introduce Me, What I Do on index; native list + paging on category pages |
 | Article | `<s_article_rep>` | Permalink only (`/1`, `/2`, …) | Post title, body, prev/next |
 
 GitHub Pages mirrors this at build time (`scripts/template-engine.js`):

@@ -1,7 +1,6 @@
 import { CATEGORY_POSTS_PER_PAGE } from '../../data/category-meta.js';
 import { POSTS_BY_CATEGORY } from '../../data/posts-manifest.js';
-import { loadTistoryCategoryPosts } from '../../data/tistory-posts.js';
-import { isTistoryMode, getCategoryTotalCount, getCategoryUrl, resolvePostAssetPath } from './category-context.js';
+import { resolvePostAssetPath } from './category-context.js';
 
 function normalizePosts(posts) {
   return posts.map((post) => ({
@@ -19,16 +18,6 @@ export function getStaticPostCount(categoryId) {
 }
 
 export async function loadCategoryPosts(categoryId, page = 1) {
-  if (isTistoryMode()) {
-    const categoryUrl = getCategoryUrl(categoryId);
-    if (!categoryUrl || categoryUrl === '#') {
-      return { posts: [], total: 0 };
-    }
-
-    const totalHint = getCategoryTotalCount(categoryId);
-    return loadTistoryCategoryPosts(categoryUrl, page, totalHint);
-  }
-
   const posts = getStaticPosts(categoryId);
   const totalPages = Math.ceil(posts.length / CATEGORY_POSTS_PER_PAGE) || 1;
   const safePage = Math.min(Math.max(page, 1), totalPages);

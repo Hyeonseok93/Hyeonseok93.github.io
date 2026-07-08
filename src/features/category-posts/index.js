@@ -3,10 +3,9 @@ import { bindCategoryScrollHeader } from '../../scroll-header.js';
 import { CATEGORY_POSTS_PER_PAGE } from '../../data/category-meta.js';
 import {
   isKnownCategoryId,
+  isTistoryMode,
   getCategoryLabel,
   getCategoryDescription,
-  getCategoryTotalCount,
-  isTistoryMode,
 } from './category-context.js';
 import { loadCategoryPosts, getStaticPostCount } from './load-posts.js';
 import {
@@ -28,6 +27,8 @@ import {
   buildCategoryHash,
   navigateToHomeSpa,
   redirectTistoryNativeUrlsToSpa,
+  redirectTistoryCategoryHashToNative,
+  buildNativeCategoryUrl,
   bootstrapDashboardRouting,
   shouldUseHomeSpaNavigation,
   hasDashboardPanels,
@@ -84,6 +85,14 @@ async function renderCategoryPosts(categoryId, page = 1) {
 async function showCategoryPosts(categoryId, page = 1) {
   if (!isKnownCategoryId(categoryId)) return;
 
+  if (isTistoryMode()) {
+    const target = buildNativeCategoryUrl(categoryId, page);
+    if (target) {
+      window.location.href = target;
+      return;
+    }
+  }
+
   if (shouldUseHomeSpaNavigation() || !hasDashboardPanels()) {
     navigateToHomeSpa(buildCategoryHash(categoryId, page));
     return;
@@ -98,6 +107,8 @@ async function showCategoryPosts(categoryId, page = 1) {
 }
 
 function initCategoryPosts() {
+  if (isTistoryMode()) return;
+
   const host = document.getElementById('sidebar-category-host');
   const paginationEl = document.getElementById('category-posts-pagination');
 
@@ -121,8 +132,7 @@ function initCategoryPosts() {
       const categoryId = getActiveCategoryId();
       if (!button || !categoryId || button.disabled) return;
 
-      const totalHint = isTistoryMode() ? getCategoryTotalCount(categoryId) : getStaticPostCount(categoryId);
-      const totalPages = Math.max(1, Math.ceil((totalHint || 1) / CATEGORY_POSTS_PER_PAGE));
+      const totalPages = Math.max(1, Math.ceil((getStaticPostCount(categoryId) || 1) / CATEGORY_POSTS_PER_PAGE));
 
       let nextPage = activeCategoryPage;
       if (button.dataset.pageAction === 'prev') {
@@ -141,6 +151,7 @@ function initCategoryPosts() {
 
 function bootstrapHomeSpa() {
   if (redirectTistoryNativeUrlsToSpa()) return;
+  if (redirectTistoryCategoryHashToNative()) return;
 
   initDashboardNav();
   initCategoryPosts();

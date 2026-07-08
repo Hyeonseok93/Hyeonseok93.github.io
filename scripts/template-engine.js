@@ -97,6 +97,19 @@ function stripGhPagesRegions(html) {
   );
 }
 
+function stripTistoryRegions(html) {
+  return html.replace(
+    /<!-- tistory-strip-start:category-posts-spa -->[\s\S]*?<!-- tistory-strip-end:category-posts-spa -->\s*/g,
+    ''
+  );
+}
+
+function removeTistoryStripMarkers(html) {
+  return html
+    .replace(/<!-- tistory-strip-start:[\w-]+ -->\s*/g, '')
+    .replace(/\s*<!-- tistory-strip-end:[\w-]+ -->\s*/g, '\n');
+}
+
 function compileLayout(options = {}) {
   const {
     target,
@@ -150,6 +163,7 @@ function compileLayout(options = {}) {
       './src/assets/badges/': './images/',
       './src/assets/': './images/',
     });
+    html = stripTistoryRegions(html);
     return html;
   }
 
@@ -166,6 +180,7 @@ function compileLayout(options = {}) {
   html = replacePatternMap(html, previewPatternMap);
   html = replaceTokens(html, extraTokens);
   html = stripGhPagesRegions(html);
+  html = removeTistoryStripMarkers(html);
 
   if (target === 'gh-pages' || target === 'preview') {
     if (target === 'gh-pages') {
