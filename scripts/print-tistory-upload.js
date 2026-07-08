@@ -19,7 +19,6 @@ const RUNTIME_ESSENTIALS = [
   'images/banner.png',
   'images/greeting.gif',
   'images/profile.png',
-  'images/contact-instagram.png',
   'images/contact-github.png',
   'images/contact-githubpages.png',
   'images/contact-tistory.png',
