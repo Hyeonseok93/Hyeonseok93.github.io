@@ -99,6 +99,7 @@ export function setDashboardPanel(panelId, page = 1) {
   const hash = buildPanelHash(panelId, { categoryId: activeCategoryId, page });
   updateDashboardHash(hash);
   closeSidebar();
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 }
 
 export function initDashboardNav() {
@@ -115,7 +116,6 @@ export function initDashboardNav() {
       }
 
       setDashboardPanel(panelId);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
 }

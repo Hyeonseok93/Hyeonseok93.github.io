@@ -176,6 +176,7 @@ function bootstrapHomeSpa() {
 
   if (boot.kind === 'panel') {
     setDashboardPanel(boot.panelId);
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }
 }
 
