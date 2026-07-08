@@ -27,7 +27,7 @@ function renderCategoryLeaf(id, labels) {
   }
 
   return `  <li class="category-tree__item category-tree__item--leaf">
-    <a href="#" data-category-id="${escapeHtml(id)}" data-category-label="${escapeHtml(label)}" class="category-tree__link category-tree__link--branch-level">
+    <a href="#category-${escapeHtml(id)}" data-category-id="${escapeHtml(id)}" data-category-label="${escapeHtml(label)}" class="category-tree__link category-tree__link--branch-level">
       <i class="fa-regular fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
       <span class="category-tree__label">${escapeHtml(label)}</span>
       <span class="category-tree__count"></span>
@@ -42,7 +42,7 @@ function renderCategoryChild(id, labels) {
   }
 
   return `      <li class="category-tree__item category-tree__item--leaf">
-        <a href="#" data-category-id="${escapeHtml(id)}" data-category-label="${escapeHtml(label)}" class="category-tree__link category-tree__link--child">
+        <a href="#category-${escapeHtml(id)}" data-category-id="${escapeHtml(id)}" data-category-label="${escapeHtml(label)}" class="category-tree__link category-tree__link--child">
           <i class="fa-regular fa-folder-open text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
           <span class="category-tree__label">${escapeHtml(label)}</span>
           <span class="category-tree__count"></span>
@@ -154,8 +154,12 @@ const ARTICLE_VARIANTS = {
           <span class="article-post-nav__icon" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
         </a>
       </s_article_next>`,
-    WRAPPER_START: '<s_article_rep>\n',
-    WRAPPER_END: '\n</s_article_rep>',
+    WRAPPER_START: `<s_article_rep>
+<main id="article-content" class="article-content-host flex-1 ml-[280px] min-h-screen w-[calc(100%-280px)] max-md:ml-0 max-md:w-full flex justify-center">
+  <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">`,
+    WRAPPER_END: `  </div>
+</main>
+</s_article_rep>`,
   },
 };
 

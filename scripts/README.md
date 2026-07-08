@@ -56,6 +56,27 @@ Post pages under `public/posts/` always use gh-pages paths. Vite dev middleware 
 
 Generated HTML includes `data-build-target="gh-pages"` on `<body>`. Preview rebuilds posts when the stamp is missing or stale.
 
+## Tistory skin layout (`s_list` / `s_article_rep`)
+
+`src/layout.html` structure:
+
+```
+sidebar (always)
+<s_list>
+  dashboard-scroll-header
+  <main id="main-content"> … Introduce Me / What I Do / category SPA … </main>
+  <s_paging> … </s_paging>
+</s_list>
+<s_article_rep>
+  <main id="article-content"> … post … </main>
+</s_article_rep>
+```
+
+- **Tistory runtime** — each tag renders only on its page type (list vs permalink).
+- **GH Pages compile** — `template-engine.js` strips the block that does not apply to the output file.
+
+SPA routing lives in `src/features/category-posts/spa-router.js`. See root [README.md](../README.md#home-spa-routing).
+
 ## Shared utilities
 
 - `src/utils/escape-html.cjs` / `.js` — HTML escaping

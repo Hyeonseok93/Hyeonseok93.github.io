@@ -1,22 +1,17 @@
 import { closeSidebar } from '../../sidebar.js';
 import { resetScrollHeader } from '../../scroll-header.js';
-import { isTistoryMode, isDashboardIndexPage, getTistoryHomeUrl } from './category-context.js';
+import {
+  hasDashboardPanels,
+  shouldUseHomeSpaNavigation,
+  navigateToHomeSpa,
+  buildPanelHash,
+  updateDashboardHash,
+  isArticlePermalinkPage,
+} from './spa-router.js';
+
+export { getSiteRoot } from './spa-router.js';
 
 let activeCategoryId = null;
-
-function getSiteRoot() {
-  const root = document.body.dataset.siteRoot;
-  if (root) return root.endsWith('/') ? root : `${root}/`;
-  return './';
-}
-
-export { getSiteRoot };
-
-function navigateToSiteHash(hash) {
-  const root = getSiteRoot();
-  closeSidebar();
-  window.location.href = `${root}#${hash.replace(/^#/, '')}`;
-}
 
 export function getActiveCategoryId() {
   return activeCategoryId;
@@ -73,55 +68,30 @@ export function setDashboardPanel(panelId, page = 1) {
     activeCategoryId = null;
   }
 
-  const hash =
-    panelId === 'category-posts' && activeCategoryId
-      ? `category-${activeCategoryId}${page > 1 ? `-p${page}` : ''}`
-      : panelId;
-
-  if (isTistoryMode() && !isDashboardIndexPage()) {
-    window.location.href = `${getTistoryHomeUrl()}#${hash}`;
-    return;
-  }
-
-  if (history.replaceState) {
-    history.replaceState(null, '', `#${hash}`);
-  } else {
-    location.hash = hash;
-  }
+  const hash = buildPanelHash(panelId, { categoryId: activeCategoryId, page });
+  updateDashboardHash(hash);
+  closeSidebar();
 }
 
-export function initDashboardNav(onCategoryHashFound) {
-  const panels = document.querySelectorAll('[data-dashboard-panel]');
-  const hasDashboardPanels = panels.length > 0;
-
+export function initDashboardNav() {
   document.querySelectorAll('[data-nav-panel]').forEach((link) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const panelId = link.dataset.navPanel;
       if (!panelId) return;
 
-      if (!hasDashboardPanels) {
-        navigateToSiteHash(panelId);
+      if (!hasDashboardPanels() || shouldUseHomeSpaNavigation()) {
+        navigateToHomeSpa(panelId);
+        closeSidebar();
         return;
       }
 
       setDashboardPanel(panelId);
-      closeSidebar();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
+}
 
-  if (!hasDashboardPanels) return;
-
-  if (isTistoryMode() && !isDashboardIndexPage()) {
-    const hash = location.hash.replace('#', '') || 'introduce-me';
-    window.location.replace(`${getTistoryHomeUrl()}#${hash}`);
-    return;
-  }
-
-  if (onCategoryHashFound?.()) return;
-
-  const hash = location.hash.replace('#', '');
-  const initialPanel = hash === 'what-i-do' ? 'what-i-do' : 'introduce-me';
-  setDashboardPanel(initialPanel);
+export function isDashboardNavReady() {
+  return hasDashboardPanels() && !isArticlePermalinkPage();
 }

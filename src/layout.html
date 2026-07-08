@@ -32,7 +32,14 @@
     </button>
   </header>
 
+  <!-- Semi-transparent overlay backdrop for mobile -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+
+  <!-- --- SIDEBAR (Notion Style Component) --- -->
+  @include('./components/Sidebar.html')
+
   <!-- Compact title bar (shows when banner scrolls out of view) -->
+  <s_list>
   <div id="dashboard-scroll-header" class="dashboard-scroll-header" aria-hidden="true">
     <div class="dashboard-scroll-header__inner">
       <span class="dashboard-scroll-header__icon" aria-hidden="true">🐶</span>
@@ -40,21 +47,12 @@
     </div>
   </div>
 
-  <!-- Semi-transparent overlay backdrop for mobile -->
-  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 pointer-events-none"></div>
-
-  <!-- --- SIDEBAR (Notion Style Component) --- -->
-  @include('./components/Sidebar.html')
-
   <!-- --- MAIN CONTENT AREA --- -->
   <main id="main-content" class="flex-1 ml-[280px] min-h-screen w-[calc(100%-280px)] max-md:ml-0 max-md:w-full flex justify-center">
     <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
 
-    <!-- --- PAGE INDEX (Dashboard Component) --- -->
+    <!-- Home SPA: Introduce Me, What I Do, category posts (Tistory: s_list pages only) -->
     @include('./components/Dashboard.html')
-
-    <!-- Article + pagination: Tistory renders only on article/list pages -->
-    @include('./components/Article.html')
 
     <s_paging>
       <div class="pagination flex justify-center gap-2 my-8">
@@ -68,6 +66,10 @@
 
     </div>
   </main>
+  </s_list>
+
+  <!-- Article permalink (Tistory: s_article_rep pages only) -->
+  @include('./components/Article.html')
 
 </div>
 

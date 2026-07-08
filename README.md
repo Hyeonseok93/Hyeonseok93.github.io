@@ -71,6 +71,44 @@ Site settings: **Source → GitHub Actions**.
 
 Post pages always use **gh-pages asset paths** (`../../assets/main.js`). Vite dev middleware maps them to `/src/` sources.
 
+## Layout & page model
+
+One `src/layout.html` is compiled differently per target. Tistory skin tags define **which HTML exists on each page type** — we do not hide overlapping regions with CSS.
+
+| Region | Tistory tag | Rendered on | Contents |
+|--------|-------------|-------------|----------|
+| Home dashboard | `<s_list>` | Index, category, tag, archive | Introduce Me, What I Do, category SPA, paging |
+| Article | `<s_article_rep>` | Permalink only (`/1`, `/2`, …) | Post title, body, prev/next |
+
+GitHub Pages mirrors this at build time (`scripts/template-engine.js`):
+
+- **Home** (`index.html`) — unwraps `<s_list>`, removes `<s_article_rep>`
+- **Post** (`posts/{slug}/`) — removes `<s_list>`, injects article HTML into `<s_article_rep>`
+
+Sidebar + mobile chrome stay outside both blocks on every page.
+
+## Home SPA routing
+
+Dashboard panels share one home URL and use **hash routes** (not separate HTML pages):
+
+| Hash | Panel |
+|------|-------|
+| `#introduce-me` | Introduce Me (default) |
+| `#what-i-do` | What I Do |
+| `#category-{id}` | Category posts (`-p2` for page 2) |
+
+Implementation: `src/features/category-posts/spa-router.js` (page detection, hash build/parse, Tistory native URL redirects). UI state: `dashboard-nav.js`. Category data: `category-context.js`.
+
+### Why hash URLs on Tistory?
+
+Tistory cannot serve custom paths (e.g. `/introduce-me`) from the skin. Native category URLs (`/category/...`) trigger a **full page load** with only `<s_list>` — fine for a plain blog, but this skin keeps the portfolio dashboard on home. So:
+
+1. **In-app navigation** — sidebar clicks stay on `/` and swap panels via hash (`history.replaceState` on home, full navigation from article pages).
+2. **Native Tistory URLs** — `/category/...`, `/tag/...`, or article pages with `#panel` hash redirect to `/#…` on boot (`redirectTistoryNativeUrlsToSpa`).
+3. **Shareable category links** — sidebar leaf `href` points to `/#category-{id}`; `data-category-url` keeps the native path for redirect matching.
+
+GH Pages uses the same hash scheme on `https://Hyeonseok93.github.io/` for a consistent UX. Post permalinks remain real paths: `/posts/{slug}/`.
+
 ## Security
 
 - Markdown → HTML is sanitized at build time (`sanitize-html`)

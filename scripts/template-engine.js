@@ -83,6 +83,14 @@ function injectBodyDataAttrs(html, { assetPrefix, site, buildTarget, pagefind = 
   return html.replace('<body id="', `<body ${attrs} id="`);
 }
 
+function wrapArticleHost(articleHtml) {
+  return `<main id="article-content" class="article-content-host flex-1 ml-[280px] min-h-screen w-[calc(100%-280px)] max-md:ml-0 max-md:w-full flex justify-center">
+    <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
+${articleHtml}
+    </div>
+  </main>`;
+}
+
 function compileLayout(options = {}) {
   const {
     target,
@@ -143,11 +151,9 @@ function compileLayout(options = {}) {
 
   if (articleHtml) {
     html = removeBlock(html, 's_list');
-    html = removeBlock(html, 's_paging');
-    html = replaceBlock(html, 's_article_rep', articleHtml);
+    html = replaceBlock(html, 's_article_rep', wrapArticleHost(articleHtml));
   } else {
     html = removeBlock(html, 's_article_rep');
-    html = removeBlock(html, 's_paging');
     html = unwrapBlock(html, 's_list');
   }
 

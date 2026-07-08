@@ -3,14 +3,10 @@ import { bindCategoryScrollHeader } from '../../scroll-header.js';
 import { CATEGORY_POSTS_PER_PAGE } from '../../data/category-meta.js';
 import {
   isKnownCategoryId,
-  shouldHandleCategoryInApp,
   getCategoryLabel,
   getCategoryDescription,
   getCategoryTotalCount,
   isTistoryMode,
-  isDashboardIndexPage,
-  getTistoryHomeUrl,
-  redirectTistoryNativeCategoryToSpa,
 } from './category-context.js';
 import { loadCategoryPosts, getStaticPostCount } from './load-posts.js';
 import {
@@ -25,23 +21,20 @@ import {
   setCategoryActive,
   setDashboardPanel,
   initDashboardNav,
-  getSiteRoot,
+  isDashboardNavReady,
 } from './dashboard-nav.js';
+import {
+  shouldHandleCategoryInApp,
+  buildCategoryHash,
+  navigateToHomeSpa,
+  redirectTistoryNativeUrlsToSpa,
+  bootstrapDashboardRouting,
+  shouldUseHomeSpaNavigation,
+  hasDashboardPanels,
+} from './spa-router.js';
 
 let activeCategoryPage = 1;
 let activeCategoryRequest = 0;
-
-function parseCategoryHash(hash) {
-  const raw = hash.replace('#', '');
-  if (!raw.startsWith('category-')) return null;
-
-  const pageMatch = raw.match(/-p(\d+)$/);
-  const page = pageMatch ? Number(pageMatch[1]) : 1;
-  const categoryId = raw.replace(/^category-/, '').replace(/-p\d+$/, '');
-
-  if (!isKnownCategoryId(categoryId)) return null;
-  return { categoryId, page };
-}
 
 async function renderCategoryPosts(categoryId, page = 1) {
   const titleEl = document.getElementById('category-posts-title');
@@ -91,25 +84,8 @@ async function renderCategoryPosts(categoryId, page = 1) {
 async function showCategoryPosts(categoryId, page = 1) {
   if (!isKnownCategoryId(categoryId)) return;
 
-  if (isTistoryMode() && !isDashboardIndexPage()) {
-    const hash = `category-${categoryId}${page > 1 ? `-p${page}` : ''}`;
-    window.location.href = `${getTistoryHomeUrl()}#${hash}`;
-    return;
-  }
-
-  if (document.body.id === 'article' && !isTistoryMode()) {
-    const base = getSiteRoot();
-    const hash = `category-${categoryId}${page > 1 ? `-p${page}` : ''}`;
-    window.location.href = `${base}#${hash}`;
-    return;
-  }
-
-  const panels = document.querySelectorAll('[data-dashboard-panel]');
-  if (!panels.length) {
-    const root = document.body.dataset.siteRoot || '../../';
-    const base = root.endsWith('/') ? root : `${root}/`;
-    const hash = `category-${categoryId}${page > 1 ? `-p${page}` : ''}`;
-    window.location.href = `${base}#${hash}`;
+  if (shouldUseHomeSpaNavigation() || !hasDashboardPanels()) {
+    navigateToHomeSpa(buildCategoryHash(categoryId, page));
     return;
   }
 
@@ -161,16 +137,27 @@ function initCategoryPosts() {
       showCategoryPosts(categoryId, nextPage);
     });
   }
+}
 
-  const parsed = parseCategoryHash(location.hash);
-  if (parsed && document.body.id !== 'article') {
-    showCategoryPosts(parsed.categoryId, parsed.page);
+function bootstrapHomeSpa() {
+  if (redirectTistoryNativeUrlsToSpa()) return;
+
+  initDashboardNav();
+  initCategoryPosts();
+
+  if (!isDashboardNavReady()) return;
+
+  const boot = bootstrapDashboardRouting();
+  if (boot.kind === 'redirected' || boot.kind === 'article' || boot.kind === 'no-dashboard') return;
+
+  if (boot.kind === 'category') {
+    showCategoryPosts(boot.categoryId, boot.page);
+    return;
+  }
+
+  if (boot.kind === 'panel') {
+    setDashboardPanel(boot.panelId);
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (redirectTistoryNativeCategoryToSpa()) return;
-
-  initDashboardNav(() => Boolean(parseCategoryHash(location.hash)));
-  initCategoryPosts();
-});
+document.addEventListener('DOMContentLoaded', bootstrapHomeSpa);
