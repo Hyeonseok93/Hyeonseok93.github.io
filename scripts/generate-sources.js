@@ -154,12 +154,12 @@ const ARTICLE_VARIANTS = {
           <span class="article-post-nav__icon" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
         </a>
       </s_article_next>`,
-    WRAPPER_START: `<s_article_rep>
-<main id="article-content" class="article-content-host flex-1 ml-[280px] min-h-screen w-[calc(100%-280px)] max-md:ml-0 max-md:w-full flex justify-center">
+    WRAPPER_START: `<s_permalink_article_rep>
+<main id="article-content" class="article-content-host flex-1 min-h-screen w-full flex justify-center">
   <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">`,
     WRAPPER_END: `  </div>
 </main>
-</s_article_rep>`,
+</s_permalink_article_rep>`,
   },
 };
 

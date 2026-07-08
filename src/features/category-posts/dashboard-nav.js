@@ -68,6 +68,11 @@ export function setDashboardPanel(panelId, page = 1) {
     activeCategoryId = null;
   }
 
+  const bodyId = document.body.id;
+  if (bodyId === 'tt-body-index' || bodyId === 'list') {
+    document.body.dataset.activePanel = panelId;
+  }
+
   const hash = buildPanelHash(panelId, { categoryId: activeCategoryId, page });
   updateDashboardHash(hash);
   closeSidebar();

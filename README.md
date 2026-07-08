@@ -73,19 +73,25 @@ Post pages always use **gh-pages asset paths** (`../../assets/main.js`). Vite de
 
 ## Layout & page model
 
-One `src/layout.html` is compiled differently per target. Tistory skin tags define **which HTML exists on each page type** — we do not hide overlapping regions with CSS.
+One `src/layout.html` compiles per target. Tistory uses **three page regions** plus official group tags:
 
-| Region | Tistory tag | Rendered on | Contents |
-|--------|-------------|-------------|----------|
-| Home dashboard | `<s_list>` | Index (SPA), category/tag/archive (native list) | Introduce Me, What I Do on index; native list + paging on category pages |
-| Article | `<s_article_rep>` | Permalink only (`/1`, `/2`, …) | Post title, body, prev/next |
+| Region | HTML | Tistory tags | When it appears |
+|--------|------|--------------|-----------------|
+| Home dashboard | `#home-dashboard` | *(none — static section)* | Home SPA only (`#tt-body-index`) |
+| Posts | `#article-section` | `<s_article_rep>` → `<s_index_article_rep>` / `<s_permalink_article_rep>` | Index summaries vs permalink body (structural) |
+| Category list | `#list-section` | `<s_list>` | Category / tag / archive |
+
+**Introduce Me / About Me live in `#home-dashboard`, not in `<s_list>`.**  
+`<s_list>` is only for category/tag/archive post lists ([Tistory list docs](https://tistory.github.io/document-tistory-skin/list/list.html)).
+
+**Permalink post body is inside `<s_permalink_article_rep>`** — without it, the full article template renders on the home page too ([Tistory post docs](https://tistory.github.io/document-tistory-skin/contents/post.html)). That was the root cause of Introduce Me overlapping with post content.
 
 GitHub Pages mirrors this at build time (`scripts/template-engine.js`):
 
-- **Home** (`index.html`) — unwraps `<s_list>`, removes `<s_article_rep>`
-- **Post** (`posts/{slug}/`) — removes `<s_list>`, injects article HTML into `<s_article_rep>`
+- **Home** — keeps `#home-dashboard`, removes `#article-section` and `#list-section`
+- **Post** — keeps `#article-section` only, removes `#home-dashboard` and `#list-section`
 
-Sidebar + mobile chrome stay outside both blocks on every page.
+Section visibility on Tistory (`#tt-body-index`, `#tt-body-page`, `#tt-body-category`, …) follows the [standard skin pattern](https://tistory.github.io/document-tistory-skin/common/basic.html): each `body` id shows one primary region. Index vs permalink inside `s_article_rep` is handled by Tistory tags, not CSS.
 
 ## Home SPA routing
 

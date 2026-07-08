@@ -52,6 +52,11 @@ function removeBlock(html, tagName) {
   return html.replace(re, '');
 }
 
+function removeSectionById(html, sectionId) {
+  const re = new RegExp(`<section id="${sectionId}"[\\s\\S]*?<\\/section>\\s*`, 'g');
+  return html.replace(re, '');
+}
+
 function replaceBlock(html, tagName, content) {
   const re = new RegExp(`<${tagName}>[\\s\\S]*?<\\/${tagName}>`);
   return html.replace(re, content);
@@ -83,7 +88,7 @@ function injectBodyDataAttrs(html, { assetPrefix, site, buildTarget }) {
 }
 
 function wrapArticleHost(articleHtml) {
-  return `<main id="article-content" class="article-content-host flex-1 ml-[280px] min-h-screen w-[calc(100%-280px)] max-md:ml-0 max-md:w-full flex justify-center">
+  return `<main id="article-content" class="article-content-host flex-1 min-h-screen w-full flex justify-center">
     <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
 ${articleHtml}
     </div>
@@ -170,11 +175,13 @@ function compileLayout(options = {}) {
   html = html.replace(/<s_list_rep>[\s\S]*?<\/s_list_rep>/g, '');
 
   if (articleHtml) {
-    html = removeBlock(html, 's_list');
+    html = removeSectionById(html, 'home-dashboard');
+    html = removeSectionById(html, 'list-section');
     html = replaceBlock(html, 's_article_rep', wrapArticleHost(articleHtml));
   } else {
+    html = removeSectionById(html, 'article-section');
+    html = removeSectionById(html, 'list-section');
     html = removeBlock(html, 's_article_rep');
-    html = unwrapBlock(html, 's_list');
   }
 
   html = replacePatternMap(html, previewPatternMap);

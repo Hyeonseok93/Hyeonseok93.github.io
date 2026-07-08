@@ -57,8 +57,36 @@ function main() {
     errors.push('skin.html must not include category-posts-anchor (GH-only SPA panel)');
   }
 
+  if (!skinHtml.includes('home-dashboard')) {
+    errors.push('skin.html must include #home-dashboard (home SPA section outside s_list)');
+  }
+
+  if (!skinHtml.includes('list-section')) {
+    errors.push('skin.html must include #list-section (category/tag/archive native list)');
+  }
+
+  if (!/<s_index_article_rep[\s>]/i.test(skinHtml)) {
+    errors.push('skin.html must include <s_index_article_rep> for home post summaries');
+  }
+
+  if (!/<s_permalink_article_rep[\s>]/i.test(skinHtml)) {
+    errors.push('skin.html must include <s_permalink_article_rep> for permalink pages');
+  }
+
+  const stylePath = path.join(DIST_DIR, 'style.css');
+  if (fs.existsSync(stylePath)) {
+    const styleCss = fs.readFileSync(stylePath, 'utf8');
+    if (!styleCss.includes('#tt-body-page') || !styleCss.includes('#home-dashboard')) {
+      errors.push('style.css must include #tt-body-page / #home-dashboard section routing');
+    }
+  }
+
   if (!skinHtml.includes('tistory-native-list')) {
     errors.push('skin.html must include tistory-native-list for category/tag/archive pages');
+  }
+
+  if (!skinHtml.includes('site-main-column')) {
+    errors.push('skin.html must use #site-main-column layout wrapper');
   }
 
   if (!/<s_paging[\s>]/i.test(skinHtml)) {
@@ -69,8 +97,8 @@ function main() {
     errors.push('skin.html contains unstripped tistory-strip markers');
   }
 
-  const opens = [...skinHtml.matchAll(/<(s_[a-z0-9_]+)>/gi)].map((match) => match[1].toLowerCase());
-  const closes = [...skinHtml.matchAll(/<\/(s_[a-z0-9_]+)>/gi)].map((match) => match[1].toLowerCase());
+  const opens = [...skinHtml.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<(s_[a-z0-9_]+)>/gi)].map((match) => match[1].toLowerCase());
+  const closes = [...skinHtml.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<\/(s_[a-z0-9_]+)>/gi)].map((match) => match[1].toLowerCase());
   const balance = {};
   for (const tag of opens) balance[tag] = (balance[tag] || 0) + 1;
   for (const tag of closes) balance[tag] = (balance[tag] || 0) - 1;

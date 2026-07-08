@@ -111,23 +111,64 @@ body {
   }
 }
 
-/* Tistory: home SPA hides native list/paging; category pages use s_list + s_paging */
-#tt-body-index #tistory-native-list,
-#tt-body-page #tistory-native-list {
+/*
+ * Tistory section routing (body id)
+ *
+ * Three regions in layout.html:
+ *   #home-dashboard  — Introduce Me / What I Do SPA (home only)
+ *   #article-section — s_article_rep (index summaries + permalink body)
+ *   #list-section    — s_list (category/tag/archive)
+ *
+ * Permalink vs index inside s_article_rep is structural (s_permalink_article_rep /
+ * s_index_article_rep). Section visibility by page type follows the Tistory skin pattern.
+ */
+
+#tt-body-index .list-section {
   display: none !important;
 }
 
-#tt-body-category #dashboard-banner,
-#tt-body-category .dashboard-welcome-container,
-#tt-body-category #dashboard-scroll-header,
-#tt-body-category #dashboard-content-panels,
-#tt-body-tag #dashboard-banner,
-#tt-body-tag .dashboard-welcome-container,
-#tt-body-tag #dashboard-scroll-header,
-#tt-body-tag #dashboard-content-panels,
-#tt-body-archive #dashboard-banner,
-#tt-body-archive .dashboard-welcome-container,
-#tt-body-archive #dashboard-scroll-header,
-#tt-body-archive #dashboard-content-panels {
+#tt-body-index:not([data-active-panel="what-i-do"]) .article-section {
+  display: none;
+}
+
+#tt-body-page #home-dashboard,
+#tt-body-page .list-section {
   display: none !important;
+}
+
+#tt-body-category #home-dashboard,
+#tt-body-category .article-section,
+#tt-body-tag #home-dashboard,
+#tt-body-tag .article-section,
+#tt-body-archive #home-dashboard,
+#tt-body-archive .article-section {
+  display: none !important;
+}
+
+body#article #home-dashboard,
+body#article .list-section {
+  display: none !important;
+}
+
+body#list .list-section {
+  display: none !important;
+}
+
+body#list:not([data-active-panel="what-i-do"]) .article-section {
+  display: none;
+}
+
+#tt-body-index .article-section .main-content-inner,
+body#list .article-section .main-content-inner {
+  padding-top: 0;
+  margin-top: -0.5rem;
+}
+
+#tt-body-index .article-section .post-card-item:first-child,
+body#list .article-section .post-card-item:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 0.75rem 0.75rem;
+  background: rgba(32, 32, 32, 0.7);
+  margin-top: 0;
+  padding-top: 1rem;
 }

@@ -35,31 +35,48 @@
   <!-- Semi-transparent overlay backdrop for mobile -->
   <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 pointer-events-none"></div>
 
-  <!-- --- SIDEBAR (Notion Style Component) --- -->
   @include('./components/Sidebar.html')
 
-  <!-- Compact title bar (shows when banner scrolls out of view) -->
-  <s_list>
-  <div id="dashboard-scroll-header" class="dashboard-scroll-header" aria-hidden="true">
-    <div class="dashboard-scroll-header__inner">
-      <span class="dashboard-scroll-header__icon" aria-hidden="true">🐶</span>
-      <span class="dashboard-scroll-header__title">Bulldog's House</span>
+  <div id="site-main-column" class="site-main-column flex-1 min-w-0 ml-[280px] w-[calc(100%-280px)] max-md:ml-0 max-md:w-full flex flex-col min-h-screen">
+
+  <!-- Home dashboard SPA: Introduce Me / What I Do (not s_list — that is for category/tag/archive lists) -->
+  <section id="home-dashboard" class="home-section">
+    <div id="dashboard-scroll-header" class="dashboard-scroll-header" aria-hidden="true">
+      <div class="dashboard-scroll-header__inner">
+        <span class="dashboard-scroll-header__icon" aria-hidden="true">🐶</span>
+        <span class="dashboard-scroll-header__title">Bulldog's House</span>
+      </div>
     </div>
+
+    <main id="main-content" class="flex-1 min-h-screen w-full flex justify-center">
+      <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
+        @include('./components/Dashboard.html')
+      </div>
+    </main>
+  </section>
+
+  <!-- Posts: index summaries (s_index_article_rep) + permalink body (s_permalink_article_rep) -->
+  <section id="article-section" class="article-section">
+    <s_article_rep>
+      <s_index_article_rep>
+        @include('./components/HomeIndexPosts.html')
+      </s_index_article_rep>
+      @include('./components/Article.html')
+    </s_article_rep>
+  </section>
+
+  <!-- Category / tag / archive native list (s_list) -->
+  <section id="list-section" class="list-section">
+    <main id="list-content" class="flex-1 min-h-screen w-full flex justify-center">
+      <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
+        <s_list>
+          @include('./components/TistoryNativeList.html')
+        </s_list>
+      </div>
+    </main>
+  </section>
+
   </div>
-
-  <!-- --- MAIN CONTENT AREA --- -->
-  <main id="main-content" class="flex-1 ml-[280px] min-h-screen w-[calc(100%-280px)] max-md:ml-0 max-md:w-full flex justify-center">
-    <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
-
-    <!-- Home SPA: Introduce Me, What I Do, category posts (Tistory: s_list pages only) -->
-    @include('./components/Dashboard.html')
-
-    </div>
-  </main>
-  </s_list>
-
-  <!-- Article permalink (Tistory: s_article_rep pages only) -->
-  @include('./components/Article.html')
 
 </div>
 
