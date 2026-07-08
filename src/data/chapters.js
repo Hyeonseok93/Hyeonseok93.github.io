@@ -70,7 +70,7 @@ export const CHAPTERS = [
     tabLabel: 'CH 7. 해킹보안학과 학사 졸업',
     tabTag: 'Security',
     tabTagAccent: false,
-    desc: '<strong>군복무 기간을 좀 더 잘 활용하기 위해</strong><br>사이버 대학에서 해킹보안학과 학사 취득!!<br>어릴적 꿈이 였던 정보보안 전문가로 한 걸음!',
+    desc: '<strong>군복무 기간을 좀 더 잘 활용하기 위해</strong><br>사이버 대학에서 해킹보안학과 학사 취득!!',
   },
   {
     id: 8,
