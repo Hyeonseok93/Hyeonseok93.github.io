@@ -57,7 +57,7 @@ export const CHAPTERS = [
     point: { x: 570, y: 72 },
     icon: '🎖️',
     sub: 'Chapter 6',
-    tabLabel: 'CH 6. 공군 장교로 입대',
+    tabLabel: 'CH 6. 공군 장교로 임관',
     tabTag: 'Military',
     tabTagAccent: false,
     desc: '<strong>미룰 수 있을때 까지 미뤘던 국방의 의무를 하러</strong><br>한국으로 돌아와 공군 인사장교 임관!!<br>첫 직장이면서 선배, 후배, 그리고<br>동료들로 부터 정말 많은것들을 배웠던 시기',
