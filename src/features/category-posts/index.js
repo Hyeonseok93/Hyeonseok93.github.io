@@ -162,7 +162,10 @@ function bootstrapHomeSpa() {
   if (boot.kind === 'redirected' || boot.kind === 'article' || boot.kind === 'no-dashboard') return;
 
   if (boot.kind === 'native-list') {
-    if (boot.categoryId) setCategoryActive(boot.categoryId);
+    if (boot.categoryId) {
+      // Category tree may still be enhancing Tistory markup; sync after DOM settles.
+      requestAnimationFrame(() => setCategoryActive(boot.categoryId));
+    }
     return;
   }
 

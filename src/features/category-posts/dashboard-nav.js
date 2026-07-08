@@ -34,10 +34,33 @@ export function clearCategoryActive() {
   });
 }
 
+export function clearDashboardNavActive() {
+  document.querySelectorAll('[data-nav-panel]').forEach((link) => {
+    const item = link.closest('.sidebar-menu-item');
+    if (item) item.classList.remove('active');
+    link.setAttribute('aria-selected', 'false');
+  });
+}
+
+function expandCategoryAncestors(link) {
+  let node = link?.closest('li');
+  while (node) {
+    if (node.matches('[data-category-branch]')) {
+      node.classList.add('is-open');
+      const branchLink = node.querySelector(':scope > .category-tree__row > .category-tree__link--branch');
+      if (branchLink) branchLink.setAttribute('aria-expanded', 'true');
+    }
+    node = node.parentElement?.closest('li');
+  }
+}
+
 export function setCategoryActive(categoryId) {
   clearCategoryActive();
+  clearDashboardNavActive();
   const link = document.querySelector(`[data-category-id="${categoryId}"]`);
-  if (link) link.classList.add('is-active');
+  if (!link) return;
+  link.classList.add('is-active');
+  expandCategoryAncestors(link);
 }
 
 export function setDashboardPanel(panelId, page = 1) {

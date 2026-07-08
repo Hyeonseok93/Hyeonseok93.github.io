@@ -1,6 +1,13 @@
 import { CATEGORY_ID_BY_LABEL } from './data/category-meta.js';
 import { POSTS_BY_CATEGORY } from './data/posts-manifest.js';
 import { escapeHtml } from './utils/escape-html.js';
+import categoriesData from './data/categories.json';
+
+const DEFAULT_OPEN_BRANCHES = new Set(
+  (categoriesData.tree || [])
+    .filter((node) => node && typeof node === 'object' && node.defaultOpen && node.branch)
+    .map((node) => node.branch)
+);
 function parseCategoryText(text) {
   const trimmed = text.replace(/\s+/g, ' ').trim();
   const match = trimmed.match(/^(.*?)\s*\((\d+)\)\s*$/);
@@ -156,8 +163,12 @@ function transformTistoryItem(li, { nested = false } = {}) {
   if (!anchor) return null;
 
   if (childList) {
+    const { label } = parseCategoryAnchor(anchor);
     const item = document.createElement('li');
     item.className = 'category-tree__item category-tree__item--branch';
+    if (DEFAULT_OPEN_BRANCHES.has(label)) {
+      item.classList.add('is-open');
+    }
     item.dataset.categoryBranch = '';
 
     const row = document.createElement('div');
@@ -319,6 +330,64 @@ function syncStaticCategoryCounts(root) {
   updateBranchCounts(root);
 }
 
+function getActiveCategoryIdFromPath() {
+  try {
+    const path = decodeURIComponent(window.location.pathname);
+    const match = path.match(/\/category\/(.+?)\/?$/);
+    if (!match) return null;
+    const slug = match[1];
+
+    for (const link of document.querySelectorAll('[data-category-id][data-category-url]')) {
+      try {
+        const linkPath = decodeURIComponent(new URL(link.dataset.categoryUrl, window.location.origin).pathname);
+        if (linkPath.replace(/\/+$/, '') === path.replace(/\/+$/, '') || linkPath.includes(slug)) {
+          return link.dataset.categoryId;
+        }
+      } catch {
+        // ignore malformed URLs
+      }
+    }
+
+    for (const link of document.querySelectorAll('[data-category-id]')) {
+      if (link.dataset.categoryId === slug || link.dataset.categoryLabel === slug) {
+        return link.dataset.categoryId;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+function restoreActiveCategoryHighlight(host) {
+  const bodyId = document.body.id;
+  if (bodyId !== 'tt-body-category' && bodyId !== 'category') return;
+
+  const categoryId = getActiveCategoryIdFromPath();
+  if (!categoryId) return;
+
+  host.querySelectorAll('[data-category-id].is-active').forEach((link) => {
+    link.classList.remove('is-active');
+  });
+  document.querySelectorAll('[data-nav-panel]').forEach((link) => {
+    const item = link.closest('.sidebar-menu-item');
+    if (item) item.classList.remove('active');
+    link.setAttribute('aria-selected', 'false');
+  });
+
+  const activeLink = host.querySelector(`[data-category-id="${categoryId}"]`);
+  if (!activeLink) return;
+  activeLink.classList.add('is-active');
+
+  let node = activeLink.closest('li');
+  while (node) {
+    if (node.matches('[data-category-branch]')) {
+      setBranchOpen(node, true);
+    }
+    node = node.parentElement?.closest('li');
+  }
+}
+
 function initCategoryTree() {
   const host = document.getElementById('sidebar-category-host');
   if (!host) return;
@@ -326,11 +395,13 @@ function initCategoryTree() {
   if (host.querySelector('[data-category-tree]')) {
     finalizeCategoryTree(host);
     syncStaticCategoryCounts(host.querySelector('[data-category-tree]'));
+    restoreActiveCategoryHighlight(host);
     return;
   }
 
   enhanceTistoryCategoryList(host);
   finalizeCategoryTree(host);
+  restoreActiveCategoryHighlight(host);
 }
 
 document.addEventListener('DOMContentLoaded', initCategoryTree);
