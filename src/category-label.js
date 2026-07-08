@@ -15,5 +15,15 @@ function rewriteTextNode(el) {
 }
 
 export function initCategoryLabels() {
-  document.querySelectorAll('.article-back span, [data-category-label-source]').forEach(rewriteTextNode);
+  document
+    .querySelectorAll('.article-back span, [data-category-label-source], .category-posts-hero__title')
+    .forEach(rewriteTextNode);
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCategoryLabels);
+  } else {
+    initCategoryLabels();
+  }
 }

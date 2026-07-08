@@ -7,7 +7,6 @@ import { TECH_BADGE_URLS } from './tech-badge-urls.js';
 import './scroll-header.js';
 import './article-page.js';
 import './category-tree.js';
-import { initCategoryLabels } from './category-label.js';
+import './category-label.js';
 
 setTechBadgeUrlMap(TECH_BADGE_URLS);
-initCategoryLabels();
