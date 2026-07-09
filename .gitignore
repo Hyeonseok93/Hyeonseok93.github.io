@@ -1,5 +1,6 @@
 node_modules/
 dist/
+docs/
 index.html
 public/posts/
 src/data/posts-manifest.js
