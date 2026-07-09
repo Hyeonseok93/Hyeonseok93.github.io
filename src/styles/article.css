@@ -524,6 +524,21 @@
   transform: rotate(180deg);
 }
 
+.article-toc:not([open]) .article-toc__nav {
+  display: none;
+  padding: 0;
+  border: none;
+}
+
+.article-page > .article-toc + .article-body {
+  margin-top: 0.35rem;
+  padding-top: 0.85rem;
+}
+
+.article-content > hr:first-child {
+  display: none;
+}
+
 .article-toc__nav {
   display: flex;
   flex-direction: column;
