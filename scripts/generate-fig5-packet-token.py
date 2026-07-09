@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-OUT = Path(__file__).resolve().parents[1] / "content/posts/papers/roberta-quadrant-mapping-ics/fig5-new.png"
+OUT = Path(__file__).resolve().parents[1] / "content/posts/papers/roberta-quadrant-mapping-ics/fig5.png"
 
 BG = "#12151c"
 BOX = "#2a3140"
@@ -71,7 +71,7 @@ def main():
     font_note = load_font(22, bold=True)
     font_title = load_font(20, bold=True)
 
-    draw.text((56, 28), "1바이트 = 1토큰 매핑", fill=TEXT, font=font_title)
+    draw.text((56, 28), "길이 = 토큰 수 = 바이트 수", fill=CYAN, font=font_title)
 
     pkt_y = 78
     tok_y = 210
@@ -98,12 +98,10 @@ def main():
     draw.line((start_x, bracket_y + 16, end_x, bracket_y + 16), fill=ACCENT, width=2)
     draw.line((end_x, bracket_y, end_x, bracket_y + 16), fill=ACCENT, width=2)
 
-    note = "6바이트 = 6토큰"
+    note = "6바이트 = 6토큰 (길이 = 토큰 수 = 바이트 수)"
     nb = draw.textbbox((0, 0), note, font=font_note)
     nw = nb[2] - nb[0]
     draw.text(((start_x + end_x - nw) / 2, bracket_y + 24), note, fill=ACCENT, font=font_note)
-
-    draw.text((end_x + 36, tok_y + 18), "길이 = 토큰 수 = 바이트 수", fill=CYAN, font=font_label)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     img.save(OUT, "PNG", optimize=True)
