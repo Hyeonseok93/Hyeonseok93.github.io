@@ -7,19 +7,21 @@
     <p class="category-posts-hero__desc text-[0.92rem] max-sm:text-[0.85rem] text-textSecondary leading-relaxed mt-3 max-w-[560px] mx-auto">[##_list_description_##]</p>
   </header>
 
-  <div class="category-posts-feed w-full flex flex-col gap-4">
+  <div class="category-posts-feed w-full flex flex-col">
     <s_list_rep>
-      <article
-        class="tistory-list-entry category-post-card post-card-item flex flex-col gap-1 p-3 rounded-lg hover:bg-white/5 transition-all duration-200"
-        data-tistory-list-entry
-      >
-        <span class="post-card-meta text-[0.75rem] text-accentCyan font-medium">[##_list_rep_regdate_##]</span>
-        <h3 class="post-card-title text-[1.05rem] font-semibold text-white hover:text-accentAmber">
-          <a href="[##_list_rep_link_##]">[##_list_rep_title_##]</a>
-        </h3>
-        <s_list_rep_thumbnail>
-          <div class="tistory-list-entry__thumb hidden" aria-hidden="true">[##_list_rep_thumbnail_##]</div>
-        </s_list_rep_thumbnail>
+      <article class="category-post-card" data-tistory-list-entry>
+        <a href="[##_list_rep_link_##]" class="category-post-card__link">
+          <div class="category-post-card__body">
+            <h3 class="category-post-card__title">[##_list_rep_title_##]</h3>
+            <p class="category-post-card__meta">[##_list_rep_regdate_##] · [##_list_rep_category_##]</p>
+            <p class="category-post-card__excerpt" data-tistory-list-excerpt>[##_list_rep_desc_##]</p>
+          </div>
+          <s_list_rep_thumbnail>
+            <div class="category-post-card__thumb">
+              <img src="[##_list_rep_thumbnail_url_##]" alt="" loading="lazy" />
+            </div>
+          </s_list_rep_thumbnail>
+        </a>
       </article>
     </s_list_rep>
   </div>

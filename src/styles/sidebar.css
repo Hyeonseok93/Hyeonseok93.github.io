@@ -194,6 +194,10 @@
   overflow: hidden;
 }
 
+.category-post-card__excerpt:empty {
+  display: none;
+}
+
 .category-post-card__thumb {
   width: 200px;
   height: 140px;

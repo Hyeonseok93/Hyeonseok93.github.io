@@ -20,7 +20,7 @@ export function renderPostCard(post, label) {
         <div class="category-post-card__body">
           <h3 class="category-post-card__title">${escapeHtml(post.title)}</h3>
           <p class="category-post-card__meta">${escapeHtml(post.date)} · ${escapeHtml(label)}</p>
-          <p class="category-post-card__excerpt">${escapeHtml(post.excerpt || '')}</p>
+          ${post.excerpt ? `<p class="category-post-card__excerpt">${escapeHtml(post.excerpt)}</p>` : ''}
         </div>
         ${renderPostThumbnail(post)}
       </a>

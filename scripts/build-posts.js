@@ -26,6 +26,7 @@ const CATEGORIES_PATH = path.join(SRC_DIR, 'data', 'categories.json');
 const THUMBNAIL_CANDIDATES = ['thumbnail.png', 'thumbnail.jpg', 'thumbnail.webp', 'thumbnail.jpeg'];
 
 const SITE_BUILD_TARGET = 'gh-pages';
+const LIST_EXCERPT_MAX_CHARS = 400;
 
 marked.setOptions({ gfm: true, breaks: false });
 
@@ -39,6 +40,18 @@ function formatDate(value) {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}. ${m}. ${d}`;
+}
+
+function htmlToPlainText(html) {
+  return String(html || '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractExcerptFromContent(content) {
+  if (!content?.trim()) return '';
+  return htmlToPlainText(sanitizeRichHtml(marked.parse(content)));
 }
 
 function buildTagsHtml(tags, assetPrefix) {
@@ -163,7 +176,7 @@ function loadPosts() {
       category: categoryId,
       categoryLabel: CATEGORY_LABELS[categoryId] || categoryId,
       tags: Array.isArray(data.tags) ? data.tags : [],
-      excerpt: data.excerpt || '',
+      excerpt: extractExcerptFromContent(content),
       thumbnailFile,
       listThumbnail: thumbnailFile ? `./posts/${slug}/${thumbnailFile}` : '',
       pageThumbnail: thumbnailFile ? `./${thumbnailFile}` : '',
@@ -185,7 +198,7 @@ function writeManifest(posts) {
       slug: post.slug,
       title: post.title,
       date: post.date,
-      excerpt: post.excerpt,
+      excerpt: post.excerpt.slice(0, LIST_EXCERPT_MAX_CHARS),
       link: `/posts/${post.slug}/`,
       thumbnail: post.listThumbnail,
     });

@@ -4,7 +4,6 @@ date: 2026-06-20
 tags:
   - Docker
   - DevOps
-excerpt: docker-compose.yml로 DB·백엔드·프론트를 한 번에 띄우는 로컬 개발 환경 구성법을 정리했습니다.
 ---
 
 로컬에서 서비스를 개발할 때 DB, API, 프론트를 각각 띄우는 과정이 번거로울 수 있습니다. **Docker Compose**를 쓰면 하나의 명령으로 전체 스택을 올릴 수 있습니다.

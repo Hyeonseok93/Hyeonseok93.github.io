@@ -24,11 +24,10 @@ content/posts/
 title: 글 제목
 date: 2026-07-07
 tags: [tag1, tag2]
-excerpt: 목록에 보일 한 줄 요약
 thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 ---
 
-본문에서 이미지: ![설명](./images/screenshot.png)
+본문 첫 부분이 카테고리 목록 요약(최대 3줄)으로 자동 표시됩니다.
 ```
 
 ## 빌드
