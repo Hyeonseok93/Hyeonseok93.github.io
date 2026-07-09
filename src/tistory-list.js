@@ -1,13 +1,66 @@
 import { leafCategoryLabel } from './category-label.js';
+import { POSTS_BY_CATEGORY } from './data/posts-manifest.js';
 
 const LIST_EXCERPT_MAX_CHARS = 400;
-const NEW_ICON_SELECTOR = 'img[alt="N"], img[alt="NEW"], img[alt="new"]';
 
 function htmlToPlainText(html) {
   const template = document.createElement('div');
   template.innerHTML = html;
   template.querySelectorAll('script, style, img, figure, iframe, video').forEach((node) => node.remove());
   return template.textContent.replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function normalizePostPath(url) {
+  try {
+    const pathname = new URL(url, window.location.origin).pathname;
+    return pathname.replace(/\/$/, '') || '/';
+  } catch {
+    return String(url || '').replace(/\/$/, '') || '/';
+  }
+}
+
+function isTistoryNewIcon(img) {
+  if (!img || img.tagName !== 'IMG') return false;
+
+  const alt = (img.getAttribute('alt') || '').trim().toLowerCase();
+  if (alt === 'n' || alt === 'new') return true;
+
+  const src = img.getAttribute('src') || '';
+  return /new_ico/i.test(src);
+}
+
+function buildManifestExcerptByTitle() {
+  const map = new Map();
+
+  for (const posts of Object.values(POSTS_BY_CATEGORY)) {
+    for (const post of posts) {
+      if (post.title && post.excerpt) {
+        map.set(post.title.trim(), post.excerpt);
+      }
+    }
+  }
+
+  return map;
+}
+
+async function fetchRssExcerptMap() {
+  const response = await fetch(`${window.location.origin}/rss`, { credentials: 'same-origin' });
+  if (!response.ok) return new Map();
+
+  const xml = await response.text();
+  const doc = new DOMParser().parseFromString(xml, 'application/xml');
+  const map = new Map();
+
+  doc.querySelectorAll('item').forEach((item) => {
+    const link = item.querySelector('link')?.textContent?.trim();
+    const description = item.querySelector('description')?.textContent;
+    if (!link || !description) return;
+
+    const text = htmlToPlainText(description);
+    if (text) map.set(normalizePostPath(link), text);
+  });
+
+  return map;
 }
 
 function normalizeMetaLine(metaEl) {
@@ -25,26 +78,19 @@ function normalizeMetaLine(metaEl) {
   metaEl.textContent = datePart || category || raw;
 }
 
-function cleanTitleElement(title) {
-  if (!title) return;
-
-  title.querySelectorAll(NEW_ICON_SELECTOR).forEach((img) => img.remove());
-  const text = title.textContent.replace(/\s+/g, ' ').trim();
-  if (text) title.textContent = text;
-}
-
 function promoteNewPostBadges(root) {
   root.querySelectorAll('.category-post-card').forEach((card) => {
     const body = card.querySelector('.category-post-card__body');
     const title = card.querySelector('.category-post-card__title');
     if (!body || !title) return;
 
-    const newImg = card.querySelector(NEW_ICON_SELECTOR);
-    cleanTitleElement(title);
-    if (!newImg) return;
+    const newImg = [...title.querySelectorAll('img')].find(isTistoryNewIcon);
+    if (newImg) newImg.remove();
 
-    newImg.remove();
-    if (body.querySelector('.category-post-card__new')) return;
+    const titleText = title.textContent.replace(/\s+/g, ' ').trim();
+    if (titleText) title.textContent = titleText;
+
+    if (!newImg || body.querySelector('.category-post-card__new')) return;
 
     const badge = document.createElement('span');
     badge.className = 'category-post-card__new';
@@ -53,13 +99,41 @@ function promoteNewPostBadges(root) {
   });
 }
 
-function sanitizeListExcerpts(root) {
-  root.querySelectorAll('[data-tistory-list-excerpt]').forEach((el) => {
-    const text = htmlToPlainText(el.innerHTML).slice(0, LIST_EXCERPT_MAX_CHARS);
+async function enrichListExcerpts(root) {
+  const manifestByTitle = buildManifestExcerptByTitle();
+  const excerptEls = [...root.querySelectorAll('[data-tistory-list-excerpt]')];
+  const needsFallback = excerptEls.some((el) => !htmlToPlainText(el.innerHTML));
+
+  let rssByPath = new Map();
+  if (needsFallback) {
+    try {
+      rssByPath = await fetchRssExcerptMap();
+    } catch {
+      rssByPath = new Map();
+    }
+  }
+
+  excerptEls.forEach((el) => {
+    let text = htmlToPlainText(el.innerHTML).slice(0, LIST_EXCERPT_MAX_CHARS);
+
+    if (!text) {
+      const card = el.closest('.category-post-card');
+      const href = card?.querySelector('.category-post-card__link')?.getAttribute('href');
+      const title = card?.querySelector('.category-post-card__title')?.textContent?.trim();
+
+      if (href) {
+        text = (rssByPath.get(normalizePostPath(href)) || '').slice(0, LIST_EXCERPT_MAX_CHARS);
+      }
+      if (!text && title) {
+        text = (manifestByTitle.get(title) || '').slice(0, LIST_EXCERPT_MAX_CHARS);
+      }
+    }
+
     if (!text) {
       el.remove();
       return;
     }
+
     el.textContent = text;
   });
 }
@@ -75,20 +149,22 @@ function ensureListThumbnails(root) {
   });
 }
 
-export function initTistoryListCards() {
+export async function initTistoryListCards() {
   const root = document.getElementById('tistory-native-list');
   if (!root) return;
 
   promoteNewPostBadges(root);
   root.querySelectorAll('.category-post-card__meta').forEach(normalizeMetaLine);
-  sanitizeListExcerpts(root);
+  await enrichListExcerpts(root);
   ensureListThumbnails(root);
 }
 
 if (typeof document !== 'undefined') {
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTistoryListCards);
+    document.addEventListener('DOMContentLoaded', () => {
+      void initTistoryListCards();
+    });
   } else {
-    initTistoryListCards();
+    void initTistoryListCards();
   }
 }
