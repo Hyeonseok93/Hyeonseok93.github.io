@@ -133,10 +133,10 @@
 }
 
 .article-content h1 {
-  margin-top: 3.5rem;
+  margin-top: 0;
   margin-bottom: 1.25rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0;
+  border-top: none;
   font-size: 1.85rem;
   font-weight: 800;
   line-height: 1.35;
@@ -144,20 +144,18 @@
   color: #fff;
 }
 
-.article-content > h1:first-child,
-.article-chapter:first-child > h1 {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: none;
-}
-
 .article-chapter {
   margin-bottom: 0.5rem;
 }
 
 .article-chapter > h1 {
-  margin-top: 3.5rem;
   margin-bottom: 1rem;
+}
+
+.article-chapter:not(:first-child) > h1 {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .article-chapter__body {
@@ -166,6 +164,12 @@
   margin-left: 0.65rem;
   padding: 0.35rem 0 0.75rem 1.35rem;
   border-left: 2px solid rgba(249, 115, 22, 0.28);
+}
+
+.article-chapter:first-child > .article-chapter__body {
+  margin-left: 0;
+  padding-left: 0;
+  border-left: none;
 }
 
 .article-chapter__body > h2:first-child {
@@ -531,8 +535,8 @@
 }
 
 .article-page > .article-toc + .article-body {
-  margin-top: 0.35rem;
-  padding-top: 0.85rem;
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .article-content > hr:first-child {
