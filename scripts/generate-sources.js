@@ -51,12 +51,14 @@ function renderCategoryChild(id, labels) {
 }
 
 function renderCategoryBranch(node, labels) {
-  const openClass = node.defaultOpen ? ' is-open' : '';
+  const isOpen = node.defaultOpen !== false;
+  const openClass = isOpen ? ' is-open' : '';
+  const ariaExpanded = isOpen ? 'true' : 'false';
   const children = node.children.map((id) => renderCategoryChild(id, labels)).join('\n');
 
   return `  <li class="category-tree__item category-tree__item--branch${openClass}" data-category-branch>
     <div class="category-tree__row">
-      <a href="#" class="category-tree__link category-tree__link--branch">
+      <a href="#" class="category-tree__link category-tree__link--branch" aria-expanded="${ariaExpanded}">
         <i class="fa-regular fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
         <span class="category-tree__label">${escapeHtml(node.branch)}</span>
         <span class="category-tree__count"></span>

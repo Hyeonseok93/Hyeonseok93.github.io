@@ -17,7 +17,6 @@
   "tree": [
     {
       "branch": "SK 쉴더스 루키즈 5기",
-      "defaultOpen": true,
       "children": ["rookies-showcase", "rookies-offline"]
     },
     {

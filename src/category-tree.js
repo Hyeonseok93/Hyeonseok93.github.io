@@ -3,11 +3,15 @@ import { POSTS_BY_CATEGORY } from './data/posts-manifest.js';
 import { escapeHtml } from './utils/escape-html.js';
 import categoriesData from './data/categories.json';
 
-const DEFAULT_OPEN_BRANCHES = new Set(
+const DEFAULT_COLLAPSED_BRANCHES = new Set(
   (categoriesData.tree || [])
-    .filter((node) => node && typeof node === 'object' && node.defaultOpen && node.branch)
+    .filter((node) => node && typeof node === 'object' && node.defaultOpen === false && node.branch)
     .map((node) => node.branch)
 );
+
+function isBranchOpenByDefault(label) {
+  return !DEFAULT_COLLAPSED_BRANCHES.has(label);
+}
 function parseCategoryText(text) {
   const trimmed = text.replace(/\s+/g, ' ').trim();
   const match = trimmed.match(/^(.*?)\s*\((\d+)\)\s*$/);
@@ -166,7 +170,7 @@ function transformTistoryItem(li, { nested = false } = {}) {
     const { label } = parseCategoryAnchor(anchor);
     const item = document.createElement('li');
     item.className = 'category-tree__item category-tree__item--branch';
-    if (DEFAULT_OPEN_BRANCHES.has(label)) {
+    if (isBranchOpenByDefault(label)) {
       item.classList.add('is-open');
     }
     item.dataset.categoryBranch = '';
@@ -262,6 +266,12 @@ function enhanceTistoryCategoryList(host) {
   bindCategoryBranches(rootList);
 }
 
+function syncBranchOpenState(root) {
+  root.querySelectorAll('[data-category-branch]').forEach((branch) => {
+    setBranchOpen(branch, branch.classList.contains('is-open'));
+  });
+}
+
 function finalizeCategoryTree(host) {
   const rootList = host.querySelector('[data-category-tree]') || host.querySelector('ul');
   if (!rootList) return;
@@ -270,6 +280,7 @@ function finalizeCategoryTree(host) {
     wrapCategoryTreeRoot(rootList, getPostsRootLabel(host));
   }
 
+  syncBranchOpenState(rootList);
   bindCategoryBranches(rootList);
   updateBranchCounts(rootList);
 }
