@@ -338,5 +338,17 @@ FDIA(False Data Injection Attack)는 **응답 프레임 구조 자체는 정상*
 
 ---
 
-**논문:** [DOI 10.6109/jkiice.2026.30.1.141](https://doi.org/10.6109/jkiice.2026.30.1.141)  
-**데이터셋:** [CICModbusDataset2023](https://www.unb.ca/cic/datasets/modbus-2023.html)
+<table class="article-ref-table">
+  <thead>
+    <tr>
+      <th>논문</th>
+      <th>데이터셋</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://doi.org/10.6109/jkiice.2026.30.1.141">DOI 10.6109/jkiice.2026.30.1.141</a></td>
+      <td><a href="https://www.unb.ca/cic/datasets/modbus-2023.html">CICModbusDataset2023</a></td>
+    </tr>
+  </tbody>
+</table>

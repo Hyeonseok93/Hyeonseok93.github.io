@@ -381,6 +381,19 @@
   white-space: nowrap;
 }
 
+.article-content .article-ref-table {
+  width: auto;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.article-content .article-ref-table th,
+.article-content .article-ref-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
 .article-tags {
   display: flex;
   flex-wrap: wrap;
