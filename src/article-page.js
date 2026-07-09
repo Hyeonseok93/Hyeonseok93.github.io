@@ -94,7 +94,7 @@ function initTocScrollSpy(sectionIds) {
 }
 
 function collectHeadings(content) {
-  const headings = content.querySelectorAll('h2, h3');
+  const headings = content.querySelectorAll('h1');
   const usedIds = new Set();
   const items = [];
 
@@ -112,7 +112,7 @@ function collectHeadings(content) {
     items.push({
       id,
       text: heading.textContent.trim(),
-      level: heading.tagName === 'H3' ? 3 : 2,
+      level: 1,
     });
   });
 
