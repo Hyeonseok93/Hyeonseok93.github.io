@@ -348,10 +348,16 @@
 .article-content th,
 .article-content td {
   padding: 1rem 1.15rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 1rem;
   line-height: 1.65;
   vertical-align: top;
+}
+
+.article-content th:last-child,
+.article-content td:last-child {
+  border-right: none;
 }
 
 .article-content tr:last-child th,
@@ -368,7 +374,7 @@
 
 .article-content thead th {
   color: var(--accent-color);
-  border-bottom-color: rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .article-content td {
@@ -386,12 +392,15 @@
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .article-content .article-ref-table th,
 .article-content .article-ref-table td {
   text-align: center;
   vertical-align: middle;
+  min-width: 12rem;
+  border-right-color: rgba(255, 255, 255, 0.16);
 }
 
 .article-tags {
