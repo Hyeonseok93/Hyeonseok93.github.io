@@ -93,6 +93,33 @@ function initTocScrollSpy(sectionIds) {
   sections.forEach((section) => observer.observe(section));
 }
 
+function groupArticleChapters() {
+  const content = document.querySelector('.article-content');
+  if (!content?.children.length) return;
+
+  const nodes = Array.from(content.children);
+  const fragment = document.createDocumentFragment();
+  let body = null;
+
+  nodes.forEach((node) => {
+    if (node.tagName === 'H1') {
+      const chapter = document.createElement('div');
+      chapter.className = 'article-chapter';
+      body = document.createElement('div');
+      body.className = 'article-chapter__body';
+      chapter.appendChild(node);
+      chapter.appendChild(body);
+      fragment.appendChild(chapter);
+      return;
+    }
+
+    if (body) body.appendChild(node);
+    else fragment.appendChild(node);
+  });
+
+  content.replaceChildren(fragment);
+}
+
 function collectHeadings(content) {
   const headings = content.querySelectorAll('h1');
   const usedIds = new Set();
@@ -177,6 +204,7 @@ function initArticleThumbnail() {
 function initArticlePage() {
   if (!isArticlePage()) return;
 
+  groupArticleChapters();
   initArticleToc();
   initArticleScrollHeader();
   initPostNavTitles();
