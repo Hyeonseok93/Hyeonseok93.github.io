@@ -73,9 +73,7 @@ function buildThumbnailHtml(thumbnailSrc, title) {
 }
 
 function buildNavCard(direction, post, assetPrefix) {
-  if (!post) {
-    return `<span class="article-post-nav__card article-post-nav__card--${direction} is-empty" aria-hidden="true"></span>`;
-  }
+  if (!post) return '';
 
   const icon =
     direction === 'prev'
