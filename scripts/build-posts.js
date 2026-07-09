@@ -16,6 +16,7 @@ const {
 } = require('./template-engine');
 const { escapeHtml } = require(path.join(SRC_DIR, 'utils', 'escape-html.cjs'));
 const { sanitizeRichHtml } = require(path.join(SRC_DIR, 'utils', 'sanitize-rich-html.cjs'));
+const { fixUnparsedBoldInHtml } = require(path.join(SRC_DIR, 'utils', 'fix-markdown-bold.cjs'));
 
 const POSTS_DIR = path.join(PROJECT_ROOT, 'content', 'posts');
 const MANIFEST_PATH = path.join(SRC_DIR, 'data', 'posts-manifest.js');
@@ -49,9 +50,14 @@ function htmlToPlainText(html) {
     .trim();
 }
 
+function parsePostMarkdown(content) {
+  const html = fixUnparsedBoldInHtml(marked.parse(content));
+  return sanitizeRichHtml(html);
+}
+
 function extractExcerptFromContent(content) {
   if (!content?.trim()) return '';
-  return htmlToPlainText(sanitizeRichHtml(marked.parse(content)));
+  return htmlToPlainText(parsePostMarkdown(content));
 }
 
 function buildTagsHtml(tags, assetPrefix) {
@@ -180,7 +186,7 @@ function loadPosts() {
       pageThumbnail: thumbnailFile ? `./${thumbnailFile}` : '',
       author: data.author || 'Hyeonseok Kim',
       postDir,
-      html: sanitizeRichHtml(marked.parse(content)),
+      html: parsePostMarkdown(content),
     });
   }
 
