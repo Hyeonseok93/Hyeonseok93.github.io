@@ -15,7 +15,10 @@ ACCENT = "#f97316"
 CYAN = "#22d3ee"
 
 BYTES = ["01", "03", "00", "00", "00", "01"]
-W, H = 1280, 360
+MARGIN_LEFT = 40
+BOX_W, BOX_H, BOX_GAP = 88, 64, 18
+LABEL_COL_W = 168
+TITLE = "6바이트 = 6토큰 (길이 = 토큰 수 = 바이트 수)"
 
 
 def load_font(size: int, bold: bool = False):
@@ -32,17 +35,14 @@ def load_font(size: int, bold: bool = False):
     return ImageFont.load_default()
 
 
-def draw_row(draw, y, label, values, box_color, font_label, font_byte, font_idx):
-    draw.text((56, y), label, fill=MUTED, font=font_label)
+def draw_row(draw, y, label, values, box_color, start_x, font_label, font_byte, font_idx):
+    draw.text((MARGIN_LEFT, y + 10), label, fill=MUTED, font=font_label)
 
-    box_w, box_h, gap = 88, 64, 18
-    start_x = 220
     centers = []
-
     for i, val in enumerate(values):
-        x = start_x + i * (box_w + gap)
+        x = start_x + i * (BOX_W + BOX_GAP)
         draw.rounded_rectangle(
-            (x, y + 6, x + box_w, y + 6 + box_h),
+            (x, y + 6, x + BOX_W, y + 6 + BOX_H),
             radius=10,
             fill=box_color,
             outline=BORDER,
@@ -50,41 +50,42 @@ def draw_row(draw, y, label, values, box_color, font_label, font_byte, font_idx)
         )
         bbox = draw.textbbox((0, 0), val, font=font_byte)
         tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
-        draw.text((x + (box_w - tw) / 2, y + 6 + (box_h - th) / 2 - 2), val, fill=TEXT, font=font_byte)
-        cx = x + box_w / 2
+        draw.text((x + (BOX_W - tw) / 2, y + 6 + (BOX_H - th) / 2 - 2), val, fill=TEXT, font=font_byte)
+        cx = x + BOX_W / 2
         centers.append(cx)
         idx = str(i)
         ib = draw.textbbox((0, 0), idx, font=font_idx)
         iw = ib[2] - ib[0]
-        draw.text((cx - iw / 2, y + 6 + box_h + 10), idx, fill=MUTED, font=font_idx)
+        draw.text((cx - iw / 2, y + 6 + BOX_H + 10), idx, fill=MUTED, font=font_idx)
 
-    return centers, start_x, box_w, gap
+    last_box_right = start_x + (len(values) - 1) * (BOX_W + BOX_GAP) + BOX_W
+    return centers, last_box_right
 
 
 def main():
-    img = Image.new("RGB", (W, H), BG)
-    draw = ImageDraw.Draw(img)
-
     font_label = load_font(24)
     font_byte = load_font(30, bold=True)
     font_idx = load_font(18)
-    font_note = load_font(22, bold=True)
-    font_title = load_font(20, bold=True)
+    font_title = load_font(21, bold=True)
 
-    draw.text((56, 28), "길이 = 토큰 수 = 바이트 수", fill=CYAN, font=font_title)
+    start_x = MARGIN_LEFT + LABEL_COL_W
+    content_right = start_x + len(BYTES) * (BOX_W + BOX_GAP) - BOX_GAP + BOX_W
+    width = content_right + 24
+    height = 318
 
-    pkt_y = 78
-    tok_y = 210
+    img = Image.new("RGB", (width, height), BG)
+    draw = ImageDraw.Draw(img)
 
-    pkt_centers, start_x, box_w, gap = draw_row(
-        draw, pkt_y, "패킷 (hex)", BYTES, BOX, font_label, font_byte, font_idx
-    )
-    tok_centers, _, _, _ = draw_row(
-        draw, tok_y, "토큰 (1:1)", BYTES, BOX_TOKEN, font_label, font_byte, font_idx
-    )
+    draw.text((MARGIN_LEFT, 18), TITLE, fill=CYAN, font=font_title)
+
+    pkt_y = 62
+    tok_y = 194
+
+    pkt_centers, _ = draw_row(draw, pkt_y, "패킷 (hex)", BYTES, BOX, start_x, font_label, font_byte, font_idx)
+    tok_centers, _ = draw_row(draw, tok_y, "토큰 (1:1)", BYTES, BOX_TOKEN, start_x, font_label, font_byte, font_idx)
 
     for pc, tc in zip(pkt_centers, tok_centers):
-        top = pkt_y + 6 + 64 + 34
+        top = pkt_y + 6 + BOX_H + 34
         bottom = tok_y + 6 - 8
         draw.line((pc, top, tc, bottom), fill=ACCENT, width=2)
         draw.polygon(
@@ -92,20 +93,15 @@ def main():
             fill=ACCENT,
         )
 
-    end_x = start_x + len(BYTES) * (box_w + gap) - gap
-    bracket_y = pkt_y + 6 + 64 + 38
-    draw.line((start_x, bracket_y, start_x, bracket_y + 16), fill=ACCENT, width=2)
-    draw.line((start_x, bracket_y + 16, end_x, bracket_y + 16), fill=ACCENT, width=2)
-    draw.line((end_x, bracket_y, end_x, bracket_y + 16), fill=ACCENT, width=2)
-
-    note = "6바이트 = 6토큰 (길이 = 토큰 수 = 바이트 수)"
-    nb = draw.textbbox((0, 0), note, font=font_note)
-    nw = nb[2] - nb[0]
-    draw.text(((start_x + end_x - nw) / 2, bracket_y + 24), note, fill=ACCENT, font=font_note)
+    bracket_y = pkt_y + 6 + BOX_H + 38
+    bracket_right = start_x + (len(BYTES) - 1) * (BOX_W + BOX_GAP) + BOX_W
+    draw.line((start_x, bracket_y, start_x, bracket_y + 14), fill=ACCENT, width=2)
+    draw.line((start_x, bracket_y + 14, bracket_right, bracket_y + 14), fill=ACCENT, width=2)
+    draw.line((bracket_right, bracket_y, bracket_right, bracket_y + 14), fill=ACCENT, width=2)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     img.save(OUT, "PNG", optimize=True)
-    print(f"Wrote {OUT}")
+    print(f"Wrote {OUT} ({width}x{height})")
 
 
 if __name__ == "__main__":
