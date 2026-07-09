@@ -130,13 +130,7 @@ const ARTICLE_VARIANTS = {
         [##_tag_label_rep_##]
       </div>
     </s_tag_label>`,
-    THUMBNAIL: `<s_article_rep_thumbnail>
-      <figure class="article-thumbnail">
-        <div class="article-thumbnail__frame">
-          <img src="[##_article_rep_thumbnail_url_##]" alt="[##_article_rep_title_##]" loading="lazy" />
-        </div>
-      </figure>
-    </s_article_rep_thumbnail>`,
+    THUMBNAIL: '',
     CONTENT: '[##_article_rep_desc_##]',
     POST_NAV: `<s_article_prev>
         <a href="[##_article_prev_link_##]" class="article-post-nav__card article-post-nav__card--prev">
