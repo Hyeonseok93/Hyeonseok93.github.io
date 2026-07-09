@@ -130,6 +130,10 @@
   letter-spacing: -0.02em;
 }
 
+.category-posts-hero__desc:empty {
+  display: none;
+}
+
 .category-posts-feed {
   display: flex;
   flex-direction: column;
