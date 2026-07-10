@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 6 — 인프라 설계 완료 및 개발 가속화를 위한 전략적 전환"
-date: 2026-05-25
+date: 2026-05-27
 tags:
   - kdt
   - sk-rookies

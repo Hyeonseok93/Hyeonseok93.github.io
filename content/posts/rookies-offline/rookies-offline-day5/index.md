@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 5 — 프로젝트 명칭 확정 및 본격 개발 시작"
-date: 2026-05-24
+date: 2026-05-26
 tags:
   - kdt
   - sk-rookies
