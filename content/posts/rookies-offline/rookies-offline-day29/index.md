@@ -10,7 +10,7 @@ tags:
   - mentoring
   - onde
   - argus
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

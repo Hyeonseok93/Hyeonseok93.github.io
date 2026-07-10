@@ -10,7 +10,7 @@ tags:
   - argus
   - security
   - diagnosis
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

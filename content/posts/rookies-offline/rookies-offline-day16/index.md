@@ -12,7 +12,7 @@ tags:
   - onde
   - owasp
   - burp-suite
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

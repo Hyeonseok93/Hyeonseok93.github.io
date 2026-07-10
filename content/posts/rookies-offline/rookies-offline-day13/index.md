@@ -12,7 +12,7 @@ tags:
   - docker
   - health-check
   - security
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

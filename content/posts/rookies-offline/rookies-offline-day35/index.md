@@ -10,7 +10,7 @@ tags:
   - argus
   - security
   - docker
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

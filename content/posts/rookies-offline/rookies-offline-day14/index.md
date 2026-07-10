@@ -12,7 +12,7 @@ tags:
   - owasp-zap
   - semgrep
   - onde
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

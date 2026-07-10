@@ -11,7 +11,7 @@ tags:
   - argus
   - security
   - owasp-zap
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

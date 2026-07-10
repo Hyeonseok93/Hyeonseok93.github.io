@@ -10,7 +10,7 @@ tags:
   - argus
   - security
   - refactoring
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

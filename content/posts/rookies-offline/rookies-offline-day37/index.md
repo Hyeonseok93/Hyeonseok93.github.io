@@ -10,7 +10,7 @@ tags:
   - argus
   - playwright
   - security
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

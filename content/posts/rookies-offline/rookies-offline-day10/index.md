@@ -11,7 +11,7 @@ tags:
   - web-hacking
   - sql-injection
   - burp-suite
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

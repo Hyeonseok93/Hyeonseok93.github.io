@@ -12,7 +12,7 @@ tags:
   - rbac
   - inventory
   - aws
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

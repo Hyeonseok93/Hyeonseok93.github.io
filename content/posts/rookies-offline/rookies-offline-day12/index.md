@@ -13,7 +13,7 @@ tags:
   - csrf
   - flyway
   - portone
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

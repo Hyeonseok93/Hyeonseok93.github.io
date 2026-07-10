@@ -12,7 +12,7 @@ tags:
   - aws
   - nginx
   - argus
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

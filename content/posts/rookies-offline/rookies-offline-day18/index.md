@@ -11,7 +11,7 @@ tags:
   - argus
   - security
   - mentoring
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

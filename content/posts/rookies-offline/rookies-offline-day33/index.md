@@ -10,7 +10,7 @@ tags:
   - argus
   - security
   - staging
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

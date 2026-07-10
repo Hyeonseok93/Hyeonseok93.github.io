@@ -9,7 +9,7 @@ tags:
   - devlog
   - career
   - soft-skills
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---

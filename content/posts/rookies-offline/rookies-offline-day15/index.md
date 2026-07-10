@@ -11,7 +11,7 @@ tags:
   - security
   - aws
   - s3
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---
