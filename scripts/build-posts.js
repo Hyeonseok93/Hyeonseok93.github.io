@@ -193,6 +193,32 @@ function loadPosts() {
   return posts.sort((a, b) => String(b.rawDate).localeCompare(String(a.rawDate)));
 }
 
+function buildCategoryNavMaps(posts) {
+  const byCategory = {};
+
+  for (const post of posts) {
+    if (!byCategory[post.category]) byCategory[post.category] = [];
+    byCategory[post.category].push(post);
+  }
+
+  const navBySlug = {};
+
+  for (const categoryPosts of Object.values(byCategory)) {
+    const sorted = [...categoryPosts].sort((a, b) =>
+      String(b.rawDate).localeCompare(String(a.rawDate))
+    );
+
+    sorted.forEach((post, index) => {
+      navBySlug[post.slug] = {
+        prev: sorted[index + 1] || null,
+        next: sorted[index - 1] || null,
+      };
+    });
+  }
+
+  return navBySlug;
+}
+
 function writeManifest(posts) {
   const byCategory = {};
   for (const post of posts) {
@@ -231,12 +257,14 @@ function writePostPages(posts) {
   const categoryTreeHtml = readFile(path.join(SRC_DIR, 'components', 'CategoryTree.html')).trim();
   const assetPrefix = '../../';
   const compileTarget = SITE_BUILD_TARGET;
+  const navBySlug = buildCategoryNavMaps(posts);
 
   fs.rmSync(PUBLIC_POSTS_DIR, { recursive: true, force: true });
 
-  posts.forEach((post, index) => {
-    const prevPost = posts[index + 1] || null;
-    const nextPost = posts[index - 1] || null;
+  posts.forEach((post) => {
+    const nav = navBySlug[post.slug] || { prev: null, next: null };
+    const prevPost = nav.prev;
+    const nextPost = nav.next;
     const outDir = path.join(PUBLIC_POSTS_DIR, post.slug);
 
     fs.mkdirSync(outDir, { recursive: true });
