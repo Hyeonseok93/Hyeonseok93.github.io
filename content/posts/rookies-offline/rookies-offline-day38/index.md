@@ -18,7 +18,7 @@ tags:
 
 > **"오늘은 증거 스크린샷·인증/설정 자동화·섹션별 진단 모듈이 동시에 `dev`로 들어온 날이다. 오전~오후에는 팀원들이 1-5 / 4-4·5-2 / 7-4 / 1-6 / 2-1 등을 올리고, 저녁에 본인이 2-2 스크린샷 증거 파이프라인을 PR #43으로 `dev`에 합쳤다."**
 >
-> 기준은 `origin/dev` 원격 커밋이며, tip은 PR #43 머지 후 `b26e33f`입니다. 본인(Bulldog, `Hyeonseok93`) 브랜치는 `feat/g22-screenshot-evidence`입니다.
+> 기준은 `origin/dev` 원격 커밋이며, tip은 PR #43 머지 후 `b26e33f`입니다. 본인(Bulldog, `Hyeonseok93`) 브랜치는 `feat/g22-screenshot-evidence`입니다. 전날(Day 37)에 안착시킨 1-2·7-4 증적 파이프라인을 **2-2 파일 다운로드 모듈**로 확장해 `dev`에 합친 하루입니다.
 
 # 1. 하루 한눈에 보기
 
@@ -59,7 +59,39 @@ tags:
 20:04  Bulldog    PR #43 → dev 머지 (2-2 증거 스크린샷)
 ```
 
-# 3. 본인(Bulldog) 작업 상세
+# 3. [2-2] 파일 다운로드 모듈 전향 확장 (기술 상세)
+
+전날(7월 9일) 마감된 자동화 스크린샷 아키텍처 블루프린트를 **KISA 가이드라인 2-2 중요 정보 파일 다운로드 가능성 / 경로 조작** 도메인으로 전향 확장했습니다.
+
+## 기존 공통 핵심 레이어의 2-2 연동 스펙 확장
+
+- **`diagnosis_service.py` & `evidence_capture_service.py` 수정:** 공통 자동 캡처 지원 가드 세트 `_AUTO_CAPTURE_SECTIONS`에 `2-2`를 신규 주입하여, 진단 마감 즉시 후처리 프로세스가 이어달리도록 세팅했습니다.
+
+## 중복 자산 생성 방지를 위한 generic 캡처 바이패스
+
+- **`backend/diagnosis/replay/recorder.py` 수정:** 2-2 모듈은 고유 증거 보드 HTML 스크린샷 엔진을 쓰므로, 리플레이 레코더의 범용 `evidence_screenshot`이 중복 기동하지 않도록 2-2 세션 진입 시 generic 캡처를 비활성화했습니다.
+
+```python
+def _capture_modes(self, *modes: str) -> list[str]:
+    if self.section_id == "2-2":
+        return [mode for mode in modes if mode != "evidence_screenshot"]
+    return list(modes)
+```
+
+## `screenshot/modules/2-2/` 단독 레이어 구현
+
+1-2 및 7-4와 구조적 대칭을 이루는 컴포넌트 세트를 빌드했습니다.
+
+- **정밀 중복 필터링 및 랭킹 셀렉터 (`selector.py`):** Findings 중 상위 `limit=3` 건만 추출하기 위해 `(rule_id, method, path, param, payload)` 튜플 기준 dedupe를 집행합니다. 랭킹 우선순위는 `severity == high` → `rule_id == 2-2-path-traversal` → `payload_leak_confirmed == True` 계층입니다.
+- **가이드라인 부합 rule_id 감시:** `2-2-path-traversal`, `2-2-input-validation`, `2-2-unauth-download`, `2-2-forced-browse`, `2-2-idor`를 수용하고, 단순 설계 미흡 지표(`2-design`) 등은 `is_capturable() == False`로 배제합니다.
+- **Playwright 2-2 전용 3장 캡처 규격 (`engine.py`):** 파일 다운로드(API 레벨) 성격에 맞춰 프론트 UI 사이트 화면 캡처는 배제하고 전송 데이터 증적에 집중합니다.
+  1. `01_baseline_evidence.png`: 정상 파일 다운로드 요청/응답 패킷 보드
+  2. `02_attack_evidence.png`: 경로 변조 페이로드(`../../../../etc/passwd` 등) 공격 요청/응답 보드
+  3. `03_comparison_evidence.png`: Baseline vs Attack 응답 바디 대조 보드
+
+자동 캡처 훅 최종 집합은 `{"1-2", "2-2", "7-4"}`로, 전날 인프라의 1-2/7-4에 **2-2를 같은 파이프라인에 끼워 넣은 형태**입니다.
+
+# 4. 본인(Bulldog) 작업 상세 (Git / PR 관점)
 
 ## 목표
 
@@ -117,7 +149,7 @@ tags:
 4. `base_urls`만 미리 맞춰 두고 (`123306d`) PR에서 `diagnosis_service`·evidence 테스트 등 남은 충돌을 수동 해결
 5. **PR #43 머지**로 `dev`에 안착
 
-# 4. 팀원별 작업 상세
+# 5. 팀원별 작업 상세
 
 ## pjcosmos — 인프라·1-2/7-4 증거·인증/설정
 
@@ -168,7 +200,7 @@ tags:
 
 당일 `main`에서는 2-1이 들어갔다가 빠진 상태입니다. `dev` tip 기준 본 문서의 핵심 스토리와는 축이 다릅니다.
 
-# 5. 당일 `dev`에 합쳐진 PR 목록
+# 6. 당일 `dev`에 합쳐진 PR 목록
 
 | PR | 시각(대략) | 작성/머지 | 제목·의미 |
 | --- | --- | --- | --- |
@@ -178,7 +210,7 @@ tags:
 | #42 | 18:04 | pjcosmos | 1-2/7-4 증거 스크린샷 + auth 자동감지 + base_urls/login config 동기화 |
 | #43 | 20:04 | Bulldog (본인) | **2-2 스크린샷 증거 + SPA 모듈화** |
 
-# 6. 테마별로 본 오늘 `dev` 변화
+# 7. 테마별로 본 오늘 `dev` 변화
 
 ## 증거 스크린샷 파이프라인 확장
 
@@ -221,7 +253,7 @@ tags:
 | `config.yaml` / `config.docker.yaml` | **섞기** — spa 블록 제거(우리), `base_urls`는 dev 내용 유지 |
 | `docker-compose.yml` | **dev** |
 
-# 7. 커밋 해시 빠른 색인
+# 8. 커밋 해시 빠른 색인
 
 ## 본인
 
@@ -246,7 +278,7 @@ tags:
 - `fc2947f` 6-1 (미머지)
 - `c277f1f` / `f70c0bc` main 2-1 merge & revert
 
-# 8. Next Step: 하루 마무리 상태
+# 9. Next Step: 하루 마무리 상태
 
 - **로컬/원격 `dev`:** `b26e33f` — PR #43 포함, 2-2 증거 스크린샷이 `dev`에 존재
 - **본인 feature 브랜치:** `origin/feat/g22-screenshot-evidence`도 동일 계열 tip (`5f7adf7` 등)으로 정리된 상태
