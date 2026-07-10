@@ -43,6 +43,21 @@ function formatDate(value) {
   return `${y}. ${m}. ${d}`;
 }
 
+/** YYYY-MM-DD for sorting. gray-matter parses bare YAML dates as Date objects. */
+function toSortableDate(value) {
+  if (!value) return '';
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString().slice(0, 10);
+  }
+  const date = new Date(value);
+  if (!Number.isNaN(date.getTime())) return date.toISOString().slice(0, 10);
+  return String(value);
+}
+
+function comparePostsByDateDesc(a, b) {
+  return toSortableDate(b.rawDate).localeCompare(toSortableDate(a.rawDate));
+}
+
 function htmlToPlainText(html) {
   return String(html || '')
     .replace(/<[^>]+>/g, ' ')
@@ -190,7 +205,7 @@ function loadPosts() {
     });
   }
 
-  return posts.sort((a, b) => String(b.rawDate).localeCompare(String(a.rawDate)));
+  return posts.sort(comparePostsByDateDesc);
 }
 
 function buildCategoryNavMaps(posts) {
@@ -204,9 +219,7 @@ function buildCategoryNavMaps(posts) {
   const navBySlug = {};
 
   for (const categoryPosts of Object.values(byCategory)) {
-    const sorted = [...categoryPosts].sort((a, b) =>
-      String(b.rawDate).localeCompare(String(a.rawDate))
-    );
+    const sorted = [...categoryPosts].sort(comparePostsByDateDesc);
 
     sorted.forEach((post, index) => {
       navBySlug[post.slug] = {
