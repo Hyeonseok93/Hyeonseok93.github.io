@@ -11,7 +11,7 @@ tags:
   - security
   - bola
   - aws
-thumbnail: thumbnail.jpg
+thumbnail: thumbnail.png
 ---
 
 ---
