@@ -62,7 +62,9 @@ thumbnail: thumbnail.png
 
 웰컴 팝업은 전역 상태 관리(**Zustand**)와 결합하여 **원자적 상태 변경(Atomic State Action)** 패턴으로 제어됩니다.
 
-![](fig1.png)
+<figure class="article-figure-center">
+  <img src="./fig1.png" alt="웰컴 팝업" loading="lazy" />
+</figure>
 
 - **상태 제어의 중앙화:** 팝업의 노출 여부는 오직 전역 스토어의 `isWelcomePopupOpen` 상태 하나에 의해서만 결정됩니다.
 - **메모리 최적화:** `if (!isWelcomePopupOpen) return null;` 조건을 통해 팝업이 닫힌 상태에서는 DOM에서 완전히 언마운트되도록 설계했습니다.
@@ -85,9 +87,14 @@ thumbnail: thumbnail.png
 - **브라우저 기본 팝업 대체:** `alert`, `confirm` 대신 서비스 디자인 시스템에 맞춘 **커스텀 컨펌 창**을 구현했습니다.
 - **토스트(Toast) 메시지:** 사용자 액션에 대한 실시간 피드백을 위한 토스트 알림 시스템을 도입하여 훨씬 매끄러운 UX를 제공합니다.
 
-![](fig2.png)
-
-![](fig3.png)
+<div class="article-figure-row">
+  <figure class="article-figure-row__item">
+    <img src="./fig2.png" alt="커스텀 컨펌 창" loading="lazy" />
+  </figure>
+  <figure class="article-figure-row__item">
+    <img src="./fig3.png" alt="토스트 알림" loading="lazy" />
+  </figure>
+</div>
 
 ## 에러 핸들링 및 예외 처리
 
@@ -106,21 +113,32 @@ thumbnail: thumbnail.png
 
 **로그인 / 회원가입 UI**
 
-![](fig5.png)
-
-![](fig6.png)
+<div class="article-figure-row">
+  <figure class="article-figure-row__item">
+    <img src="./fig5.png" alt="로그인 UI" loading="lazy" />
+  </figure>
+  <figure class="article-figure-row__item">
+    <img src="./fig6.png" alt="회원가입 UI" loading="lazy" />
+  </figure>
+</div>
 
 **여행자 보험 화면**
 
-![](fig7.png)
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig7.png" alt="여행자 보험 화면" loading="lazy" />
+</figure>
 
 **여행기**
 
-![](fig8.png)
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig8.png" alt="여행기 화면" loading="lazy" />
+</figure>
 
 **에러 페이지**
 
-![](fig9.png)
+<figure class="article-figure-center">
+  <img src="./fig9.png" alt="에러 페이지" loading="lazy" />
+</figure>
 
 # 4. 전체 개발 현황 및 동료들의 성과
 
