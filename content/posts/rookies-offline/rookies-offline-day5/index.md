@@ -65,7 +65,9 @@ thumbnail: thumbnail.png
 
 확정된 서비스 UI 화면은 아래와 같습니다.
 
-![](fig1.png)
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig1.png" alt="온데 서비스 UI 화면" loading="lazy" />
+</figure>
 
 # 4. 개발 환경 세팅 및 개발 개시
 
