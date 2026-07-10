@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 25 — 관리자 백오피스 수동 보안 진단 결과보고서"
-date: 2026-06-16
+date: 2026-06-23
 tags:
   - kdt
   - sk-rookies

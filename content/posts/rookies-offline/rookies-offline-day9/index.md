@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 9 — 실전 연동을 위한 API 표준화, BOLA 보안 취약점 개선 및 클라우드 인프라 고도화"
-date: 2026-05-31
+date: 2026-06-02
 tags:
   - kdt
   - sk-rookies

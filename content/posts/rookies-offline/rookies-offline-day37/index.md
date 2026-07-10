@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 37 — Playwright 기반 진단 후 자동 증적 스크린샷 파이프라인 완수 및 [2-2] 파일 다운로드 모듈 전향 확장"
-date: 2026-06-28
+date: 2026-07-09
 tags:
   - kdt
   - sk-rookies

@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 11 — 실시간 DB 재고 달력 동기화, 권한(RBAC) 보안 가드 정밀화 및 로컬 Mock S3(MinIO) 인프라 구축 완료"
-date: 2026-06-02
+date: 2026-06-04
 tags:
   - kdt
   - sk-rookies

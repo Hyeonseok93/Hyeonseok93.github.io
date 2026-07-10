@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 16 — 실전 WEB/API 취약점 진단 및 모의침투(Penetration Testing) 수행 보고: 정보수집부터 포스트 익스플로잇까지"
-date: 2026-06-07
+date: 2026-06-11
 tags:
   - kdt
   - sk-rookies

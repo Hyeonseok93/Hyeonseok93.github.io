@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 24 — 실전 모의침투 보안 진단 보고서 — 3-2 ~ 8-1 항목"
-date: 2026-06-15
+date: 2026-06-22
 tags:
   - kdt
   - sk-rookies

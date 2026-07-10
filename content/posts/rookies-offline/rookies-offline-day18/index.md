@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 18 — 2차 주간 멘토링 보고: 온데(Onde) 플랫폼 최종 아키텍처 진단 및 아르고스(Argus) 3단계 사양 확정"
-date: 2026-06-09
+date: 2026-06-14
 tags:
   - kdt
   - sk-rookies

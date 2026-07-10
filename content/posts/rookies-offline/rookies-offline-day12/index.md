@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 12 — 백엔드 코어 데이터베이스 개편, 결제 파이프라인 최종 결합 및 SQL Injection 심화·CSRF 다층 방어 메커니즘 총정리"
-date: 2026-06-03
+date: 2026-06-05
 tags:
   - kdt
   - sk-rookies

@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 31 — '아르고스(Argus)' 9대 신규 확장 진단 모듈 구축 및 Progress UI·Docker 라우팅 정비"
-date: 2026-06-22
+date: 2026-07-01
 tags:
   - kdt
   - sk-rookies

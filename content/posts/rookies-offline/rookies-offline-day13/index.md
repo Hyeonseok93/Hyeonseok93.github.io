@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 13 — 메인 브랜치 전면 통합, Nginx 배포 패키징, 플랫폼 헬스체크(Health Check) 수립 및 웹 보안 진단 준비 완료"
-date: 2026-06-04
+date: 2026-06-08
 tags:
   - kdt
   - sk-rookies

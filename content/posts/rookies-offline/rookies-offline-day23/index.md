@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 23 — 중간 발표 PPT 빌드 및 핵심 거버넌스 총정리"
-date: 2026-06-14
+date: 2026-06-21
 tags:
   - kdt
   - sk-rookies

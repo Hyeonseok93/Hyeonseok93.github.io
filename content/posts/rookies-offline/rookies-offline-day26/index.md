@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 26 — 전 영역 보안 보완 이행 점검 결과 (상편: 1-1 ~ 3-6)"
-date: 2026-06-17
+date: 2026-06-24
 tags:
   - kdt
   - sk-rookies

@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 20 — 아르고스 3주 마일스톤 확정, 멘토링 피드백 및 최초 DAST 오탐 분석"
-date: 2026-06-11
+date: 2026-06-17
 tags:
   - kdt
   - sk-rookies

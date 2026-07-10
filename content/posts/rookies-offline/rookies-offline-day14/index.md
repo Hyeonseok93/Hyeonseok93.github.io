@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 14 — 범용 웹 보안 진단 플랫폼으로의 패러다임 전환: 오픈소스(ZAP·Semgrep) 분석 및 3대 핵심 MVP 시나리오 확정"
-date: 2026-06-05
+date: 2026-06-09
 tags:
   - kdt
   - sk-rookies

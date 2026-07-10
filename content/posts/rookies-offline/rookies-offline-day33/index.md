@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 33 — '아르고스(Argus)' 취약점 자동 진단 전 영역 풀스택 대통합 및 비동기 취약점 퍼징 아키텍처 수립 보고서 (Staging 통합본)"
-date: 2026-06-24
+date: 2026-07-03
 tags:
   - kdt
   - sk-rookies

@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 17 — Onde 클라우드 실서버 배포 완수 및 2차 대면 멘토링 연계 3대 보안 진단 RFC 수립"
-date: 2026-06-08
+date: 2026-06-12
 tags:
   - kdt
   - sk-rookies
