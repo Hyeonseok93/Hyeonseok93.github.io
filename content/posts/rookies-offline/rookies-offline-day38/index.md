@@ -10,6 +10,7 @@ tags:
   - argus
   - playwright
   - git
+thumbnail: thumbnail.png
 ---
 
 ---
