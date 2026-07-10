@@ -1,5 +1,5 @@
 ---
-title: RoBERTa Quadrant Mapping 기반 ICS 독점 프로토콜 이상 탐지
+title: "[논문요약] RoBERTa Quadrant Mapping 기반 ICS 독점 프로토콜 이상 탐지"
 date: 2026-05-24
 tags:
   - ics

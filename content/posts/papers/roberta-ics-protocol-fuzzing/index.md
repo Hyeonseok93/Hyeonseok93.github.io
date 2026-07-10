@@ -1,6 +1,6 @@
 ---
-title: RoBERTa 기반 ICS 프로토콜 퍼징 입력 생성 및 제어 기법
-date: 2026-02-01
+title: "[논문요약] RoBERTa 기반 ICS 프로토콜 퍼징 입력 생성 및 제어 기법"
+date: 2026-05-25
 tags:
   - ics
   - roberta

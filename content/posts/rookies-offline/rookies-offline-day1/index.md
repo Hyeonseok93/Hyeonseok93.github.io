@@ -1,6 +1,6 @@
 ---
-title: "SK 쉴더스 루키즈 5기 오프라인 세션 Day 1 — 개발 프로세스 및 UI/UX 아키텍처"
-date: 2026-07-10
+title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 1 — 개발 프로세스 및 UI/UX 아키텍처"
+date: 2026-05-20
 tags:
   - kdt
   - sk-rookies
