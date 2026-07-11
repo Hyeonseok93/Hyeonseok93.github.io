@@ -19,17 +19,46 @@ thumbnail: thumbnail.png
 
 # 서론
 
-> **"온데(onde)를 AWS에 올리고 Windows Server 연결까지 맞춘 뒤, 2차 대면 멘토링용으로 질문 세 가지를 정리했습니다. 로그인 응답에 토큰이 Body로도 나오는지, Nginx로 나뉜 경로를 어떻게 스캔할지, ZAP·Semgrep을 현업에서 얼마나 쓰는지입니다."**
+> **"온데(onde)를 AWS에 올리고 Windows Server 연결까지 맞춘 뒤, 마이페이지 명세서 PDF API에 LFI·SSRF 진단용 코드를 심어 두었습니다. 2차 대면 멘토링용으로는 로그인 Body 토큰 중복, Nginx 스캔 범위, ZAP·Semgrep 현업 사용 여부 질문 세 가지를 정리했습니다."**
 >
-> 실서버 배포를 마친 날이고, 멘토링 전에 물어볼 내용을 패킷·가이드라인 기준으로 적어 둔 기록입니다.
+> 실서버 배포 + 명세서 PDF 취약점 심기, 그리고 멘토링 전에 물어볼 내용을 적어 둔 기록입니다.
 
-# 1. 온데 실서버 · Windows Server · 알파 피드백
+# 1. 온데 실서버 · Windows Server · 명세서 PDF 진단용 취약점 심기
 
-16일차 수동 진단에 이어, 주말 멘토링과 이후 자동화 스캔을 위해 인프라와 타깃 쪽을 조금 더 손봤습니다.
+16일차 수동 진단에 이어, 주말 멘토링과 이후 스캔 때 잡을거리가 있게 인프라를 맞추고, 마이페이지 **통합 정산서(명세서) PDF** API에 진단용 취약 코드를 넣어 두었습니다.
 
 - **Windows Server:** 아르고스 Selenium/헤드리스 캡처가 돌 수 있게 윈도우 가상 서버와 API 쪽 연결을 맞춰 두었습니다.
-- **알파 피드백 반영:** 진단 범위를 넓히려고 SSRF, 파일 인클루전, 중요 파일 다운로드 같은 취약 코드를 타깃에 추가해 두었습니다.
 - **OAuth·출력부 (백엔드):** 실서버 도메인에 맞춰 카카오 Redirect URI를 갱신하고, 차량 출력·OAuth 세션 검증을 정리했습니다.
+
+## 명세서 PDF에 넣어 둔 진단용 취약점
+
+대상은 `POST /api/v1/report/integrated` (`IntegratedReportController`)입니다. 마이페이지 「통합 정산서 스마트 발급」이 이 API를 호출하고, Security 설정상 **`permitAll`(비로그인 호출 가능)** 입니다. Body는 대략 `{ memberId, template, logoUrl }` 입니다.
+
+### 1) `template` → LFI / 경로 탐색 (서버 파일 → PDF)
+
+정상 UI는 `verification` / `business`만 보냅니다. 그 외 값이 들어오면 `/app` 기준으로 파일을 읽어 PDF 본문에 그대로 넣습니다.
+
+```java
+// 진단용 — verification/business가 아니면 로컬 파일 로드
+File file = new File("/app", req.getTemplate());
+String content = Files.readAllBytes(...);
+document.add(new Paragraph(content));
+```
+
+예: `{"template":"../etc/passwd"}` 처럼 넣으면 컨테이너 내부 파일을 PDF로 받아볼 수 있습니다. (중요 설정·시크릿 유출로 이어질 수 있는 부분)
+
+### 2) `logoUrl` → SSRF (서버가 대신 URL 요청)
+
+정상 로고는 `https://onde.click/assets/logo.png`입니다. 다른 URL이면 서버가 `RestTemplate`으로 GET 해서 응답 앞부분을 PDF에 넣고, iText 로고 로드 경로로도 원격 fetch가 될 수 있습니다.
+
+예: 내부망·메타데이터(`169.254.169.254`)·`localhost` 관리 포트 등을 `logoUrl`에 넣으면 서버 입장에서 대신 찔러 보고 결과가 PDF에 실립니다.
+
+### 3) 같은 API의 `memberId` IDOR
+
+인증 없이 Body의 `memberId`만 바꿔도 타인 예약·정산 명세서를 발급받을 수 있는 구조입니다. 파일/SSRF와는 별개지만 **같은 명세서 다운로드 API**에 붙어 있습니다.
+
+정리하면, “알파 피드백” 같은 말이 아니라 **명세서 PDF 발급 API에 LFI·SSRF(·IDOR)를 의도적으로 심어 둔 것**입니다.
+
 
 # 2. 멘토링 질문 1 — 로그인 응답 Body에 토큰이 또 나옴
 
