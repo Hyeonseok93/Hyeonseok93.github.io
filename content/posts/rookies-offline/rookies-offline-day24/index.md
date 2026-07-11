@@ -240,7 +240,7 @@ thumbnail: thumbnail.png
 
 - **Case 1 (Redis 무인증 커네션 결함):** 내부 가상 네트워크망 내부에서 분산 캐시 세션을 처리하는 Redis 인메모리 저장소 연동 설정 상 패스워드 비밀번호 검증 장치(`requirepass`)가 누락된 채 무인증(No Auth) 디폴트 상태로 구동 중입니다. 방화벽으로 외부 접속은 격리되어 있으나 웹셸 업로드 등으로 내부망 서브넷 권한을 취득한 공격자가 발생할 경우, Redis 기본 포트(6379)에 다이렉트 인입하여 세션 리프레시 토큰 및 이메일 인증 코드를 평문 탈취/변조할 수 있는 잠재적 취약 요소입니다.
 
-- **Case 2 (Spring Boot Actuator 활성화 정보 노출):** 애플리케이션 빌드 구성 환경상, 상태 모니터링 엔드포인트인 Spring Boot Actuator 주요 기능들이 비활성화 처리되지 않고 노출 셋업되어 있습니다. Nginx 라우팅 필터에 의해 루트 HTML로 우회 차단 제어되고 있으나, 빌드 사양 상 `/actuator/env`, `/actuator/flyway` 기능이 활성화 상태이므로 프록시 규칙 변경 시 DB 스키마 마이그레이션 구조 및 내부 환경 변수가 단숨에 노출될 위험 요소를 내포하고 있습니다.
+- **Case 2 (Spring Boot Actuator 활성화 정보 노출):** 애플리케이션 빌드 구성 환경상, 상태 모니터링 엔드포인트인 Spring Boot Actuator 주요 기능들이 비활성화 처리되지 않고 노출 셋업되어 있습니다. Nginx 라우팅 필터에 의해 루트 HTML로 우회 차단 제어되고 있으나, 빌드 사양 상 `/actuator/env`, `/actuator/flyway` 기능이 활성화 상태이므로 프록시 규칙 변경 시 DB 스키마 마이그레이션 구조 및 내부 환경 변수가 쉽게 노출될 위험 요소를 내포하고 있습니다.
 
 - **해결방안:** `redis.conf`에 `requirepass` 지시어를 적용하고 백엔드 환경 변수에 연동 비밀번호를 설정해야 합니다. 또 `application.yml`에 `management.endpoints.web.exposure.exclude=*` 속성을 추가해 불필요한 Actuator 관리자 모니터링 디렉터리를 애플리케이션 수준에서 막아야 합니다.
 
