@@ -50,22 +50,22 @@ thumbnail: thumbnail.png
 
 ## ── 1-1. XSS / CSRF 공격 가능성 모듈 (중요 - 머지완료)
 
-- **통합 명세 및 소스 변경:** `feat/xss&csrf-search-engine` 브랜치(PR #7)의 최종 릴리즈를 통해 `modules/1-1/` 아래로 완전히 머지 완료되었습니다. `module.py` 내에 `DiagnosisModule` 상속 기반의 G11 진단 엔트리를 정립했습니다.
+- **통합 명세 및 소스 변경:** `feat/xss&csrf-search-engine` 브랜치의 최종 릴리즈를 통해 `modules/1-1/` 아래로 완전히 머지 완료되었습니다. `module.py` 내에 `DiagnosisModule` 상속 기반의 G11 진단 엔트리를 정립했습니다.
 - **코어 컴포넌트 구조:** httpx/ZAP 기반의 크로스 사이트 스캐닝 오케스트레이션을 제어하는 `scanner.py`, ZAP active/passive 동적 연동을 대규모로 전개하는 `zap_runner.py` 및 ZAP alert 로그를 내부 정형화 Finding 구조로 치환하는 `zap_adapter.py`가 탑재되었습니다. 이와 더불어 `payloads.py`, `rules.py`, `auth.py`, `auth_extractor.py` 및 OpenAPI 문서 내에서 XSS/CSRF 후보군을 자동 디스커버리 추출하는 `openapi_utils.py` 엔진이 통합 탑재되었습니다. 해당 소스코드는 `origin/main` 브랜치에 머지 완료되었습니다.
 
 ## ── 1-2. 삽입 (Injection) 공격 가능성 모듈 (중요 - 머지완료)
 
-- **통합 명세 및 소스 변경:** `feature/injection-scan` 브랜치에서 standalone CLI 형태로 작동하던 파이프라인을 `merge/ja` 브랜치(PR #4) 튜닝 세션을 거쳐 `Staging` 통합 파이프라인에 합쳐 넣음시켰습니다. 진입점을 `modules/1-2/module.py` 내부의 `G12Module` 클래스로 정형화 등록했습니다.
+- **통합 명세 및 소스 변경:** `feature/injection-scan` 브랜치에서 standalone CLI 형태로 작동하던 파이프라인을 `merge/ja` 브랜치 튜닝 세션을 거쳐 `Staging` 통합 파이프라인에 합쳐 넣음시켰습니다. 진입점을 `modules/1-2/module.py` 내부의 `G12Module` 클래스로 정형화 등록했습니다.
 - **코어 컴포넌트 구조:** SQL/Command/NoSQL/SSTI/XML 변조 페이로드를 직접 투사하고 에러·시간 기반 검증을 진행하는 `payload_injector.py` 핵심 엔진과 INSANE 정책 기반의 ZAP injection 전용 정책(`zap_engine.py`)의 원형 규칙을 안전하게 보존하여 포팅했습니다. 타깃 소스를 기존 단일 Swagger에서 **`api-tree-verified.json`** 전체 인벤토리 구조로 변경하고, `test-accounts.json` 내의 쿠키 세션 및 `probe_auth` 인증 모듈을 재사용하도록 주변 연결부를 재접합했습니다.
 
 ## ── 1-4. SSRF / File Inclusion 공격 가능성 모듈 (중요 - 머지완료)
 
-- **통합 명세 및 소스 변경:** `feat/SSRF.File_Inclusion_search_engine` 브랜치(PR #1)의 성과를 단일 mainline 파이프라인 레이어에 머지 완료했습니다. 1-2 모듈의 포팅 성공 아키텍처 패턴을 공유하여 구조적 일치성을 달성했습니다.
+- **통합 명세 및 소스 변경:** `feat/SSRF.File_Inclusion_search_engine` 브랜치의 성과를 단일 mainline 파이프라인 레이어에 머지 완료했습니다. 1-2 모듈의 포팅 성공 아키텍처 패턴을 공유하여 구조적 일치성을 달성했습니다.
 - **코어 컴포넌트 구조:** 파라미터 식별자 네이밍 및 스키마 구조를 정밀 연산하여 SSRF/LFI/RFI 취약 평면 후보군을 가려내는 `search_engine.py` 기제와 타이밍 및 baseline 구조 대조용 `payload_injector.py`, 역할별 토큰 경계를 다루는 `role_boundary.py`를 원형 그대로 흡수 이식했습니다. 인벤토리 연동을 위해 `inventory_bridge.py` 컴포넌트를 신설하여 수집된 `Endpoint` 데이터가 코어 검색 엔진의 `ScanTarget` 객체 형식으로 변환되도록 다리를 놓았으며, 이 과정에서 `probe_url` 함수 호출을 통한 `host.docker.internal` 컨테이너 네트워크 치환 매퍼를 동일 적용했습니다.
 
 ## ── 1-6. 입력 값 크기 및 무결성 검증오류 모듈 (일반 - 1차 완료)
 
-- **통합 명세 및 소스 변경:** `feat/input-search-engine` 브랜치(PR #3) 성과를 `Staging` 통합 mainline에 1차로 합쳤습니다. ONDE 여행 플랫폼 로컬 타깃 대역 및 다중 OpenAPI 명세 소스 자동 해석 파이프라인 규칙이 정상 맞물려 기동하도록 세팅했습니다.
+- **통합 명세 및 소스 변경:** `feat/input-search-engine` 브랜치 성과를 `Staging` 통합 mainline에 1차로 합쳤습니다. ONDE 여행 플랫폼 로컬 타깃 대역 및 다중 OpenAPI 명세 소스 자동 해석 파이프라인 규칙이 정상 맞물려 기동하도록 세팅했습니다.
 - **코어 컴포넌트 구조:** ONDE 입력값 검증 타깃(8080/8081/5173)과 ZAP 프록시 연동 가이드 및 다중 OpenAPI 소스 지원 해석 운영 경로를 담은 `docs/ONDE_INPUT_SEARCH_ENGINE_RUNBOOK.md` 명세 가이드라인 문서 및 업로드 배치 통합 구조를 동시 넣었습니다.
 
 # 3. 1-2 인젝션 모듈 통합 이후 탐지 신뢰도 및 strict 검증 제어 고도화
@@ -104,5 +104,5 @@ Engine: ARGUS_DIRECT
 플랫폼 핵심 검색 엔진 모듈의 첫 연동을 마쳤으므로, 다음에는 전체 병합을 안정화하고 화면으로 확인할 수 있는 증적 자동화 기능을 만듭니다.
 
 - **다음 작업:**
-  1. **브랜치 동기화 마무리:** `Staging`에 이미 합쳐 둔 1-2, 1-4, 1-6(1차)과 `main`에 머지된 1-1 XSS/CSRF 모듈(PR #7)을 서로 맞춰 주고(머지)해서, 28개 체크리스트 항목을 한 mainline 코드에 모을 예정입니다. 또 `feat/input-validation-serach-engine` 브랜치에 남은 1-6 검증 예외 처리기(`module.py`)는 Staging 2차 PR로 합치겠습니다.
+  1. **브랜치 동기화 마무리:** `Staging`에 이미 합쳐 둔 1-2, 1-4, 1-6(1차)과 `main`에 머지된 1-1 XSS/CSRF 모듈을 서로 맞춰 주고(머지)해서, 28개 체크리스트 항목을 한 mainline 코드에 모을 예정입니다. 또 `feat/input-validation-serach-engine` 브랜치에 남은 1-6 검증 예외 처리기(`module.py`)는 Staging 2차로 합치겠습니다.
   2. **Playwright/Selenium 실시간 증적 스크린샷 기능 만들기:** 검색 엔진을 합친 뒤, 미리 만든 `backend/screenshot/modules/{id}` 디렉터리(28개 섹션 번호별 디렉터리)를 바탕으로 **실시간 화면 스크린샷 캡처 기능**을 만들겠습니다. 자동 스캐너가 ONDE에서 취약점을 찾는 순간(XSS 페이로드 때문에 브라우저 Alert가 뜨거나, 인가 우회로 비정상 페이지로 이동하는 경우 등)의 **브라우저 화면을 증적으로 자동 캡처해 S3 버킷에 저장하는 기능**을 추가할 예정입니다. 다음 스프린트에도 이어서 진행합니다.
