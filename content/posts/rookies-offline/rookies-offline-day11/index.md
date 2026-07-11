@@ -87,27 +87,9 @@ thumbnail: thumbnail.png
 
 로컬 셋업 환경에서 마스터 데이터와 이미지 파일이 연동되어 브라우저 화면에 렌더링되기까지의 흐름을 구조화했습니다.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User as 웹 브라우저 (사용자)
-    participant FE as Frontend (Port: 5173)
-    participant BE as Backend API (Port: 8080)
-    participant DB as MariaDB (Port: 3306)
-    participant MinIO as MinIO S3 (Port: 9000)
-
-    User->>FE: 숙소 목록 페이지 진입
-    FE->>BE: GET /api/v1/accommodations (숙소 정보 요청)
-    BE->>DB: 숙소 리스트 조회 (시드된 데이터 로드)
-    DB-->>BE: 숙소 정보 반환 (데이터베이스에 한글 이미지 파일명 저장됨)
-    BE-->>FE: 숙소 JSON 응답 (예: "thumbnail": "몽골어 비전 투어 게스트하우스.jpg")
-    Note over FE: stayApi.ts에서 응답 값 앞에 <br/>MinIO 로컬 버킷 경로 접두사 조립<br/>http://localhost:9000/onde-local/accommodation/ + 파일명
-    FE-->>User: 이미지 태그 생성 <img src="http://localhost:9000/onde-local/accommodation/몽골어...jpg" />
-    User->>MinIO: GET /onde-local/accommodation/몽골어...jpg (이미지 요청)
-    Note over MinIO: 버킷 정책(set_bucket_policy.py)에 의해<br/>익명 읽기(Public) 권한 승인됨
-    Note over MinIO: 로컬 마운트된 ./S3_Mock/onde-local/... 에서<br/>해당 파일을 그대로 디스크 검색
-    MinIO-->>User: HTTP 200 OK (정상 이미지 데이터 응답 및 화면 렌더링)
-```
+<figure class="article-figure-center article-figure-center--full">
+  <img src="./fig1.png" alt="숙소 목록 렌더링 데이터 흐름: Browser → Frontend → Backend → MariaDB, 이후 MinIO에서 이미지 직접 조회" loading="lazy" />
+</figure>
 
 ## ② 도커 오케스트레이션 및 Flyway 마이그레이션 튜닝
 
