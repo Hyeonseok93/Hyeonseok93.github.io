@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 8 — 프론트 Mock 데이터 전면 제거를 통한 통합 준비 그리고 백엔드 전 모듈 통합 완수"
-date: 2026-05-30
+date: 2026-05-29
 tags:
   - kdt
   - sk-rookies

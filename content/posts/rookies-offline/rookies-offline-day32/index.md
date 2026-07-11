@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 32 — '아르고스(Argus)' 플랫폼 코어 리팩토링 및 4대 검색 엔진(1-1, 1-2, 1-4, 1-6) Staging 통합"
-date: 2026-07-02
+date: 2026-07-03
 tags:
   - kdt
   - sk-rookies

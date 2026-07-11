@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 36 — IT 채용 시장 패러다임 변화 분석 및 HR 관점의 풀스택 취업·비즈니스 소프트 스킬 정밀 가이드"
-date: 2026-07-08
+date: 2026-07-09
 tags:
   - kdt
   - sk-rookies

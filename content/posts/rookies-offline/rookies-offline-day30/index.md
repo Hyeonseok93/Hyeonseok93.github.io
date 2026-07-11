@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 30 — '아르고스(Argus)' 취약점 자동 진단 6대 코어 모듈 프레임워크 수립 및 지속 개발"
-date: 2026-06-30
+date: 2026-07-01
 tags:
   - kdt
   - sk-rookies

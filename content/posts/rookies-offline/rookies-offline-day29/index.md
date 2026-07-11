@@ -1,6 +1,6 @@
 ---
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 29 — 3차 대면 멘토링 피드백 보고: 중간 발표 PPT 교정안 및 '온데(Onde)' 실증 증적 비교 구성 확정"
-date: 2026-06-27
+date: 2026-06-30
 tags:
   - kdt
   - sk-rookies
