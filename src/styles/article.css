@@ -330,15 +330,27 @@
 
 .article-content pre {
   margin: 1.5rem 0;
+  padding: 1rem 1.15rem;
   border-radius: 0.6rem;
   overflow: auto;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #161616;
 }
 
-.article-content pre code {
+/* Prism sets background on inline `code`, which paints a per-line chip
+   only as wide as each line's text. Force a single block surface instead. */
+.article-content pre code,
+.article-content pre[class*='language-'] code,
+.article-content code[class*='language-'] {
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-shadow: none;
   font-size: 0.88rem;
   line-height: 1.6;
+  white-space: inherit;
 }
 
 .article-content blockquote {
