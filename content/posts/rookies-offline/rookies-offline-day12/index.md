@@ -51,15 +51,9 @@ thumbnail: thumbnail.png
 
 사용자 입력값(파라미터)이 숫자형이든 문자형이든 관계없이, 입력값에 대한 **적절한 검증이나 필터링 없이 미완성 SQL 구문과 그대로 결합(Concatenation)**되어 데이터베이스 엔진으로 전송될 때 발생합니다. 이로 인해 변조된 SQL 질의가 데이터베이스에서 그대로 실행되고, 결과에 따라 화면이 동적으로 구성되면서 공격이 성공하게 됩니다.
 
-```
-[공격자 악의적 구문 주입]
-       ▼
-[검증 없는 파라미터 + 미완성 SQL 구문 결합]
-       ▼
-[변조된 완성형 SQL 질의 발생]
-       ▼
-[데이터베이스(DB) 명령 실행]  [중요 정보 유출 및 동적 화면 구성 공격 성공]
-```
+<figure class="article-figure-center article-figure-center--full">
+  <img src="./fig1.png" alt="SQL Injection 발생 흐름: 악의적 구문 주입 → 미검증 파라미터와 SQL 결합 → 변조 질의 → DB 실행 → 정보 유출" loading="lazy" />
+</figure>
 
 ## ② UNION-Based SQL Injection (데이터 조회 공격)
 
@@ -102,19 +96,15 @@ SQL Injection을 물리적으로 완전 방어하는 기법은 **Prepared Statem
 
 사용자의 브라우저 권한을 악용해 원치 않는 변조 요청을 강제 송신하는 CSRF 공격을 방어하기 위한 **Form Page와 Action Page 간 이원화 교차 검증 프로세스**를 정립했습니다.
 
-```
-[Form Page 진입]  서버가 동적 난수 토큰 생성  [Session] 및 [HTML Parameter]에 이원화 복사 저장
-                                                                     ▼
-[네트워크 구간]   사용자가 폼 전송 시 Parameter Token을 Request Body에 실어 전송
-                                                                     ▼
-[Action Page]     [서버 내 Session Token] ↔ [전송된 Parameter Token] 일대일 교차 대조 검증
-```
+<figure class="article-figure-center article-figure-center--full">
+  <img src="./fig2.png" alt="CSRF Token 이원화 교차 검증: Form Page 발급 → 네트워크 전송 → Action Page Session↔Parameter 대조" loading="lazy" />
+</figure>
 
 1. **Form Page 계층 (토큰 발급 및 분배):** 인증된 사용자가 안전한 입력/수정 화면에 진입하면, 백엔드 엔진은 즉시 유추 불가능한 암호학적 랜덤 난수 토큰을 발급합니다. 이 토큰은 웹 서버 메모리 내부인 **`세션(Session) Token`**에 바인딩됨과 동시에, HTML 문서 내의 **`파라미터(Parameter) Token`** 영역(`<input type="hidden">`)에 복사되어 클라이언트로 이원화 배분됩니다.
 2. **네트워크 구간 (요청 발생):** 사용자가 전송 버튼을 누르면, 브라우저는 HTML 폼 내부에 은닉되어 있던 `파라미터 Token` 값을 HTTP Request Body 파라미터에 실어 서버로 송신합니다.
 3. **Action Page 계층 (교차 유효성 검증):** 요청을 수신한 백엔드 컨트롤러는 서버 메모리에 안전하게 보관 중이던 `세션 Token`과 클라이언트가 패킷 Body에 담아 보낸 `파라미터 Token` 값을 **일대일 동기화 대조 연산(`=`)**으로 비교합니다. 두 값이 완벽하게 일치할 때만 비즈니스 로직을 정상 수행하고, 토큰이 누락되었거나 일치하지 않는 위조 요청은 즉시 무력화 차단합니다.
 
-# 5. 기능 영역별 최종 상태 점검 (2026-06-05 기준)
+# 5. 기능 영역별 최종 상태 점검
 
 | 분류       | 세부 작업 내용                                           | 담당자 |     상태      | 비고                       |
 | :--------- | :------------------------------------------------------- | :----: | :-----------: | :------------------------- |
