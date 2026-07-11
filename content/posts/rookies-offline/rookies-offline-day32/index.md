@@ -65,7 +65,7 @@ thumbnail: thumbnail.png
 
 ## ── 1-6. 입력 값 크기 및 무결성 검증오류 모듈 (일반 - 1차 완료)
 
-- **통합 명세 및 소스 변경:** 성욱 담당의 `feat/input-search-engine` 브랜치(PR #3) 성과를 `Staging` 통합 mainline에 1차 수렴 완료했습니다. ONDE 여행 플랫폼 로컬 타깃 대역 및 다중 OpenAPI 명세 소스 자동 해석 파이프라인 규칙이 정상 맞물려 기동하도록 세팅했습니다.
+- **통합 명세 및 소스 변경:** `feat/input-search-engine` 브랜치(PR #3) 성과를 `Staging` 통합 mainline에 1차 수렴 완료했습니다. ONDE 여행 플랫폼 로컬 타깃 대역 및 다중 OpenAPI 명세 소스 자동 해석 파이프라인 규칙이 정상 맞물려 기동하도록 세팅했습니다.
 - **코어 컴포넌트 구조:** ONDE 입력값 검증 타깃(8080/8081/5173)과 ZAP 프록시 연동 가이드 및 다중 OpenAPI 소스 지원 해석 운영 경로를 담은 `docs/ONDE_INPUT_SEARCH_ENGINE_RUNBOOK.md` 명세 가이드라인 문서 및 업로드 배치 통합 구조를 동시 안착시켰습니다.
 
 # 3. 1-2 인젝션 모듈 통합 이후 탐지 신뢰도 및 strict 검증 제어 고도화
