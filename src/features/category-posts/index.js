@@ -1,13 +1,13 @@
 import { closeSidebar } from '../../sidebar.js';
 import { bindCategoryScrollHeader } from '../../scroll-header.js';
-import { CATEGORY_POSTS_PER_PAGE } from '../../data/category-meta.js';
+import { CATEGORY_POSTS_PER_PAGE, RECENT_POSTS_LIMIT } from '../../data/category-meta.js';
 import {
   isKnownCategoryId,
   isTistoryMode,
   getCategoryLabel,
   getCategoryDescription,
 } from './category-context.js';
-import { loadCategoryPosts, getStaticPostCount } from './load-posts.js';
+import { loadCategoryPosts, getStaticPostCount, getRecentPosts } from './load-posts.js';
 import {
   renderPostCard,
   renderCategoryPagination,
@@ -36,6 +36,24 @@ import {
 
 let activeCategoryPage = 1;
 let activeCategoryRequest = 0;
+let recentPostsRendered = false;
+
+function renderRecentPosts() {
+  const listEl = document.getElementById('what-i-do-posts-list');
+  if (!listEl || recentPostsRendered) return;
+
+  const posts = getRecentPosts(RECENT_POSTS_LIMIT);
+  if (!posts.length) {
+    listEl.innerHTML = renderErrorState('아직 작성된 글이 없습니다.');
+    recentPostsRendered = true;
+    return;
+  }
+
+  listEl.innerHTML = posts
+    .map((post) => renderPostCard(post, getCategoryLabel(post.categoryId)))
+    .join('');
+  recentPostsRendered = true;
+}
 
 async function renderCategoryPosts(categoryId, page = 1) {
   const titleEl = document.getElementById('category-posts-title');
@@ -155,6 +173,7 @@ function bootstrapHomeSpa() {
 
   initDashboardNav();
   initCategoryPosts();
+  renderRecentPosts();
 
   if (!isDashboardNavReady()) return;
 

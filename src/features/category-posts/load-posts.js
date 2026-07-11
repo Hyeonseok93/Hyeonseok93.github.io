@@ -17,6 +17,23 @@ export function getStaticPostCount(categoryId) {
   return getStaticPosts(categoryId).length;
 }
 
+/** Newest posts across all categories (display date string is zero-padded YYYY. MM. DD). */
+export function getRecentPosts(limit = 8) {
+  const all = [];
+  for (const [categoryId, posts] of Object.entries(POSTS_BY_CATEGORY)) {
+    for (const post of posts) {
+      all.push({
+        ...post,
+        categoryId,
+        thumbnail: resolvePostAssetPath(post.thumbnail),
+      });
+    }
+  }
+
+  all.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  return all.slice(0, Math.max(0, limit));
+}
+
 export async function loadCategoryPosts(categoryId, page = 1) {
   const posts = getStaticPosts(categoryId);
   const totalPages = Math.ceil(posts.length / CATEGORY_POSTS_PER_PAGE) || 1;

@@ -1,4 +1,5 @@
 export const CATEGORY_POSTS_PER_PAGE = 8;
+export const RECENT_POSTS_LIMIT = 8;
 
 import categories from './categories.json';
 
