@@ -32,9 +32,16 @@ thumbnail: thumbnail.png
 
 ## 명세서 PDF에 넣어 둔 진단용 취약점
 
+### 왜 넣었나
+
+이제 팀에서 수동 진단·스캔 연습을 해야 하는데, 온데 일반 기능만으로는 **LFI·SSRF 같은 유형을 제대로 찔러 볼 자리가 없었습니다.**  
+그래서 마이페이지 명세서(통합 정산서) PDF 발급 구간에만, **연습·진단용으로** 의도적으로 취약 코드를 심어 두었습니다. (서비스 전체 보안을 열어 둔 게 아니라, 이 API 한곳에 모아 둔 형태입니다.)
+
+### 어디에 / 어떻게
+
 대상은 `POST /api/v1/report/integrated` (`IntegratedReportController`)입니다. 마이페이지 「통합 정산서 스마트 발급」이 이 API를 호출하고, Security 설정상 **`permitAll`(비로그인 호출 가능)** 입니다. Body는 대략 `{ memberId, template, logoUrl }` 입니다.
 
-### 1) `template` → LFI / 경로 탐색 (서버 파일 → PDF)
+#### 1) `template` → LFI / 경로 탐색 (서버 파일 → PDF)
 
 정상 UI는 `verification` / `business`만 보냅니다. 그 외 값이 들어오면 `/app` 기준으로 파일을 읽어 PDF 본문에 그대로 넣습니다.
 
@@ -47,17 +54,16 @@ document.add(new Paragraph(content));
 
 예: `{"template":"../etc/passwd"}` 처럼 넣으면 컨테이너 내부 파일을 PDF로 받아볼 수 있습니다. (중요 설정·시크릿 유출로 이어질 수 있는 부분)
 
-### 2) `logoUrl` → SSRF (서버가 대신 URL 요청)
+#### 2) `logoUrl` → SSRF (서버가 대신 URL 요청)
 
 정상 로고는 `https://onde.click/assets/logo.png`입니다. 다른 URL이면 서버가 `RestTemplate`으로 GET 해서 응답 앞부분을 PDF에 넣고, iText 로고 로드 경로로도 원격 fetch가 될 수 있습니다.
 
 예: 내부망·메타데이터(`169.254.169.254`)·`localhost` 관리 포트 등을 `logoUrl`에 넣으면 서버 입장에서 대신 찔러 보고 결과가 PDF에 실립니다.
 
-### 3) 같은 API의 `memberId` IDOR
+#### 3) 같은 API의 `memberId` IDOR
 
 인증 없이 Body의 `memberId`만 바꿔도 타인 예약·정산 명세서를 발급받을 수 있는 구조입니다. 파일/SSRF와는 별개지만 **같은 명세서 다운로드 API**에 붙어 있습니다.
 
-정리하면, “알파 피드백” 같은 말이 아니라 **명세서 PDF 발급 API에 LFI·SSRF(·IDOR)를 의도적으로 심어 둔 것**입니다.
 
 
 # 2. 멘토링 질문 1 — 로그인 응답 Body에 토큰이 또 나옴
