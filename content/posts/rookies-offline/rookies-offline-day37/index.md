@@ -22,15 +22,15 @@ thumbnail: thumbnail.png
 
 # 1. 아르고스(Argus) 자동 증적 캡처 파이프라인 설계 아키텍처
 
-단순히 스캔 결과 수치만 배출하는 기존 한계를 넘어, 보안 진단 보고서의 핵심인 '실증 증적 이미지'를 플랫폼이 스스로 렌더링하고 캡처하도록 관심사와 실패 격리 원칙을 기반으로 정밀 설계했습니다.
+스캔 결과 숫자만 보여 주던 방식에서 나아가, 보안 진단 보고서에 필요한 증적 이미지를 플랫폼이 직접 렌더링하고 캡처하도록 기능을 나눠 설계하고 실패도 따로 처리했습니다.
 
-## 관심사의 완전 분리 (Separation of Concerns)
+## 역할 분리 (Separation of Concerns)
 
-- 기존 진단 엔진 코어(`diagnosis/modules/`)의 비즈니스 로직을 전혀 건드리지 않고, 오직 진단 결과서(`latest.yaml`)를 입력받아 독립 실행되는 증적 캡처 레이어(`screenshot/modules/`)를 평행 구축했습니다. 이로 인해 진단 코드의 오염 없이 언제든 스크린샷 사양만 유연하게 유지보수 및 플러그인할 수 있습니다.
+- 기존 진단 엔진 코어(`diagnosis/modules/`)의 동작은 건드리지 않고, 진단 결과서(`latest.yaml`)만 받아 따로 실행되는 증적 캡처 레이어(`screenshot/modules/`)를 만들었습니다. 그래서 진단 코드와 섞이지 않은 채 스크린샷 형식만 따로 고치거나 추가할 수 있습니다.
 
-## 완벽한 실패 격리 (Fault Isolation)
+## 캡처 실패 분리 처리 (Fault Isolation)
 
-- 스크린샷 캡처 중 브라우저 컨텍스트 오류나 네트워크 지연으로 인해 캡처가 실패하더라도, **이미 성공적으로 확보된 진단 리포트 결과 자체를 실패로 뒤집지 않도록(`never turn a valid diagnosis into a failure`)** 가드를 세웠습니다. 전체 실패 시 `capture-error.json` 로그만 남긴 채 안전하게 격리 처리됩니다.
+- 스크린샷을 찍는 중 브라우저 컨텍스트 오류나 네트워크 지연이 생겨도, **이미 만든 진단 리포트 결과가 실패로 바뀌지 않도록(`never turn a valid diagnosis into a failure`)** 처리했습니다. 캡처 전체가 실패하면 `capture-error.json`에 로그만 남깁니다.
 
 # 2. 원격 7월 9일 마일스톤 완료 내역 (`6c09ac6` — 1-2 / 7-4 통합)
 
@@ -47,7 +47,7 @@ thumbnail: thumbnail.png
 
 ## 1-2. 삽입 (Injection) 공격 가능성 자동 캡처 모듈
 
-- **레이어드 컴포넌트 구현:** `backend/screenshot/modules/1-2/` 하위에 CLI 진입점인 `capture.py`, Playwright Chromium 구동용 `engine.py`, HTTP 재현용 `replay.py`, 그리고 Burp Suite 스타일의 1280×720 HTML 보드를 구워내는 `renderer.py`를 완비했습니다.
+- **구성 요소:** `backend/screenshot/modules/1-2/` 아래에 CLI 시작점 `capture.py`, Playwright Chromium 실행용 `engine.py`, HTTP 재현용 `replay.py`, Burp Suite 스타일의 1280×720 HTML 보드를 만드는 `renderer.py`를 넣었습니다.
 - **실전 브라우저 로그인 연동 (`6c09ac6`):** `_authenticate_browser_context()` 엔진을 리팩터링하여 `api-tree.json` 기반 프론트엔드 로그인 주소를 자동 추적하고, Playwright API 로그인을 수행한 뒤 세션 쿠키를 브라우저 컨텍스트에 복사 이식하여 **실제 로그인 권한이 유지된 타깃 사이트 UI 화면**을 정밀 캡처해 냅니다.
 - **Playwright 결정적 5장 캡처 사양 (`engine.py`):**
   1. `01_baseline_site.png`: 정상 요청 시의 실제 프론트엔드 UI 화면
@@ -65,7 +65,7 @@ thumbnail: thumbnail.png
 
 **신규 연동 파일:** `backend/app/services/evidence_capture_service.py`
 
-개별 진단 모듈 실행이 성공적으로 마감되고 리포트 영속화가 끝나는 즉시, 중앙 서비스 스케줄러가 **별도 백그라운드 subprocess**를 할당하여 섹션별 `capture.py` 엔진을 자동 트리거합니다.
+개별 진단 모듈 실행과 리포트 저장이 끝나면, 중앙 서비스가 **별도 백그라운드 subprocess**에서 섹션별 `capture.py`를 자동 실행합니다.
 
 ```
 진단 프로세스 완료 (_run_module)
@@ -84,7 +84,7 @@ python backend/screenshot/modules/{section_id}/capture.py --report ... 실행
 
 # 4. 최종 산출물 데이터 구조 및 디렉터리 레이아웃 스냅샷
 
-파이프라인이 기동 완료된 후 `backend/data/report/` 하부에 최종 빌드 적재되는 증적 자산의 구조도는 다음과 같이 일원화됩니다.
+파이프라인이 끝나면 `backend/data/report/` 아래에 저장되는 증적 파일 구조는 다음과 같습니다.
 
 ```
 backend/data/report/
@@ -151,9 +151,9 @@ backend/data/report/
 20:04  Bulldog    PR #43 → dev 머지 (2-2 증거 스크린샷)
 ```
 
-# 8. [2-2] 파일 다운로드 모듈 전향 확장 (기술 상세)
+# 8. [2-2] 파일 다운로드 모듈 확장 (기술 상세)
 
-직전(7월 9일) 마감된 자동화 스크린샷 아키텍처 블루프린트를 **KISA 가이드라인 2-2 중요 정보 파일 다운로드 가능성 / 경로 조작** 도메인으로 전향 확장했습니다.
+7월 9일에 만든 자동 스크린샷 구조를 **KISA 가이드라인 2-2 중요 정보 파일 다운로드 가능성 / 경로 조작** 항목에도 확장했습니다.
 
 ## 기존 공통 핵심 레이어의 2-2 연동 스펙 확장
 
@@ -174,7 +174,7 @@ def _capture_modes(self, *modes: str) -> list[str]:
 
 1-2 및 7-4와 구조적 대칭을 이루는 컴포넌트 세트를 빌드했습니다.
 
-- **정밀 중복 필터링 및 랭킹 셀렉터 (`selector.py`):** Findings 중 상위 `limit=3` 건만 추출하기 위해 `(rule_id, method, path, param, payload)` 튜플 기준 dedupe를 집행합니다. 랭킹 우선순위는 `severity == high` → `rule_id == 2-2-path-traversal` → `payload_leak_confirmed == True` 계층입니다.
+- **정밀 중복 필터링 및 랭킹 셀렉터 (`selector.py`):** Findings 중 상위 `limit=3` 건만 추출하기 위해 `(rule_id, method, path, param, payload)` 튜플 기준 dedupe를 진행합니다. 랭킹 우선순위는 `severity == high` → `rule_id == 2-2-path-traversal` → `payload_leak_confirmed == True` 계층입니다.
 - **가이드라인 부합 rule_id 감시:** `2-2-path-traversal`, `2-2-input-validation`, `2-2-unauth-download`, `2-2-forced-browse`, `2-2-idor`를 수용하고, 단순 설계 미흡 지표(`2-design`) 등은 `is_capturable() == False`로 배제합니다.
 - **Playwright 2-2 전용 3장 캡처 규격 (`engine.py`):** 파일 다운로드(API 레벨) 성격에 맞춰 프론트 UI 사이트 화면 캡처는 배제하고 전송 데이터 증적에 집중합니다.
   1. `01_baseline_evidence.png`: 정상 파일 다운로드 요청/응답 패킷 보드
