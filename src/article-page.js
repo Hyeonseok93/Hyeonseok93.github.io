@@ -97,25 +97,21 @@ function getArticleContentRoot() {
   const content = document.querySelector('.article-content');
   if (!content) return null;
 
-  // Tistory wraps [##_article_rep_desc_##] in a single editor shell.
-  // Chapter grouping must run on that shell's children, not the outer wrapper.
-  if (content.children.length === 1) {
-    const only = content.children[0];
-    if (
-      only?.classList?.contains('contents_style') ||
-      only?.classList?.contains('tt_article_useless_p_margin')
-    ) {
-      return only;
-    }
-  }
+  // Tistory often injects sibling wrappers beside the editor shell, so
+  // children.length is not always 1 — find the real contents root explicitly.
+  const nested =
+    content.querySelector(':scope > .contents_style') ||
+    content.querySelector(':scope > .tt_article_useless_p_margin') ||
+    content.querySelector('.contents_style') ||
+    content.querySelector('.tt_article_useless_p_margin');
 
-  return content;
+  return nested || content;
 }
 
 function groupArticleChapters() {
   const content = getArticleContentRoot();
   if (!content?.children.length) return;
-  if (content.querySelector(':scope > .article-chapter')) return;
+  if ([...content.children].some((el) => el.classList?.contains('article-chapter'))) return;
 
   const nodes = Array.from(content.children);
   const fragment = document.createDocumentFragment();
