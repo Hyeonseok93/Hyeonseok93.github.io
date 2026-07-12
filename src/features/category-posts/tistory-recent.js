@@ -22,7 +22,6 @@ function isUsableThumbnailUrl(url) {
   const value = String(url || '').trim();
   if (!value) return false;
   // Tistory RSS img tags embed onerror="this.src='.../no-image-v1.png'".
-  // A greedy src= regex can pick that fallback instead of the real image.
   if (/no-image/i.test(value)) return false;
   return true;
 }
@@ -41,7 +40,7 @@ function extractThumbnailFromDescription(descriptionHtml) {
   return '';
 }
 
-function extractThumbnail(item, descriptionHtml) {
+function extractRssFallbackThumbnail(item, descriptionHtml) {
   const enclosure = item.querySelector('enclosure')?.getAttribute('url');
   if (isUsableThumbnailUrl(enclosure)) return enclosure.trim();
 
@@ -51,6 +50,31 @@ function extractThumbnail(item, descriptionHtml) {
   if (isUsableThumbnailUrl(mediaThumb)) return mediaThumb.trim();
 
   return extractThumbnailFromDescription(descriptionHtml);
+}
+
+function extractOgImage(html) {
+  const doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
+  const og =
+    doc.querySelector('meta[property="og:image"]')?.getAttribute('content') ||
+    doc.querySelector('meta[name="og:image"]')?.getAttribute('content') ||
+    '';
+  return isUsableThumbnailUrl(og) ? og.trim() : '';
+}
+
+/**
+ * Tistory 대표이미지는 RSS에 없고, permalink og:image 로 노출됩니다.
+ * Recent Posts 카드가 카테고리 목록과 같은 썸네일을 쓰도록 글 페이지를 조회합니다.
+ */
+async function fetchRepresentativeThumbnail(link) {
+  if (!link || link === '#') return '';
+
+  try {
+    const response = await fetch(link, { credentials: 'same-origin' });
+    if (!response.ok) return '';
+    return extractOgImage(await response.text());
+  } catch {
+    return '';
+  }
 }
 
 /**
@@ -69,7 +93,7 @@ export async function getTistoryRecentPosts(limit = 8) {
     throw new Error('Tistory RSS parse failed');
   }
 
-  return [...doc.querySelectorAll('item')].slice(0, Math.max(0, limit)).map((item) => {
+  const posts = [...doc.querySelectorAll('item')].slice(0, Math.max(0, limit)).map((item) => {
     const title = item.querySelector('title')?.textContent?.trim() || 'Untitled';
     const link = item.querySelector('link')?.textContent?.trim() || '#';
     const description = item.querySelector('description')?.textContent || '';
@@ -82,8 +106,15 @@ export async function getTistoryRecentPosts(limit = 8) {
       link,
       date: formatRssDate(pubDate),
       excerpt: htmlToPlainText(description).slice(0, EXCERPT_MAX_CHARS),
-      thumbnail: extractThumbnail(item, description),
+      thumbnail: extractRssFallbackThumbnail(item, description),
       categoryLabel,
     };
   });
+
+  const thumbnails = await Promise.all(posts.map((post) => fetchRepresentativeThumbnail(post.link)));
+
+  return posts.map((post, index) => ({
+    ...post,
+    thumbnail: thumbnails[index] || post.thumbnail,
+  }));
 }
