@@ -38,7 +38,52 @@ dist/gh-pages/              GitHub Pages deploy artifact
 
 ## Writing posts
 
-See [content/posts/README.md](content/posts/README.md).
+글은 **카테고리 → 포스트 폴더** 구조로 둡니다.
+
+```
+content/posts/
+├── personal-web/              # 카테고리 ID
+│   └── tmux-guide/            # 포스트 slug (폴더명)
+│       ├── index.md           # 본문
+│       ├── thumbnail.png      # 목록/상단 썸네일 (선택)
+│       └── images/            # 본문 이미지 (선택)
+│           └── screenshot.png
+└── ...
+```
+
+- **카테고리 폴더명** = `src/data/categories.json` ID
+- **포스트 폴더명** = URL slug (`/posts/tmux-guide/`)
+- frontmatter `category` / `slug`는 생략 가능 (폴더가 우선)
+
+### frontmatter 예시
+
+```markdown
+---
+title: 글 제목
+date: 2026-07-07
+tags: [tag1, tag2]
+thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
+---
+
+본문 첫 부분이 카테고리 목록 요약(최대 3줄)으로 자동 표시됩니다.
+```
+
+### 빌드
+
+```bash
+npm run dev              # 로컬 미리보기
+npm run build:gh-pages   # 배포 산출물
+```
+
+`public/posts/`와 `src/data/posts-manifest.js`는 **자동 생성**(gitignore)입니다.
+
+글 페이지 미리보기: `npm run dev` 후 `http://localhost:5173/posts/{slug}/`
+
+### 새 글 추가
+
+1. `content/posts/{category}/{slug}/` 폴더 생성
+2. `index.md` + 필요하면 `thumbnail.png`, `images/` 추가
+3. `npm run dev` 또는 `npm run build:gh-pages` 후 push
 
 ## Deploy (GitHub Pages)
 
@@ -71,6 +116,77 @@ Site settings: **Source → GitHub Actions**.
 
 Post pages always use **gh-pages asset paths** (`../../assets/main.js`). Vite dev middleware maps them to `/src/` sources.
 
+| Target | Script paths | Images | Used by |
+|--------|--------------|--------|---------|
+| `preview` | `./src/main.js` | `./src/assets/` | `npm run dev` |
+| `gh-pages` | `./assets/main.js` | `./images/` | `npm run build:gh-pages` |
+
+Post pages under `public/posts/` always use gh-pages paths. Vite dev middleware rewrites `/assets/` and `/images/` to source files.
+
+Generated HTML includes `data-build-target="gh-pages"` on `<body>`. Preview rebuilds posts when the stamp is missing or stale.
+
+## Build scripts
+
+| Script | Purpose |
+|--------|---------|
+| `generate-sources.js` | `categories.json` + `article-shell.source.html` → CategoryTree / Article shells |
+| `template-engine.js` | HTML compile helpers (`@include`, block replace, layout targets) |
+| `build-posts.js` | `content/posts/{category}/{slug}/` → manifest + `public/posts/{slug}/` |
+
+### CSS note
+
+Component styles live in `src/styles/*.css` and are imported from `src/style.css`.
+Partials must stay **before** `@tailwind` (PostCSS `@import` order rule).
+
+### Generated artifacts (gitignored)
+
+| Path | Generator | Notes |
+|------|-----------|-------|
+| `index.html` | `build-html.js` | Vite entry / local preview |
+| `public/posts/` | `build-posts.js` | Per-post HTML + copied assets |
+| `src/data/posts-manifest.js` | `build-posts.js` | `POSTS_BY_CATEGORY` |
+| `dist/` | Vite + `build-html.js` | Production bundles |
+
+**Fresh clone:** `npm install` then `npm run dev`.
+
+### Source of truth
+
+| Edit this | Generates |
+|-----------|-----------|
+| `src/data/categories.json` (`tree` + `labels`) | `src/components/CategoryTree.html` |
+| `src/templates/article-shell.source.html` | `article-page.html`, `Article.html` |
+
+Run manually: `npm run generate:sources` (also runs automatically before `build-posts` / `build-html`).
+
+### npm script map
+
+| Command | What it does |
+|---------|----------------|
+| `generate:sources` | Regenerate CategoryTree + article shells |
+| `build:posts` | Markdown → manifest + `public/posts/` (gh-pages paths) |
+| `build:html:preview` | Local dashboard shell → root `index.html` |
+| `build:html:vite-index` | Vite entry HTML (used by `build:assets`) |
+| `build:html:gh-pages` | Final site → `dist/gh-pages/index.html` |
+| `build:html:tistory` | Tistory skin → `dist/tistory/skin.html` |
+| `build:assets` | `vite-index` + `vite build` |
+| `build:gh-pages` | posts → assets → gh-pages HTML → validate |
+| `validate:gh-pages` | Assert GH output has no Tistory leaks / correct shells |
+| `dev` | posts → preview HTML → vite |
+
+### Shared utilities
+
+- `src/utils/escape-html.cjs` / `.js` — HTML escaping
+- `src/utils/sanitize-rich-html.cjs` / `.js` — rich HTML sanitization (Node + browser)
+- `src/utils/rich-html-policy.cjs` / `.js` — shared allowlists
+
+### Article templates
+
+| File | Role |
+|------|------|
+| `src/templates/article-shell.source.html` | **Edit this** — shared article layout |
+| `src/templates/article-page.html` | Generated Mustache shell for `build-posts.js` |
+| `src/components/Article.html` | Generated Tistory `[##_…_##]` shell |
+
 ## Layout & page model
 
 One `src/layout.html` compiles per target. Tistory uses **three page regions** plus official group tags:
@@ -85,6 +201,23 @@ One `src/layout.html` compiles per target. Tistory uses **three page regions** p
 `<s_list>` is only for category/tag/archive post lists ([Tistory list docs](https://tistory.github.io/document-tistory-skin/list/list.html)).
 
 **Permalink post body is inside `<s_permalink_article_rep>`** — without it, the full article template renders on the home page too ([Tistory post docs](https://tistory.github.io/document-tistory-skin/contents/post.html)). That was the root cause of Introduce Me overlapping with post content.
+
+`src/layout.html` structure:
+
+```
+sidebar (always)
+#home-dashboard          ← Introduce Me / What I Do SPA (outside s_list)
+#article-section
+  <s_article_rep>
+    <s_index_article_rep>   ← home post summaries (What I Do)
+    <s_permalink_article_rep> ← permalink body only
+#list-section
+  <s_list>                ← category/tag/archive native list + paging
+```
+
+- **Permalink vs index** — structural via `s_permalink_article_rep` / `s_index_article_rep` (Tistory official).
+- **Home vs category** — `#home-dashboard` vs `#list-section` selected by `body#tt-body-*` (Tistory standard section routing).
+- **GH Pages compile** — `template-engine.js` removes whole `<section>` blocks per output file (no overlapping DOM).
 
 GitHub Pages mirrors this at build time (`scripts/template-engine.js`):
 
@@ -117,5 +250,4 @@ GitHub Pages keeps hash SPA + `category-posts-pagination` because there is no Ti
 
 - Markdown → HTML is sanitized at build time (`sanitize-html`)
 - Runtime `innerHTML` uses `escapeHtml` / `DOMPurify` where needed
-
-More detail: [scripts/README.md](scripts/README.md).
+- Shared helpers: `src/utils/escape-html`, `sanitize-rich-html`, `rich-html-policy`
