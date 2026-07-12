@@ -18,17 +18,39 @@ function formatRssDate(pubDate) {
   return `${y}. ${m}. ${d}`;
 }
 
+function isUsableThumbnailUrl(url) {
+  const value = String(url || '').trim();
+  if (!value) return false;
+  // Tistory RSS img tags embed onerror="this.src='.../no-image-v1.png'".
+  // A greedy src= regex can pick that fallback instead of the real image.
+  if (/no-image/i.test(value)) return false;
+  return true;
+}
+
+function extractThumbnailFromDescription(descriptionHtml) {
+  const template = document.createElement('div');
+  template.innerHTML = String(descriptionHtml || '');
+
+  const dataUrl = template.querySelector('[data-url]')?.getAttribute('data-url');
+  if (isUsableThumbnailUrl(dataUrl)) return dataUrl.trim();
+
+  const img = template.querySelector('img');
+  const src = img?.getAttribute('src');
+  if (isUsableThumbnailUrl(src)) return src.trim();
+
+  return '';
+}
+
 function extractThumbnail(item, descriptionHtml) {
   const enclosure = item.querySelector('enclosure')?.getAttribute('url');
-  if (enclosure) return enclosure;
+  if (isUsableThumbnailUrl(enclosure)) return enclosure.trim();
 
   const mediaThumb =
     item.querySelector('media\\:thumbnail, thumbnail')?.getAttribute('url') ||
     item.getElementsByTagName('media:thumbnail')[0]?.getAttribute('url');
-  if (mediaThumb) return mediaThumb;
+  if (isUsableThumbnailUrl(mediaThumb)) return mediaThumb.trim();
 
-  const match = String(descriptionHtml || '').match(/<img[^>]+src=["']([^"']+)["']/i);
-  return match?.[1] || '';
+  return extractThumbnailFromDescription(descriptionHtml);
 }
 
 /**

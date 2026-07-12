@@ -285,6 +285,32 @@
   border-top: none;
 }
 
+/*
+ * Tistory editor content.css wins over plain `.article-content hr` with
+ * `#tt-body-page hr[data-ke-style]` (divider SVG → three dots). Force GH look.
+ */
+#tt-body-page .article-content hr[data-ke-style],
+#tt-body-page .article-content hr[data-ke-style='style1'],
+#tt-body-page .article-content hr[data-ke-style='style2'],
+#tt-body-page .article-content hr[data-ke-style='style3'],
+#tt-body-page .article-content hr[data-ke-style='style4'],
+#tt-body-page .article-content hr[data-ke-style='style5'],
+#tt-body-page .article-content hr[data-ke-style='style6'] {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: 0;
+  margin: 2.5rem 0;
+  padding: 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  /* Single shorthand — avoid mixing longhands (Lightning CSS mangled them). */
+  background: none !important;
+  font-size: inherit;
+  line-height: normal;
+  cursor: default !important;
+}
+
 .article-content li > ul,
 .article-content li > ol {
   margin-top: 0.4rem;
@@ -368,6 +394,385 @@
 
 .article-content blockquote p + p {
   margin-top: 0.75rem;
+}
+
+/*
+ * Tistory content.css: `#tt-body-page blockquote[data-ke-style='style1']`
+ * (quote SVG + center). Match GH Pages accent-bar callout instead.
+ */
+#tt-body-page .article-content blockquote,
+#tt-body-page .article-content blockquote[data-ke-style],
+#tt-body-page .article-content blockquote[data-ke-style='style1'],
+#tt-body-page .article-content blockquote[data-ke-style='style2'],
+#tt-body-page .article-content blockquote[data-ke-style='style3'],
+#tt-body-page .article-content blockquote[data-ke-style='box'] {
+  margin: 1.5rem 0;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 1rem 1.15rem;
+  width: auto;
+  max-width: none;
+  text-align: left;
+  font-size: inherit;
+  font-style: normal;
+  line-height: inherit;
+  color: #9ca3af;
+  border: none;
+  border-left: 4px solid var(--accent-color);
+  border-radius: 0 0.75rem 0.75rem 0;
+  /* Shorthand clears Tistory quote SVG (do not add background-image longhand). */
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+#tt-body-page .article-content blockquote::before,
+#tt-body-page .article-content blockquote::after,
+#tt-body-page .article-content blockquote[data-ke-style]::before,
+#tt-body-page .article-content blockquote[data-ke-style]::after {
+  content: none !important;
+  display: none !important;
+}
+
+#tt-body-page .article-content blockquote p,
+#tt-body-page .article-content blockquote[data-ke-style] p {
+  margin: 0;
+  text-align: left;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+#tt-body-page .article-content blockquote p + p,
+#tt-body-page .article-content blockquote[data-ke-style] p + p {
+  margin-top: 0.75rem;
+}
+
+/*
+ * Tistory post body parity with GitHub Pages `.article-content`.
+ * Platform content.css uses `#tt-body-page …[data-ke-*]` and figure.imageblock;
+ * re-assert GH spacing/type under a stronger wrapper selector.
+ */
+#tt-body-page .article-content {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #d1d5db;
+  word-break: keep-all;
+}
+
+#tt-body-page .article-content p,
+#tt-body-page .article-content p[data-ke-size],
+#tt-body-page .article-content p[data-ke-size='size14'],
+#tt-body-page .article-content p[data-ke-size='size16'],
+#tt-body-page .article-content p[data-ke-size='size18'],
+#tt-body-page .article-content p[data-ke-size='size20'],
+#tt-body-page .article-content p[data-ke-size='size24'],
+#tt-body-page .article-content .tt_article_useless_p_margin p,
+#tt-body-page .article-content .contents_style p {
+  margin-top: 0 !important;
+  margin-bottom: 1.5rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+#tt-body-page .article-content h1,
+#tt-body-page .article-content h2,
+#tt-body-page .article-content h3,
+#tt-body-page .article-content h4,
+#tt-body-page .article-content h1[data-ke-size],
+#tt-body-page .article-content h2[data-ke-size],
+#tt-body-page .article-content h3[data-ke-size],
+#tt-body-page .article-content h4[data-ke-size] {
+  scroll-margin-top: 6rem;
+  color: #f9fafb;
+  word-break: keep-all;
+  font-style: normal;
+}
+
+#tt-body-page .article-content h1,
+#tt-body-page .article-content h1[data-ke-size] {
+  margin-top: 3.5rem;
+  margin-bottom: 1.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+#tt-body-page .article-content > h1:first-child,
+#tt-body-page .article-content > h1[data-ke-size]:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+#tt-body-page .article-content h2,
+#tt-body-page .article-content h2[data-ke-size],
+#tt-body-page .article-content h2[data-ke-size='size26'] {
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.65rem;
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.45;
+  color: #f9fafb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#tt-body-page .article-content h3,
+#tt-body-page .article-content h3[data-ke-size],
+#tt-body-page .article-content h3[data-ke-size='size23'] {
+  margin-top: 2rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #f3f4f6;
+  border: none;
+}
+
+#tt-body-page .article-content h4,
+#tt-body-page .article-content h4[data-ke-size] {
+  margin-top: 1.5rem;
+  margin-bottom: 0.65rem;
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #e5e7eb;
+  border: none;
+}
+
+#tt-body-page .article-content hr + h1,
+#tt-body-page .article-content hr + h1[data-ke-size] {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+#tt-body-page .article-content ul,
+#tt-body-page .article-content ol,
+#tt-body-page .article-content ul[data-ke-list-type],
+#tt-body-page .article-content ol[data-ke-list-type] {
+  margin: 0 0 1.5rem 1.25rem;
+  padding-left: 0;
+  color: inherit;
+}
+
+#tt-body-page .article-content ul,
+#tt-body-page .article-content ul[data-ke-list-type='disc'] {
+  list-style-type: disc;
+}
+
+#tt-body-page .article-content ol,
+#tt-body-page .article-content ol[data-ke-list-type='decimal'] {
+  list-style-type: decimal;
+}
+
+#tt-body-page .article-content li,
+#tt-body-page .article-content ul[data-ke-list-type] > li,
+#tt-body-page .article-content ol[data-ke-list-type] > li {
+  margin-bottom: 0.45rem;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+#tt-body-page .article-content li > ul,
+#tt-body-page .article-content li > ol {
+  margin-top: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+#tt-body-page .article-content ul ul {
+  list-style-type: circle;
+}
+
+#tt-body-page .article-content strong,
+#tt-body-page .article-content b {
+  color: #fff;
+  font-weight: 700;
+}
+
+#tt-body-page .article-content a {
+  color: var(--accent-cyan, #22d3ee);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+#tt-body-page .article-content a:hover {
+  color: var(--accent-color);
+}
+
+#tt-body-page .article-content code:not([class*='language-']):not(pre code) {
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fda4af;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88em;
+}
+
+#tt-body-page .article-content pre,
+#tt-body-page .article-content pre[class*='language-'],
+#tt-body-page .article-content .hljs {
+  margin: 1.5rem 0;
+  padding: 1rem 1.15rem;
+  border-radius: 0.6rem;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #161616;
+  color: #e5e7eb;
+}
+
+#tt-body-page .article-content pre code,
+#tt-body-page .article-content pre[class*='language-'] code,
+#tt-body-page .article-content code[class*='language-'] {
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-shadow: none;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  white-space: inherit;
+}
+
+#tt-body-page .article-content figure.imageblock,
+#tt-body-page .article-content figure.imageblock.alignCenter,
+#tt-body-page .article-content figure.imageblock.alignLeft,
+#tt-body-page .article-content figure.imageblock.alignRight {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  margin: 1.5rem 0;
+  padding: 0;
+  text-align: center;
+}
+
+#tt-body-page .article-content figure.imageblock.alignLeft {
+  text-align: left;
+}
+
+#tt-body-page .article-content figure.imageblock.alignRight {
+  text-align: right;
+}
+
+#tt-body-page .article-content figure.imageblock span {
+  display: block;
+  width: 100%;
+}
+
+#tt-body-page .article-content figure.imageblock img,
+#tt-body-page .article-content figure img,
+#tt-body-page .article-content p > img,
+#tt-body-page .article-content img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  margin: 1.5rem auto;
+  border-radius: 0.5rem;
+}
+
+#tt-body-page .article-content figure.imageblock img,
+#tt-body-page .article-content figure img {
+  margin: 0 auto;
+}
+
+/* Avoid stacked p+figure margins from editor wrappers */
+#tt-body-page .article-content p:has(> figure.imageblock),
+#tt-body-page .article-content p:has(> img),
+#tt-body-page .article-content .tt_article_useless_p_margin p:has(> figure.imageblock),
+#tt-body-page .article-content .tt_article_useless_p_margin p:has(> img),
+#tt-body-page .article-content .contents_style p:has(> figure.imageblock),
+#tt-body-page .article-content .contents_style p:has(> img) {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+#tt-body-page .article-content table,
+#tt-body-page .article-content table[data-ke-style],
+#tt-body-page .article-content table[data-ke-align] {
+  width: 100%;
+  margin: 1.75rem 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.65rem;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+#tt-body-page .article-content th,
+#tt-body-page .article-content td,
+#tt-body-page .article-content table[data-ke-style] th,
+#tt-body-page .article-content table[data-ke-style] td {
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 1rem;
+  line-height: 1.65;
+  vertical-align: top;
+  word-break: keep-all;
+}
+
+#tt-body-page .article-content th:last-child,
+#tt-body-page .article-content td:last-child {
+  border-right: none;
+}
+
+#tt-body-page .article-content tr:last-child th,
+#tt-body-page .article-content tr:last-child td {
+  border-bottom: none;
+}
+
+#tt-body-page .article-content th,
+#tt-body-page .article-content table[data-ke-style] th {
+  color: #fff;
+  font-weight: 700;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#tt-body-page .article-content thead th {
+  color: var(--accent-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#tt-body-page .article-content td,
+#tt-body-page .article-content table[data-ke-style] td {
+  color: #d1d5db;
+}
+
+#tt-body-page .article-content tbody th {
+  color: #f3f4f6;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+#tt-body-page .article-content .article-ref-table {
+  width: auto;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+#tt-body-page .article-content .article-ref-table th,
+#tt-body-page .article-content .article-ref-table td {
+  text-align: center;
+  vertical-align: middle;
+  min-width: 12rem;
+  border-right-color: rgba(255, 255, 255, 0.16);
 }
 
 .article-content img {
