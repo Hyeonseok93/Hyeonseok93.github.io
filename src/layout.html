@@ -39,15 +39,16 @@
 
   <div id="site-main-column" class="site-main-column flex-1 min-w-0 ml-[280px] w-[calc(100%-280px)] max-md:ml-0 max-md:w-full flex flex-col min-h-screen">
 
+  <!-- Shared mini header: must stay outside #home-dashboard so article/list pages keep it -->
+  <div id="dashboard-scroll-header" class="dashboard-scroll-header" aria-hidden="true">
+    <div class="dashboard-scroll-header__inner">
+      <span class="dashboard-scroll-header__icon" aria-hidden="true">🐶</span>
+      <span class="dashboard-scroll-header__title">Bulldog's House</span>
+    </div>
+  </div>
+
   <!-- Home dashboard SPA: Introduce Me / What I Do (not s_list — that is for category/tag/archive lists) -->
   <section id="home-dashboard" class="home-section">
-    <div id="dashboard-scroll-header" class="dashboard-scroll-header" aria-hidden="true">
-      <div class="dashboard-scroll-header__inner">
-        <span class="dashboard-scroll-header__icon" aria-hidden="true">🐶</span>
-        <span class="dashboard-scroll-header__title">Bulldog's House</span>
-      </div>
-    </div>
-
     <main id="main-content" class="flex-1 min-h-screen w-full flex justify-center">
       <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
         @include('./components/Dashboard.html')
