@@ -46,6 +46,22 @@
   transform: translateY(-2px);
 }
 
+/* Connect captions: one line; JS shrinks font, then ellipsis at min size */
+.connect-links-caption,
+.connect-links-note {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
 /* Compact scroll header (dashboard list page) */
 .dashboard-scroll-header {
   position: fixed;

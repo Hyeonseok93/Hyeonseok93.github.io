@@ -11,3 +11,4 @@ import './features/category-posts/index.js';
 import './article-page.js';
 import './chapters.js';
 import './tech-stack.js';
+import './connect-captions.js';
