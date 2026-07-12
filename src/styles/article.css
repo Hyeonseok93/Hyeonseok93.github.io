@@ -859,7 +859,9 @@
 .article-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  /* Prefer margin over gap: Tistory inserts "," text nodes between links,
+     and flex gap would treat those as items and double the spacing. */
+  gap: 0;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -871,6 +873,7 @@
 .article-tags a {
   display: inline-flex;
   align-items: center;
+  margin: 0 0.35rem 0.35rem 0;
   padding: 0.35rem 0.75rem;
   border-radius: var(--article-surface-radius);
   background: var(--article-surface-bg);

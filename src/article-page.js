@@ -217,9 +217,21 @@ function initArticleThumbnail() {
   });
 }
 
+/** Strip Tistory's literal "," separators between tag links. */
+function normalizeArticleTags() {
+  document.querySelectorAll('.article-tags').forEach((el) => {
+    [...el.childNodes].forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE && /^[\s,]*$/.test(node.textContent || '')) {
+        node.remove();
+      }
+    });
+  });
+}
+
 function initArticlePage() {
   if (!isArticlePage()) return;
 
+  normalizeArticleTags();
   groupArticleChapters();
   initArticleToc();
   initArticleScrollHeader();
