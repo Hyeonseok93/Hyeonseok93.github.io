@@ -8,7 +8,6 @@ tags:
   - "국비지원"
   - "루키즈 개발 5기"
   - onde
-  - security
   - sql-injection
   - csrf
   - flyway
