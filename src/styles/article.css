@@ -691,6 +691,54 @@
   margin: 0 auto;
 }
 
+/*
+ * GH uses <figure class="article-figure-center(--wide)"> > <img>.
+ * Tistory turns [##_Image_##] into nested figure.imageblock, so the GH
+ * max-width rules never win. Mirror those caps on the wrapper instead.
+ */
+#tt-body-page .article-content .article-figure-center,
+#tt-body-page .article-content div.article-figure-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+
+#tt-body-page .article-content .article-figure-center > figure.imageblock,
+#tt-body-page .article-content .article-figure-center > .imageblock {
+  width: 100%;
+  max-width: min(100%, 28rem);
+  margin: 0;
+  padding: 0;
+}
+
+#tt-body-page .article-content .article-figure-center--wide > figure.imageblock,
+#tt-body-page .article-content .article-figure-center--wide > .imageblock {
+  max-width: min(100%, 42rem);
+}
+
+#tt-body-page .article-content .article-figure-center--full > figure.imageblock,
+#tt-body-page .article-content .article-figure-center--full > .imageblock {
+  max-width: 100%;
+}
+
+#tt-body-page .article-content .article-figure-center figure.imageblock span,
+#tt-body-page .article-content .article-figure-center .imageblock span {
+  display: block;
+  width: 100%;
+}
+
+#tt-body-page .article-content .article-figure-center figure.imageblock img,
+#tt-body-page .article-content .article-figure-center .imageblock img,
+#tt-body-page .article-content .article-figure-center > img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  border-radius: 0.5rem;
+}
+
 /* Avoid stacked p+figure margins from editor wrappers */
 #tt-body-page .article-content p:has(> figure.imageblock),
 #tt-body-page .article-content p:has(> img),
