@@ -121,14 +121,15 @@ body {
  *
  * Permalink vs index inside s_article_rep is structural (s_permalink_article_rep /
  * s_index_article_rep). Section visibility by page type follows the Tistory skin pattern.
+ *
+ * Home never shows #article-section: Recent Posts is rendered into
+ * #what-i-do-posts-list. s_index_article_rep stays in the skin only because
+ * Tistory expects it beside s_permalink_article_rep — not as a second feed.
  */
 
-#tt-body-index .list-section {
+#tt-body-index .list-section,
+#tt-body-index .article-section {
   display: none !important;
-}
-
-#tt-body-index:not([data-active-panel="what-i-do"]) .article-section {
-  display: none;
 }
 
 #tt-body-page #home-dashboard,
@@ -150,25 +151,7 @@ body#article .list-section {
   display: none !important;
 }
 
-body#list .list-section {
+body#list .list-section,
+body#list .article-section {
   display: none !important;
-}
-
-body#list:not([data-active-panel="what-i-do"]) .article-section {
-  display: none;
-}
-
-#tt-body-index .article-section .main-content-inner,
-body#list .article-section .main-content-inner {
-  padding-top: 0;
-  margin-top: -0.5rem;
-}
-
-#tt-body-index .article-section .post-card-item:first-child,
-body#list .article-section .post-card-item:first-child {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0 0 0.75rem 0.75rem;
-  background: rgba(32, 32, 32, 0.7);
-  margin-top: 0;
-  padding-top: 1rem;
 }
