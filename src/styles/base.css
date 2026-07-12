@@ -63,8 +63,30 @@ body {
 }
 .about-header-clean span,
 .connect-header-clean span,
-.projects-header-clean span,
+.projects-header-clean:not(.projects-header-row) span,
 .tech-stack-header-clean span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Projects header: title+subtitle left, View all CTA right */
+.projects-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  flex-wrap: wrap;
+  white-space: normal;
+}
+.projects-header-row__left {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.projects-header-row__left > span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
