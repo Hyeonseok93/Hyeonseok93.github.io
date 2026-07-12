@@ -433,8 +433,11 @@
 }
 
 #tt-body-page .article-content blockquote p,
-#tt-body-page .article-content blockquote[data-ke-style] p {
-  margin: 0;
+#tt-body-page .article-content blockquote[data-ke-style] p,
+#tt-body-page .article-content .contents_style blockquote p,
+#tt-body-page .article-content .tt_article_useless_p_margin blockquote p {
+  margin: 0 !important;
+  padding: 0 !important;
   text-align: left;
   font-size: inherit;
   line-height: inherit;
@@ -442,8 +445,10 @@
 }
 
 #tt-body-page .article-content blockquote p + p,
-#tt-body-page .article-content blockquote[data-ke-style] p + p {
-  margin-top: 0.75rem;
+#tt-body-page .article-content blockquote[data-ke-style] p + p,
+#tt-body-page .article-content .contents_style blockquote p + p,
+#tt-body-page .article-content .tt_article_useless_p_margin blockquote p + p {
+  margin-top: 0.35rem !important;
 }
 
 /*
@@ -858,6 +863,8 @@
   width: 100%;
   margin: 0;
   padding: 0;
+  /* Tistory injects literal "," text nodes between tag links — hide them. */
+  font-size: 0;
 }
 
 .article-tag,

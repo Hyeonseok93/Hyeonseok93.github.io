@@ -123,14 +123,20 @@ const ARTICLE_VARIANTS = {
     CATEGORY_LINK: '[##_article_rep_category_link_##]',
     CATEGORY_LABEL: '[##_article_rep_category_##]',
     TITLE: '[##_article_rep_title_##]',
-    DATE: '[##_article_rep_date_##]',
+    DATE: '[##_article_rep_simple_date_##]',
     AUTHOR: '[##_blogger_##]',
     TAGS: `<s_tag_label>
       <div class="article-tags">
         [##_tag_label_rep_##]
       </div>
     </s_tag_label>`,
-    THUMBNAIL: '',
+    THUMBNAIL: `<s_article_rep_thumbnail>
+      <figure class="article-thumbnail">
+        <div class="article-thumbnail__frame">
+          <img src="[##_article_rep_thumbnail_raw_url_##]" alt="" loading="lazy" />
+        </div>
+      </figure>
+    </s_article_rep_thumbnail>`,
     CONTENT: '[##_article_rep_desc_##]',
     POST_NAV: `<s_article_prev>
         <a href="[##_article_prev_link_##]" class="article-post-nav__card article-post-nav__card--prev">
