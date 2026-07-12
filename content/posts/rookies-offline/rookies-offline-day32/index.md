@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 32 — 아르고스 코어 리팩토링과 1-1·1-2·1-4·1-6 Staging 통합"
 date: 2026-07-03
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - argus
   - security
   - refactoring

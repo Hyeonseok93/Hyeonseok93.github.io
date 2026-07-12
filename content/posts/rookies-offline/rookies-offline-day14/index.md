@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 14 — 진단 대상(온데) 마무리 후 웹 취약점 자동 진단 플랫폼 기획: 오픈소스(ZAP·Semgrep) 분석 및 3대 MVP 시나리오 확정"
 date: 2026-06-09
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - security
   - argus
   - owasp-zap

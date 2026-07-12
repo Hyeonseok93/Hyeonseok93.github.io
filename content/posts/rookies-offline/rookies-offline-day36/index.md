@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 36 — IT 채용 시장 변화와 취업·비즈니스 소프트 스킬 정리"
 date: 2026-07-09
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - career
   - soft-skills
 thumbnail: thumbnail.png

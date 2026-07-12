@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 10 — 본격 취약점 진단을 위한 공격 메커니즘 이해: 웹 해킹 및 SQL Injection 인증 우회 기법 학습"
 date: 2026-06-02
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - security
   - web-hacking
   - sql-injection

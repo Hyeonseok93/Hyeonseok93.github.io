@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 6 — 인프라 설계 정리 및 개발 속도를 위한 방식 변경"
 date: 2026-05-27
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - onde
   - frontend
   - infrastructure

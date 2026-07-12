@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 19 — 온데(Onde) 멘토링 피드백 반영 및 아르고스(Argus) 모듈 별 1인 개발 파이프라인 개발"
 date: 2026-06-16
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - onde
   - argus
   - security

@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 35 — 멘토링 피드백 반영 진단 엔진(1-2, 4-5, 7-4) 개선과 1-6 Docker 크래시 수정"
 date: 2026-07-08
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - argus
   - security
   - docker

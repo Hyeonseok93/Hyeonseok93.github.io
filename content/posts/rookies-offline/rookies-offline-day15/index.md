@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 15 — 아르고스(Argus) 명칭·A/B/C 분담, 5개 설계 산출물 및 7월 개발 일정 수립"
 date: 2026-06-10
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - argus
   - security
   - zap

@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 22 — 웹/API 최초 취약점 진단 결과보고서 — 파라미터 검증과 파일 처리"
 date: 2026-06-19
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - onde
   - security
   - vulnerability-assessment

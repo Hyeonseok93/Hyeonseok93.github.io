@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 2 — 프로젝트 명 확정 및 상세 서브 도메인 분할"
 date: 2026-05-21
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - vulnerability-assessment
   - argus
 thumbnail: thumbnail.png

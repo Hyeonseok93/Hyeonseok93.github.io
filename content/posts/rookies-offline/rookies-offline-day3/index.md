@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 3 — 진짜 애자일을 위한 첫걸음 및 팀 협업 표준화 세팅"
 date: 2026-05-22
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - agile
   - scrum
 thumbnail: thumbnail.png

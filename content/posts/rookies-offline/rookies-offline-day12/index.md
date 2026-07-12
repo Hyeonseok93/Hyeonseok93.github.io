@@ -2,11 +2,11 @@
 title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 12 — 백엔드 코어 데이터베이스 개편, 결제 파이프라인 연결 및 SQL Injection 심화·CSRF 다층 방어 정리"
 date: 2026-06-05
 tags:
-  - kdt
-  - sk-rookies
-  - sk-shieldus
-  - rookies-5기
-  - devlog
+  - KDT
+  - "SK Rookie"
+  - "SK shieldus"
+  - "국비지원"
+  - "루키즈 개발 5기"
   - onde
   - security
   - sql-injection
