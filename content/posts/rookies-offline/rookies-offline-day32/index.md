@@ -88,7 +88,7 @@ thumbnail: thumbnail.png
 | **Boolean-only**    | 단순 참/거짓 바디 분기 차이만 발견되고 인젝션 증거가 미비할 시 | **`FALSE_POSITIVE` (결함 기각)**  |
 | **Simple 5xx**      | SQL 패턴의 흔적 없이 단순 내부 서버 오류 코드만 배출 시        | **`FALSE_POSITIVE` (결함 기각)**  |
 
-이와 같은 필터링 스펙인 `should_report_injection_finding()` 라인을 실행한 결과, 수백 건의 의심 의심 노이즈를 걸러 내고시키고 실서버 상에 심어둔 진짜 코어 취약점 1건을 정확하게 포획 남기는 데 최종 성공했습니다.
+이와 같은 필터링 스펙인 `should_report_injection_finding()` 라인을 실행한 결과, 수백 건의 의심 노이즈를 걸러 내고 실서버 상에 심어둔 진짜 코어 취약점 1건을 정확하게 포획 남기는 데 최종 성공했습니다.
 
 ```http
 GET /api/v1/posts?page=0&size=20&status=ACTIVE&type=REVIEW
@@ -97,12 +97,12 @@ Classification: CONFIRMED_INJECTION_TIME_BASED
 Engine: ARGUS_DIRECT
 ```
 
-# 5. 마무리와 다음 작업: 검색 엔진 통합과 스크린샷 증적 자동화
+# 4. 마무리와 다음 작업: 검색 엔진 통합과 스크린샷 증적 자동화
 
 오늘 따로 CLI 브랜치에서 움직이던 네 핵심 검색 엔진(1-1, 1-2, 1-4, 1-6)과 인젝터 파이프라인을 연동해 합쳤습니다.
 
 플랫폼 핵심 검색 엔진 모듈의 첫 연동을 마쳤으므로, 다음에는 전체 병합을 안정화하고 화면으로 확인할 수 있는 증적 자동화 기능을 만듭니다.
 
 - **다음 작업:**
-  1. **브랜치 동기화 마무리:** `Staging`에 이미 합쳐 둔 1-2, 1-4, 1-6(1차)과 `main`에 머지된 1-1 XSS/CSRF 모듈을 서로 맞춰 주고(머지)해서, 28개 체크리스트 항목을 한 mainline 코드에 모을 예정입니다. 또 `feat/input-validation-serach-engine` 브랜치에 남은 1-6 검증 예외 처리기(`module.py`)는 Staging 2차로 합치겠습니다.
+  1. **브랜치 동기화 마무리:** `Staging`에 이미 합쳐 둔 1-2, 1-4, 1-6(1차)과 `main`에 머지된 1-1 XSS/CSRF 모듈을 서로 맞춰 주고(머지)해서, 28개 체크리스트 항목을 한 mainline 코드에 모을 예정입니다. 또 `feat/input-validation-search-engine` 브랜치에 남은 1-6 검증 예외 처리기(`module.py`)는 Staging 2차로 합치겠습니다.
   2. **Playwright/Selenium 실시간 증적 스크린샷 기능 만들기:** 검색 엔진을 합친 뒤, 미리 만든 `backend/screenshot/modules/{id}` 디렉터리(28개 섹션 번호별 디렉터리)를 바탕으로 **실시간 화면 스크린샷 캡처 기능**을 만들겠습니다. 자동 스캐너가 ONDE에서 취약점을 찾는 순간(XSS 페이로드 때문에 브라우저 Alert가 뜨거나, 인가 우회로 비정상 페이지로 이동하는 경우 등)의 **브라우저 화면을 증적으로 자동 캡처해 S3 버킷에 저장하는 기능**을 추가할 예정입니다. 다음 스프린트에도 이어서 진행합니다.

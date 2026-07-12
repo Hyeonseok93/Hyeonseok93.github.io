@@ -32,7 +32,7 @@ thumbnail: thumbnail.png
 - **7-1 (Client Request Method):** TRACE, PUT, DELETE 등 위험하거나 불필요한 HTTP 메서드 허용 여부 판정
 - **7-2 (파일 목록화 가능성):** WAS 및 웹 서버의 디렉터리 리스팅(Directory Listing) 노출 여부 점검
 - **7-3 (서버 헤더정보 노출):** Server, X-Powered-By 등 소프트웨어 스택 및 버전 헤더 노출 진단
-- **7-4 (취약한 보안설정):** HSTS, CSP, X-Frame-Options, 쿠키 Secure 속성 누락 여부 다각도 분석
+- **7-4 (취약한 보안설정):** HSTS, CSP, X-Frame-Options, 쿠키 Secure 속성 누락 여부 다각도 분석 — 같은 가이드라인 ID(7-4) 안에서, 수동 진단 때 다룬 CORS 외에 **응답 보안 헤더** 쪽으로 자동 진단 범위를 넓힌 것입니다.
 
 > 가이드라인상 **중요**로 표시된 항목을 우선 큐에 두고 진행했습니다. 맡은 범위를 마친 뒤에는 같은 파이프라인에 맞춰 위 목록까지 범위를 넓혀 구현·연동했습니다.
 ## ── 아르고스 진단 엔진의 공통 원칙
@@ -50,7 +50,7 @@ thumbnail: thumbnail.png
     --> POST /api/diagnosis/modules/{section_id}/run 인입 (오버라이드 옵션 전달)
         --> diagnosis_service.run_section() 컨텍스트 초기화
             --> GxxModule.run(ctx) 모듈 동적 로드 및 실행
-                --> httpx 프로브 1차 타격 및 ZAP 스캔 연동
+                --> httpx 프로브 1차 요청 및 ZAP 스캔 연동
                 --> SectionReport 객체 빌드 및 결과 검출 지표 산출
                 --> reports/latest.yaml 파일 저장 및 완료
 ```
