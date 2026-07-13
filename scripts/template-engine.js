@@ -164,7 +164,7 @@ function compileLayout(options = {}) {
     );
     html = replaceTokens(html, {
       './src/assets/profile.png': '[##_image_##]',
-      './src/assets/badges/tech/': './images/',
+      './src/assets/badges/dark/': './images/',
       './src/assets/badges/': './images/',
       './src/assets/': './images/',
     });

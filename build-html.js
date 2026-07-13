@@ -83,7 +83,7 @@ function ensurePostsUpToDate() {
   }
 }
 
-/** Tistory serves skin files as flat images/* — nested badges/tech/ paths 404 on many blogs. */
+/** Tistory serves skin files as flat images/* — nested badges/dark/ paths 404 on many blogs. */
 function flattenTistoryImages(imgDir) {
   if (!fs.existsSync(imgDir)) return 0;
 

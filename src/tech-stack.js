@@ -113,7 +113,7 @@ function initTechStack() {
   const grid = document.getElementById('tech-stack-grid');
   if (!section || !grid) return;
 
-  const assetBase = section.dataset.techAssetBase || './images/badges/tech/';
+  const assetBase = section.dataset.techAssetBase || './images/badges/dark/';
 
   grid.innerHTML = TECH_BADGES.map(
     (badge) => `

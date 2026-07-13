@@ -1,4 +1,4 @@
-const modules = import.meta.glob('./assets/badges/tech/*.png', {
+const modules = import.meta.glob('./assets/badges/dark/*.png', {
   eager: true,
   query: '?url',
   import: 'default',
