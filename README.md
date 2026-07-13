@@ -1,26 +1,14 @@
 # 🐶 Bulldog's House
 
 <p align="center">
-  <a href="https://hyeonseok93.github.io/">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="assets/readme_badges/dark/github-pages.png" />
-      <img src="assets/readme_badges/light/github-pages.png" alt="GitHub Pages" height="40" />
-    </picture>
-  </a>
-  &nbsp;
-  <a href="https://bulldog93.tistory.com/">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="assets/readme_badges/dark/tistory.png" />
-      <img src="assets/readme_badges/light/tistory.png" alt="Tistory" height="40" />
-    </picture>
-  </a><br />
+  <a href="https://hyeonseok93.github.io/" style="text-decoration:none;"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme_badges/dark/github-pages.png" /><img src="assets/readme_badges/light/github-pages.png" alt="GitHub Pages" height="40" /></picture></a>&#8194;<a href="https://bulldog93.tistory.com/" style="text-decoration:none;"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme_badges/dark/tistory.png" /><img src="assets/readme_badges/light/tistory.png" alt="Tistory" height="40" /></picture></a><br />
   <a href="https://hyeonseok93.github.io/">https://hyeonseok93.github.io/</a>
   ·
   <a href="https://bulldog93.tistory.com/">https://bulldog93.tistory.com/</a>
 </p>
 
 <p align="center">
-  <img src="assets/confidently.gif" alt="Bulldog Confident" width="420" />
+  <picture><img src="assets/confidently.gif" alt="Bulldog Confident" width="420" /></picture>
 </p>
 
 <p align="center">
