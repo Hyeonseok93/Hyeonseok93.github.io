@@ -114,7 +114,7 @@ Hyeonseok93.github.io/
 ┗━━ 📄 build-html.js                  # 타깃별 HTML 출력 (index/dist)
 ```
 
-<br />
+---
 
 ## 📄 글 작성
 
@@ -167,7 +167,7 @@ thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 > 티스토리에 업로드할 때는 frontmatter(`---` 블록)를 제거하고 본문만 붙여넣으세요.  
 > 태그도 frontmatter의 `tags`를 그대로 쓰지 말고, 티스토리 에디터에서 별도로 입력해야 합니다.
 
-<br />
+---
 
 ## 🚀 배포 (GitHub Pages + Tistory)
 
@@ -192,7 +192,7 @@ thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 
 GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
 
-<br />
+---
 
 ## 🧭 빌드 흐름 이해하기
 
@@ -209,7 +209,7 @@ GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
    - GitHub Pages 출력: `dist/gh-pages/`
    - Tistory 출력: `dist/tistory/`
 
-<br />
+---
 
 ## 🔧 어디를 수정해야 하나?
 
