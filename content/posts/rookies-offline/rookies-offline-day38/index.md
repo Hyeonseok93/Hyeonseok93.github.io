@@ -1,5 +1,5 @@
 ---
-title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 38 — 아르고스 대시보드 UI (Attack Surface / Diagnosis / 섹션 ! / Findings·증적)"
+title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 38 — 아르고스 Findings·증적 UI 연동, 캡처 확장, ONDE 하드코딩 제거"
 date: 2026-07-13
 tags:
   - KDT
