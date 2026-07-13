@@ -149,16 +149,13 @@ thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 4. 저장 후 스킨 이름 입력 → **보관함**에서 적용
 
 > [!TIP]
-> 업로드 파일 목록은 로컬에서 `npm run tistory:upload-list`로 확인할 수 있습니다.  
-> 티스토리 포스팅은 `index.md` 본문 내용을 그대로 복사해 붙여넣고,  
-> 이미지는 티스토리 에디터에서 별도로 업로드해 넣으면 됩니다.
+> 업로드 파일 목록은 로컬에서 `npm run tistory:upload-list`로 확인할 수 있습니다. 티스토리 포스팅은 `index.md` 본문 내용을 그대로 복사해 붙여넣고, 이미지는 티스토리 에디터에서 별도로 업로드해 넣으면 됩니다.
 
 GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
 
 ## 🧭 빌드 흐름 이해하기
 
-이 프로젝트는 **글 원본(Markdown) + 템플릿**을 합쳐서,  
-GitHub Pages용 결과물과 Tistory 스킨 결과물을 각각 만들어냅니다.
+이 프로젝트는 **글 원본(Markdown) + 템플릿**을 합쳐 GitHub Pages용 결과물과 Tistory 스킨 결과물을 각각 만들어냅니다.
 
 1. **원본 준비**
    - 글 원본: `content/posts/`
