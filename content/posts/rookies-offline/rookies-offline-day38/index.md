@@ -33,15 +33,13 @@ thumbnail: thumbnail.png
 | **증적** | 1-1 캡처 모듈 추가·정리, 1-2 엔진 보강, 2-1 캡처·재업로드 금지, 2-2 상세 샷 UI, 6-1 webcapture |
 | **그 외** | 같은 섹션을 다시 돌릴 때 옛 PNG/replay 정리, 4-4 SPA fallback 오탐 수정, 1-6 유형별 대표 finding |
 
-```text
-Attack Surface에서 Base URL·인벤토리 입력
-  → api-tree 구성
-  → Diagnosis에서 섹션 Start
-  → 리포트 YAML/JSON 저장
-  → (지원 섹션) evidence 캡처 → data/report/{section}/evidence/
-  → Findings / Report 패널에서 이미지 로드
-  → 섹션 `!`로 진단 의미·수동 단계 안내
-```
+1. Attack Surface에서 Base URL·인벤토리 입력
+2. api-tree 구성
+3. Diagnosis에서 섹션 Start
+4. 리포트 YAML/JSON 저장
+5. (지원 섹션) evidence 캡처 → `data/report/{section}/evidence/`
+6. Findings / Report 패널에서 이미지 로드
+7. 섹션 `!`로 진단 의미·수동 단계 안내
 
 # 2. Attack Surface — ONDE에 안 묶이게 타깃 잡기
 
@@ -61,11 +59,9 @@ Attack Surface에서 Base URL·인벤토리 입력
 
 이전에는 API List / URL List가 API·Frontend URL과 교차로 붙었습니다. 이후 규칙은 아래와 같습니다.
 
-```text
-API List  → API 역할 Base URL만
-OpenAPI   → servers[].url 또는 API 역할 Base URL
-URL List  → Frontend 역할 Base URL만
-```
+- API List → API 역할 Base URL만
+- OpenAPI → `servers[].url` 또는 API 역할 Base URL
+- URL List → Frontend 역할 Base URL만
 
 Frontend Base가 없는데 상대 경로 URL List만 있으면 `localhost:5173`을 임의로 만들지 않고 미해결로 둡니다. OpenAPI도 server/API base가 없으면 임의 localhost를 만들지 않습니다. 관련 테스트는 `test_base_urls_service`, `test_inventory_source_roles`, `test_txt_list`에 보강했습니다.
 
@@ -155,11 +151,9 @@ Download는 진단 결과를 **보고서 파일로 받는** 버튼입니다. 섹
 
 나눈 처리:
 
-```text
 1. manifest 캐시가 있으면 Multipart HTTP Replay(실서버 재업로드)는 스킵
 2. 저장된 request/response로 EvidenceCase를 복원
-3. capture_case(화면 PNG)만 매 회차 다시 실행
-```
+3. `capture_case`(화면 PNG)만 매 회차 다시 실행
 
 | | 이전 | 이후 |
 |--|------|------|
