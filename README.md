@@ -1,19 +1,16 @@
 # 🐶 Bulldog's House
 
 <p align="center">
-  <img src="assets/confidently.gif" alt="Bulldog Confident" width="420" />
-</p>
-
-<p align="center">
   <a href="https://hyeonseok93.github.io/"><img src="assets/readme_badges/github-pages.png" alt="GitHub Pages" height="40" /></a>
   &nbsp;
-  <a href="https://bulldog93.tistory.com/"><img src="assets/readme_badges/tistory.png" alt="Tistory" height="40" /></a>
-</p>
-
-<p align="center">
+  <a href="https://bulldog93.tistory.com/"><img src="assets/readme_badges/tistory.png" alt="Tistory" height="40" /></a><br />
   <a href="https://hyeonseok93.github.io/">https://hyeonseok93.github.io/</a>
   ·
   <a href="https://bulldog93.tistory.com/">https://bulldog93.tistory.com/</a>
+</p>
+
+<p align="center">
+  <img src="assets/confidently.gif" alt="Bulldog Confident" width="420" />
 </p>
 
 <p align="center">
