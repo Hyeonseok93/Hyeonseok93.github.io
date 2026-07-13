@@ -1,9 +1,19 @@
 # 🐶 Bulldog's House
 
 <p align="center">
-  <a href="https://hyeonseok93.github.io/"><img src="assets/readme_badges/github-pages.png" alt="GitHub Pages" height="40" /></a>
+  <a href="https://hyeonseok93.github.io/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/readme_badges/dark/github-pages.png" />
+      <img src="assets/readme_badges/light/github-pages.png" alt="GitHub Pages" height="40" />
+    </picture>
+  </a>
   &nbsp;
-  <a href="https://bulldog93.tistory.com/"><img src="assets/readme_badges/tistory.png" alt="Tistory" height="40" /></a><br />
+  <a href="https://bulldog93.tistory.com/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/readme_badges/dark/tistory.png" />
+      <img src="assets/readme_badges/light/tistory.png" alt="Tistory" height="40" />
+    </picture>
+  </a><br />
   <a href="https://hyeonseok93.github.io/">https://hyeonseok93.github.io/</a>
   ·
   <a href="https://bulldog93.tistory.com/">https://bulldog93.tistory.com/</a>
@@ -87,7 +97,7 @@ Hyeonseok93.github.io/
 ┣━━ 📂 assets/                        # 정적 에셋 (이미지/뱃지 등)
 ┃   ┣━━ 📂 badges/dark/               # README 기술 스택 뱃지 (다크)
 ┃   ┣━━ 📂 badges/light/              # README 기술 스택 뱃지 (라이트)
-┃   ┗━━ 📂 readme_badges/             # README 플랫폼 뱃지 PNG
+┃   ┗━━ 📂 readme_badges/             # README 플랫폼 뱃지 (dark/light)
 ┣━━ 📂 content/
 ┃   ┗━━ 📂 posts/                     # 글 원본 (category/slug/index.md)
 ┣━━ 📂 scripts/                       # 빌드/생성/검증 스크립트
