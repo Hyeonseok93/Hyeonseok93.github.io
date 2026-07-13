@@ -22,7 +22,18 @@
   <strong>✨ 들어오셔서 확인해보세요!!! ✨</strong>
 </p>
 
-## 실행/빌드 명령어
+## 🛠 기술 스택
+
+<p align="center">
+  <img src="assets/badges/tech/html5.png" alt="HTML5" height="28" />
+  <img src="assets/badges/tech/css3.png" alt="CSS3" height="28" />
+  <img src="assets/badges/tech/javascript.png" alt="JavaScript" height="28" />
+  <img src="assets/badges/tech/vite.png" alt="Vite" height="28" />
+  <img src="assets/badges/tech/tailwindcss.png" alt="Tailwind CSS" height="28" />
+  <img src="assets/badges/tech/githubactions.png" alt="GitHub Actions" height="28" />
+</p>
+
+## 💻 실행/빌드 명령어
 
 <table align="center">
   <thead>
@@ -56,7 +67,8 @@
 ```text
 Hyeonseok93.github.io/
 ┣━━ 📂 assets/                        # 정적 에셋 (이미지/뱃지 등)
-┃   ┗━━ 📂 readme_badges/             # README 뱃지 PNG
+┃   ┣━━ 📂 badges/tech/               # README 기술 스택 뱃지
+┃   ┗━━ 📂 readme_badges/             # README 플랫폼 뱃지 PNG
 ┣━━ 📂 content/
 ┃   ┗━━ 📂 posts/                     # 글 원본 (category/slug/index.md)
 ┣━━ 📂 scripts/                       # 빌드/생성/검증 스크립트
