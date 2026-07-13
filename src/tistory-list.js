@@ -29,13 +29,21 @@ function isTistoryNewIcon(img) {
   return /new_ico/i.test(src);
 }
 
+function normalizeTitleKey(title) {
+  return String(title || '')
+    .replace(/\u00a0/g, ' ')
+    .replace(/&mdash;|&#8212;/gi, '—')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function buildManifestExcerptByTitle() {
   const map = new Map();
 
   for (const posts of Object.values(POSTS_BY_CATEGORY)) {
     for (const post of posts) {
       if (post.title && post.excerpt) {
-        map.set(post.title.trim(), post.excerpt);
+        map.set(normalizeTitleKey(post.title), post.excerpt);
       }
     }
   }
@@ -125,7 +133,7 @@ async function enrichListExcerpts(root) {
         text = (rssByPath.get(normalizePostPath(href)) || '').slice(0, LIST_EXCERPT_MAX_CHARS);
       }
       if (!text && title) {
-        text = (manifestByTitle.get(title) || '').slice(0, LIST_EXCERPT_MAX_CHARS);
+        text = (manifestByTitle.get(normalizeTitleKey(title)) || '').slice(0, LIST_EXCERPT_MAX_CHARS);
       }
     }
 
