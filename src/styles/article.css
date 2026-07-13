@@ -345,7 +345,9 @@
   color: var(--accent-color);
 }
 
-.article-content code:not([class*='language-']) {
+/* Inline code only — never match `pre code` (that caused a text-width chip
+   inside the full-width pre box). */
+.article-content :not(pre) > code:not([class*='language-']) {
   padding: 0.15rem 0.45rem;
   border-radius: 0.25rem;
   background: rgba(255, 255, 255, 0.08);
@@ -355,6 +357,10 @@
 }
 
 .article-content pre {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   margin: 1.5rem 0;
   padding: 1rem 1.15rem;
   border-radius: 0.6rem;
@@ -363,14 +369,19 @@
   background: #161616;
 }
 
-/* Prism sets background on inline `code`, which paints a per-line chip
-   only as wide as each line's text. Force a single block surface instead. */
+/* One surface only: kill nested text-width border/background on inner code. */
 .article-content pre code,
 .article-content pre[class*='language-'] code,
 .article-content code[class*='language-'] {
   display: block;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
   padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   background: transparent;
   color: inherit;
   text-shadow: none;
@@ -613,7 +624,7 @@
   color: var(--accent-color);
 }
 
-#tt-body-page .article-content code:not([class*='language-']):not(pre code) {
+#tt-body-page .article-content :not(pre) > code:not([class*='language-']) {
   padding: 0.15rem 0.45rem;
   border-radius: 0.25rem;
   background: rgba(255, 255, 255, 0.08);
@@ -622,9 +633,17 @@
   font-size: 0.88em;
 }
 
+/* Outer box only — full content width. Do not shrink to text. */
 #tt-body-page .article-content pre,
+#tt-body-page .article-content pre[data-ke-type='codeblock'],
 #tt-body-page .article-content pre[class*='language-'],
-#tt-body-page .article-content .hljs {
+#tt-body-page .article-content .hljs,
+#tt-body-page .article-content .contents_style pre,
+#tt-body-page .article-content .tt_article_useless_p_margin pre {
+  display: block;
+  width: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
   margin: 1.5rem 0;
   padding: 1rem 1.15rem;
   border-radius: 0.6rem;
@@ -634,14 +653,34 @@
   color: #e5e7eb;
 }
 
-#tt-body-page .article-content pre code,
-#tt-body-page .article-content pre[class*='language-'] code,
-#tt-body-page .article-content code[class*='language-'] {
-  display: block;
-  width: 100%;
+/* If Tistory wraps with an extra div, strip that shell so only `pre` shows a box. */
+#tt-body-page .article-content div[data-ke-type='codeblock'] {
+  margin: 0;
   padding: 0;
-  background: transparent;
-  color: inherit;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Inner `code` must not draw a second text-sized box. */
+#tt-body-page .article-content pre code,
+#tt-body-page .article-content pre[data-ke-type='codeblock'] code,
+#tt-body-page .article-content pre[class*='language-'] code,
+#tt-body-page .article-content code[class*='language-'],
+#tt-body-page .article-content .contents_style pre code,
+#tt-body-page .article-content .tt_article_useless_p_margin pre code {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: inherit !important;
   text-shadow: none;
   font-size: 0.88rem;
   line-height: 1.6;
