@@ -1,61 +1,104 @@
-# Bulldog's House
+# 🐶 Bulldog's House
 
-Tistory-style Notion dashboard skin for [GitHub Pages](https://Hyeonseok93.github.io/) and Tistory.
+<p align="center">
+  <a href="https://hyeonseok93.github.io/"><img src="assets/readme_badges/github-pages.png" alt="GitHub Pages" height="40" /></a>
+  &nbsp;
+  <a href="https://bulldog93.tistory.com/"><img src="assets/readme_badges/tistory.png" alt="Tistory" height="40" /></a>
+</p>
 
-## Quick start
+<p align="center">
+  <img src="assets/confidently.gif" alt="Bulldog Confident" width="420" />
+</p>
 
-```bash
-npm install
-npm run dev
+<p align="center">
+  <a href="https://hyeonseok93.github.io/">https://hyeonseok93.github.io/</a>
+  ·
+  <a href="https://bulldog93.tistory.com/">https://bulldog93.tistory.com/</a>
+</p>
+
+<p align="center">
+  나만의 블로그 스킨을 만들고, GitHub Pages와 티스토리에 배포하기 위한 저장소입니다.<br />
+  소스는 하나고, GitHub Pages는 백업 블로그 · 티스토리는 메인 블로그로 같은 구조가 올라갑니다.
+</p>
+
+<p align="center">
+  <strong>✨ 들어오셔서 확인해보세요!!! ✨</strong>
+</p>
+
+## 실행/빌드 명령어
+
+| 명령어 | 용도 |
+|--------|------|
+| `npm install` | 의존성 설치 |
+| `npm run dev` | 로컬 개발 (Vite HMR) |
+| `npm run build:gh-pages` | 배포용 빌드 → `dist/gh-pages/` |
+| `npm run build:tistory` | 티스토리 스킨 → `dist/tistory/` |
+
+## 📂 프로젝트 구조 (Project Folder Structure)
+
+```text
+Hyeonseok93.github.io/
+┣━━ 📂 assets/                        # 정적 에셋 (이미지/뱃지 등)
+┃   ┗━━ 📂 readme_badges/             # README 뱃지 PNG
+┣━━ 📂 content/
+┃   ┗━━ 📂 posts/                     # 글 원본 (category/slug/index.md)
+┣━━ 📂 scripts/                       # 빌드/생성/검증 스크립트
+┃   ┣━━ 📄 build-posts.js             # 글 HTML + manifest 생성
+┃   ┣━━ 📄 generate-sources.js        # CategoryTree · Article 셸 생성
+┃   ┣━━ 📄 template-engine.js         # 레이아웃 컴파일 엔진
+┃   ┗━━ 📄 validate-gh-pages.js       # gh-pages 결과 검증
+┣━━ 📂 src/                           # 대시보드/글 UI 소스
+┃   ┣━━ 📂 components/                # HTML 컴포넌트
+┃   ┣━━ 📂 features/                  # 기능별 모듈
+┃   ┣━━ 📂 styles/                    # 스타일 조각
+┃   ┣━━ 📂 templates/                 # 템플릿 원본
+┃   ┗━━ 📂 data/
+┃       ┗━━ 📄 categories.json        # 카테고리 라벨/트리
+┣━━ 📂 public/
+┃   ┗━━ 📂 posts/                     # 생성된 글 HTML (gitignore)
+┣━━ 📂 dist/                          # 빌드 산출물
+┃   ┣━━ 📂 gh-pages/                  # GitHub Pages 배포 산출물
+┃   ┗━━ 📂 tistory/                   # 티스토리 스킨 산출물
+┗━━ 📄 build-html.js                  # 타깃별 HTML 출력 (index/dist)
 ```
 
-Open `http://localhost:5173/` for the dashboard. Article pages: `http://localhost:5173/posts/{slug}/`.
+## 📄 글 작성
 
-## Commands
+아래 순서대로 작성하면 됩니다.
 
-| Command | When to use |
-|---------|-------------|
-| `npm run dev` | Local development (Vite HMR) |
-| `npm run build:gh-pages` | Production build → `dist/gh-pages/` |
-| `npm run build:tistory` | Tistory skin → `dist/tistory/` |
+### 1) 폴더 구조
 
-### Do not run `vite` alone
-
-Always use `npm run dev` or `npm run build:gh-pages`. Generated files (`index.html`, `public/posts/`, `posts-manifest.js`) must be built first.
-
-## Project layout
-
-```
-content/posts/              Markdown source (category/slug/index.md)
-src/data/categories.json    Category labels, descriptions, sidebar tree
-src/templates/article-shell.source.html  Shared article layout source
-scripts/generate-sources.js Generates CategoryTree + article shells
-src/                        HTML components, JS, styles
-build-html.js               Compiles layout → index.html / dist/
-public/posts/               Generated article HTML (gitignored)
-dist/gh-pages/              GitHub Pages deploy artifact
-```
-
-## Writing posts
-
-글은 **카테고리 → 포스트 폴더** 구조로 둡니다.
-
-```
+```text
 content/posts/
-├── personal-web/              # 카테고리 ID
-│   └── tmux-guide/            # 포스트 slug (폴더명)
-│       ├── index.md           # 본문
-│       ├── thumbnail.png      # 목록/상단 썸네일 (선택)
-│       └── images/            # 본문 이미지 (선택)
-│           └── screenshot.png
-└── ...
+┣━━ 📂 category-name/                  # 카테고리 ID (categories.json과 일치)
+┃   ┗━━ 📂 post-slug/                  # 포스트 slug (URL 폴더명)
+┃       ┣━━ 📄 index.md                # 본문 (필수)
+┃       ┣━━ 🖼️ thumbnail.png           # 목록/상단 썸네일 (선택)
+┃       ┗━━ 📂 images/                 # 본문 이미지 (선택)
+┃           ┗━━ 🖼️ screenshot.png
+┗━━ ...
 ```
 
-- **카테고리 폴더명** = `src/data/categories.json` ID
-- **포스트 폴더명** = URL slug (`/posts/tmux-guide/`)
-- frontmatter `category` / `slug`는 생략 가능 (폴더가 우선)
+- **카테고리 폴더명** → `src/data/categories.json`의 ID와 동일
+- **포스트 폴더명** → URL slug (`/posts/post-slug/`)
 
-### frontmatter 예시
+### 2) 작성 순서
+
+1. `content/posts/{category}/{slug}/` 폴더 생성
+2. `index.md` 작성 + 필요하면 `thumbnail.png`, `images/` 추가
+3. `npm run dev` 또는 `npm run build:gh-pages`로 확인 후 push
+
+> [!TIP]
+> 빌드/개발 명령을 실행하면 `public/posts/`, `src/data/posts-manifest.js`가 자동 생성되며(gitignore 대상),  
+> 글 미리보기는 `npm run dev` 실행 후 `http://localhost:5173/posts/{slug}/`에서 확인할 수 있습니다.
+
+> [!NOTE]
+> 티스토리 포스팅은 `index.md` 본문 내용을 그대로 복사해 붙여넣고,  
+> 이미지는 티스토리 에디터에서 별도로 업로드해 넣으면 됩니다.
+
+### 3) frontmatter(메타데이터) 예시
+
+`index.md` 상단에 아래처럼 메타데이터를 넣어주면 됩니다.
 
 ```markdown
 ---
@@ -64,190 +107,72 @@ date: 2026-07-07
 tags: [tag1, tag2]
 thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 ---
-
-본문 첫 부분이 카테고리 목록 요약(최대 3줄)으로 자동 표시됩니다.
 ```
 
-### 빌드
+본문 첫 부분은 카테고리 목록 요약(최대 3줄)으로 자동 표시됩니다.
 
-```bash
-npm run dev              # 로컬 미리보기
-npm run build:gh-pages   # 배포 산출물
-```
+- frontmatter의 `category` / `slug`는 생략 가능 (폴더 구조 우선)
 
-`public/posts/`와 `src/data/posts-manifest.js`는 **자동 생성**(gitignore)입니다.
+> [!IMPORTANT]
+> 티스토리에 업로드할 때는 frontmatter(`---` 블록)를 제거하고 본문만 붙여넣으세요.  
+> 태그도 frontmatter의 `tags`를 그대로 쓰지 말고, 티스토리 에디터에서 별도로 입력해야 합니다.
 
-글 페이지 미리보기: `npm run dev` 후 `http://localhost:5173/posts/{slug}/`
+## 🚀 배포 (GitHub Pages + Tistory)
 
-### 새 글 추가
+`main` 브랜치에 push하면 GitHub Actions가 `npm run build:all`을 실행합니다.
 
-1. `content/posts/{category}/{slug}/` 폴더 생성
-2. `index.md` + 필요하면 `thumbnail.png`, `images/` 추가
-3. `npm run dev` 또는 `npm run build:gh-pages` 후 push
+### 자동으로 되는 것
 
-## Deploy (GitHub Pages)
+- **GitHub Pages**: `dist/gh-pages/`가 자동 배포됩니다.
+- **티스토리 스킨 빌드**: `dist/tistory/`가 빌드되고, `tistory-skin` 아티팩트가 생성됩니다.
 
-Push to `main` — GitHub Actions runs `npm run build:all` and:
+### 직접 해야 하는 것 (티스토리 업로드)
 
-1. **GitHub Pages** — deploys `dist/gh-pages/` automatically
-2. **Tistory skin** — builds `dist/tistory/` and uploads `tistory-skin.zip` as a workflow artifact
+1. 저장소 **Actions** → 최신 실행 → **Artifacts** → `tistory-skin` 다운로드
+2. 티스토리 관리자 **꾸미기 → 스킨 → 스킨 등록**으로 이동
+3. 다운로드한 zip을 풀고, 안의 파일들을 티스토리 스킨 등록 화면에 업로드
+   - 루트 파일: `index.xml`, `skin.html`, `style.css`, `preview.gif`
+   - `images/` 폴더: 내부 전체 파일 (`images/tistory.js` 포함)
+4. 저장 후 스킨 이름 입력 → **보관함**에서 적용
 
-Download the Tistory skin: repo **Actions** tab → latest run → **Artifacts** → `tistory-skin` (folder contents).
+> [!TIP]
+> 업로드 파일 목록은 로컬에서 `npm run tistory:upload-list`로 확인할 수 있습니다.
 
-Upload in Tistory admin (**꾸미기 → 스킨 → 스킨 등록**). Do **not** zip; add files individually:
+GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
 
-1. **1st batch (root):** `index.xml`, `skin.html`, `style.css`, `preview.gif`
-2. **2nd batch:** all files under `images/` (including `images/tistory.js`)
-3. Click **저장**, enter a skin name → appears in **보관함**
+## 🧭 빌드 흐름 이해하기
 
-Run `npm run tistory:upload-list` locally for the full checklist.
+이 프로젝트는 **글 원본(Markdown) + 템플릿**을 합쳐서,  
+GitHub Pages용 결과물과 Tistory 스킨 결과물을 각각 만들어냅니다.
 
-> Tistory has no official upload API (Open API ended 2024). CI builds the skin; you upload files manually.
+1. **원본 준비**
+   - 글 원본: `content/posts/`
+   - 카테고리 구조: `src/data/categories.json`
+   - 공통 레이아웃: `src/templates/article-shell.source.html`, `src/layout.html`
+2. **생성 단계**
+   - `scripts/generate-sources.js`가 카테고리/아티클 관련 생성 파일을 갱신
+   - `scripts/build-posts.js`가 글 HTML과 manifest를 생성
+3. **출력 단계**
+   - GitHub Pages 출력: `dist/gh-pages/`
+   - Tistory 출력: `dist/tistory/`
 
-Site settings: **Source → GitHub Actions**.
+## 📦 자동 생성 파일 (수정 금지)
 
-## Build targets
+아래 경로는 빌드 시 자동으로 만들어지므로 직접 편집하지 않는 것을 권장합니다.
 
-| Target | Output | Notes |
-|--------|--------|-------|
-| `preview` | Root `index.html` | Local dev shell (`npm run dev`) |
-| `gh-pages` | `dist/gh-pages/` | Production site |
-| `tistory` | `dist/tistory/skin.html` | Tistory skin upload |
+- `public/posts/` (글 HTML 생성 결과)
+- `src/data/posts-manifest.js` (글 목록 manifest)
+- `dist/` (최종 배포 번들)
 
-Post pages always use **gh-pages asset paths** (`../../assets/main.js`). Vite dev middleware maps them to `/src/` sources.
+> [!NOTE]
+> 생성 산출물은 재빌드 시 덮어써질 수 있어, 원본 파일(`content/`, `src/templates/`, `src/data/`)을 수정하는 방식이 안전합니다.
 
-| Target | Script paths | Images | Used by |
-|--------|--------------|--------|---------|
-| `preview` | `./src/main.js` | `./src/assets/` | `npm run dev` |
-| `gh-pages` | `./assets/main.js` | `./images/` | `npm run build:gh-pages` |
+## 🔧 어디를 수정해야 하나?
 
-Post pages under `public/posts/` always use gh-pages paths. Vite dev middleware rewrites `/assets/` and `/images/` to source files.
-
-Generated HTML includes `data-build-target="gh-pages"` on `<body>`. Preview rebuilds posts when the stamp is missing or stale.
-
-## Build scripts
-
-| Script | Purpose |
-|--------|---------|
-| `generate-sources.js` | `categories.json` + `article-shell.source.html` → CategoryTree / Article shells |
-| `template-engine.js` | HTML compile helpers (`@include`, block replace, layout targets) |
-| `build-posts.js` | `content/posts/{category}/{slug}/` → manifest + `public/posts/{slug}/` |
-
-### CSS note
-
-Component styles live in `src/styles/*.css` and are imported from `src/style.css`.
-Partials must stay **before** `@tailwind` (PostCSS `@import` order rule).
-
-### Generated artifacts (gitignored)
-
-| Path | Generator | Notes |
-|------|-----------|-------|
-| `index.html` | `build-html.js` | Vite entry / local preview |
-| `public/posts/` | `build-posts.js` | Per-post HTML + copied assets |
-| `src/data/posts-manifest.js` | `build-posts.js` | `POSTS_BY_CATEGORY` |
-| `dist/` | Vite + `build-html.js` | Production bundles |
-
-**Fresh clone:** `npm install` then `npm run dev`.
-
-### Source of truth
-
-| Edit this | Generates |
-|-----------|-----------|
-| `src/data/categories.json` (`tree` + `labels`) | `src/components/CategoryTree.html` |
-| `src/templates/article-shell.source.html` | `article-page.html`, `Article.html` |
-
-Run manually: `npm run generate:sources` (also runs automatically before `build-posts` / `build-html`).
-
-### npm script map
-
-| Command | What it does |
-|---------|----------------|
-| `generate:sources` | Regenerate CategoryTree + article shells |
-| `build:posts` | Markdown → manifest + `public/posts/` (gh-pages paths) |
-| `build:html:preview` | Local dashboard shell → root `index.html` |
-| `build:html:vite-index` | Vite entry HTML (used by `build:assets`) |
-| `build:html:gh-pages` | Final site → `dist/gh-pages/index.html` |
-| `build:html:tistory` | Tistory skin → `dist/tistory/skin.html` |
-| `build:assets` | `vite-index` + `vite build` |
-| `build:gh-pages` | posts → assets → gh-pages HTML → validate |
-| `validate:gh-pages` | Assert GH output has no Tistory leaks / correct shells |
-| `dev` | posts → preview HTML → vite |
-
-### Shared utilities
-
-- `src/utils/escape-html.cjs` / `.js` — HTML escaping
-- `src/utils/sanitize-rich-html.cjs` / `.js` — rich HTML sanitization (Node + browser)
-- `src/utils/rich-html-policy.cjs` / `.js` — shared allowlists
-
-### Article templates
-
-| File | Role |
-|------|------|
-| `src/templates/article-shell.source.html` | **Edit this** — shared article layout |
-| `src/templates/article-page.html` | Generated Mustache shell for `build-posts.js` |
-| `src/components/Article.html` | Generated Tistory `[##_…_##]` shell |
-
-## Layout & page model
-
-One `src/layout.html` compiles per target. Tistory uses **three page regions** plus official group tags:
-
-| Region | HTML | Tistory tags | When it appears |
-|--------|------|--------------|-----------------|
-| Home dashboard | `#home-dashboard` | *(none — static section)* | Home SPA only (`#tt-body-index`) |
-| Posts | `#article-section` | `<s_article_rep>` → `<s_index_article_rep>` / `<s_permalink_article_rep>` | Index summaries vs permalink body (structural) |
-| Category list | `#list-section` | `<s_list>` | Category / tag / archive |
-
-**Introduce Me / About Me live in `#home-dashboard`, not in `<s_list>`.**  
-`<s_list>` is only for category/tag/archive post lists ([Tistory list docs](https://tistory.github.io/document-tistory-skin/list/list.html)).
-
-**Permalink post body is inside `<s_permalink_article_rep>`** — without it, the full article template renders on the home page too ([Tistory post docs](https://tistory.github.io/document-tistory-skin/contents/post.html)). That was the root cause of Introduce Me overlapping with post content.
-
-`src/layout.html` structure:
-
-```
-sidebar (always)
-#home-dashboard          ← Introduce Me / What I Do SPA (outside s_list)
-#article-section
-  <s_article_rep>
-    <s_index_article_rep>   ← home post summaries (What I Do)
-    <s_permalink_article_rep> ← permalink body only
-#list-section
-  <s_list>                ← category/tag/archive native list + paging
-```
-
-- **Permalink vs index** — structural via `s_permalink_article_rep` / `s_index_article_rep` (Tistory official).
-- **Home vs category** — `#home-dashboard` vs `#list-section` selected by `body#tt-body-*` (Tistory standard section routing).
-- **GH Pages compile** — `template-engine.js` removes whole `<section>` blocks per output file (no overlapping DOM).
-
-GitHub Pages mirrors this at build time (`scripts/template-engine.js`):
-
-- **Home** — keeps `#home-dashboard`, removes `#article-section` and `#list-section`
-- **Post** — keeps `#article-section` only, removes `#home-dashboard` and `#list-section`
-
-Section visibility on Tistory (`#tt-body-index`, `#tt-body-page`, `#tt-body-category`, …) follows the [standard skin pattern](https://tistory.github.io/document-tistory-skin/common/basic.html): each `body` id shows one primary region. Index vs permalink inside `s_article_rep` is handled by Tistory tags, not CSS.
-
-## Home SPA routing
-
-Dashboard panels share one home URL and use **hash routes** (not separate HTML pages):
-
-| Hash | Panel |
-|------|-------|
-| `#introduce-me` | Introduce Me (default) |
-| `#what-i-do` | What I Do |
-| `#category-{id}` | Category posts (`-p2` for page 2) |
-
-Implementation: `src/features/category-posts/spa-router.js` (page detection, hash build/parse, Tistory native URL redirects). UI state: `dashboard-nav.js`. Category data: `category-context.js`.
-
-### Why hash URLs on Tistory?
-
-Tistory cannot serve custom paths (e.g. `/introduce-me`) from the skin. **Introduce Me / What I Do** stay on the home hash SPA (`/#introduce-me`, `/#what-i-do`).
-
-**Category posts on Tistory** use native list URLs (`/category/...?page=N`) with `<s_list_rep>` + `<s_paging>` — not the GitHub Pages JS pager. Sidebar category links go to the real Tistory category page.
-
-GitHub Pages keeps hash SPA + `category-posts-pagination` because there is no Tistory server. Post permalinks remain real paths: `/posts/{slug}/`.
-
-## Security
-
-- Markdown → HTML is sanitized at build time (`sanitize-html`)
-- Runtime `innerHTML` uses `escapeHtml` / `DOMPurify` where needed
-- Shared helpers: `src/utils/escape-html`, `sanitize-rich-html`, `rich-html-policy`
+| 바꾸고 싶은 내용 | 수정할 파일 |
+|------------------|-------------|
+| 카테고리 트리/이름 | `src/data/categories.json` |
+| 글 본문/썸네일/이미지 | `content/posts/{category}/{slug}/` |
+| 글 페이지 공통 구조 | `src/templates/article-shell.source.html` |
+| 홈/사이드바/레이아웃 구조 | `src/layout.html`, `src/components/` |
+| 빌드 동작 자체 | `scripts/template-engine.js`, `scripts/build-posts.js` |
