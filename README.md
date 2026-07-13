@@ -25,12 +25,30 @@
 ## 🛠 기술 스택
 
 <p align="center">
-  <img src="assets/badges/tech/html5.png" alt="HTML5" height="28" />
-  <img src="assets/badges/tech/css3.png" alt="CSS3" height="28" />
-  <img src="assets/badges/tech/javascript.png" alt="JavaScript" height="28" />
-  <img src="assets/badges/tech/vite.png" alt="Vite" height="28" />
-  <img src="assets/badges/tech/tailwindcss.png" alt="Tailwind CSS" height="28" />
-  <img src="assets/badges/tech/githubactions.png" alt="GitHub Actions" height="28" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/html5.png" />
+    <img src="assets/badges/light/html5.png" alt="HTML5" height="28" />
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/css3.png" />
+    <img src="assets/badges/light/css3.png" alt="CSS3" height="28" />
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/javascript.png" />
+    <img src="assets/badges/light/javascript.png" alt="JavaScript" height="28" />
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/vite.png" />
+    <img src="assets/badges/light/vite.png" alt="Vite" height="28" />
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/tailwindcss.png" />
+    <img src="assets/badges/light/tailwindcss.png" alt="Tailwind CSS" height="28" />
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/githubactions.png" />
+    <img src="assets/badges/light/githubactions.png" alt="GitHub Actions" height="28" />
+  </picture>
 </p>
 
 ## 💻 실행/빌드 명령어
@@ -67,7 +85,8 @@
 ```text
 Hyeonseok93.github.io/
 ┣━━ 📂 assets/                        # 정적 에셋 (이미지/뱃지 등)
-┃   ┣━━ 📂 badges/tech/               # README 기술 스택 뱃지
+┃   ┣━━ 📂 badges/dark/               # README 기술 스택 뱃지 (다크)
+┃   ┣━━ 📂 badges/light/              # README 기술 스택 뱃지 (라이트)
 ┃   ┗━━ 📂 readme_badges/             # README 플랫폼 뱃지 PNG
 ┣━━ 📂 content/
 ┃   ┗━━ 📂 posts/                     # 글 원본 (category/slug/index.md)
