@@ -37,18 +37,25 @@ function normalizeTitleKey(title) {
     .trim();
 }
 
-function buildManifestExcerptByTitle() {
-  const map = new Map();
+function extractDayKey(title) {
+  const match = String(title || '').match(/\bDay\s*(\d+)\b/i);
+  return match ? `day-${match[1]}` : '';
+}
+
+function buildManifestExcerptMaps() {
+  const byTitle = new Map();
+  const byDay = new Map();
 
   for (const posts of Object.values(POSTS_BY_CATEGORY)) {
     for (const post of posts) {
-      if (post.title && post.excerpt) {
-        map.set(normalizeTitleKey(post.title), post.excerpt);
-      }
+      if (!post.title || !post.excerpt) continue;
+      byTitle.set(normalizeTitleKey(post.title), post.excerpt);
+      const dayKey = extractDayKey(post.title);
+      if (dayKey && !byDay.has(dayKey)) byDay.set(dayKey, post.excerpt);
     }
   }
 
-  return map;
+  return { byTitle, byDay };
 }
 
 async function fetchRssExcerptMap() {
@@ -108,7 +115,7 @@ function promoteNewPostBadges(root) {
 }
 
 async function enrichListExcerpts(root) {
-  const manifestByTitle = buildManifestExcerptByTitle();
+  const { byTitle: manifestByTitle, byDay: manifestByDay } = buildManifestExcerptMaps();
   const excerptEls = [...root.querySelectorAll('[data-tistory-list-excerpt]')];
   const needsFallback = excerptEls.some((el) => !htmlToPlainText(el.innerHTML));
 
@@ -133,7 +140,11 @@ async function enrichListExcerpts(root) {
         text = (rssByPath.get(normalizePostPath(href)) || '').slice(0, LIST_EXCERPT_MAX_CHARS);
       }
       if (!text && title) {
-        text = (manifestByTitle.get(normalizeTitleKey(title)) || '').slice(0, LIST_EXCERPT_MAX_CHARS);
+        const key = normalizeTitleKey(title);
+        text = (manifestByTitle.get(key) || manifestByDay.get(extractDayKey(title)) || '').slice(
+          0,
+          LIST_EXCERPT_MAX_CHARS,
+        );
       }
     }
 
