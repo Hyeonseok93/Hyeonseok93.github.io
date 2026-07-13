@@ -355,9 +355,13 @@
 }
 
 .article-content pre {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
   margin: 1.5rem 0;
-  padding: 1rem 1.15rem;
-  border-radius: 0.6rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.5rem;
   overflow: auto;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #161616;
@@ -624,10 +628,17 @@
 
 #tt-body-page .article-content pre,
 #tt-body-page .article-content pre[class*='language-'],
-#tt-body-page .article-content .hljs {
+#tt-body-page .article-content .hljs,
+#tt-body-page .article-content div[data-ke-type='codeblock'],
+#tt-body-page .article-content .contents_style pre,
+#tt-body-page .article-content .tt_article_useless_p_margin pre {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
   margin: 1.5rem 0;
-  padding: 1rem 1.15rem;
-  border-radius: 0.6rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.5rem;
   overflow: auto;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #161616;
