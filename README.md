@@ -32,6 +32,8 @@
   <strong>✨ 들어오셔서 확인해보세요!!! ✨</strong>
 </p>
 
+<br />
+
 ## 🛠 기술 스택
 
 <p align="center">
@@ -60,6 +62,8 @@
     <img src="assets/badges/light/githubactions.png" alt="GitHub Actions" height="28" />
   </picture>
 </p>
+
+<br />
 
 ## 💻 실행/빌드 명령어
 
@@ -90,6 +94,8 @@
   </tbody>
 </table>
 
+<br />
+
 ## 📂 프로젝트 구조 (Project Folder Structure)
 
 ```text
@@ -119,6 +125,8 @@ Hyeonseok93.github.io/
 ┃   ┗━━ 📂 tistory/                   # 티스토리 스킨 산출물
 ┗━━ 📄 build-html.js                  # 타깃별 HTML 출력 (index/dist)
 ```
+
+<br />
 
 ## 📄 글 작성
 
@@ -171,6 +179,8 @@ thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 > 티스토리에 업로드할 때는 frontmatter(`---` 블록)를 제거하고 본문만 붙여넣으세요.  
 > 태그도 frontmatter의 `tags`를 그대로 쓰지 말고, 티스토리 에디터에서 별도로 입력해야 합니다.
 
+<br />
+
 ## 🚀 배포 (GitHub Pages + Tistory)
 
 `main` 브랜치에 push하면 GitHub Actions가 `npm run build:all`을 실행합니다.
@@ -194,6 +204,8 @@ thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 
 GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
 
+<br />
+
 ## 🧭 빌드 흐름 이해하기
 
 이 프로젝트는 **글 원본(Markdown) + 템플릿**을 합쳐 GitHub Pages용 결과물과 Tistory 스킨 결과물을 각각 만들어냅니다.
@@ -208,6 +220,8 @@ GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
 3. **출력 단계**
    - GitHub Pages 출력: `dist/gh-pages/`
    - Tistory 출력: `dist/tistory/`
+
+<br />
 
 ## 🔧 어디를 수정해야 하나?
 
