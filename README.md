@@ -84,7 +84,7 @@
 
 <br />
 
-## 📂 프로젝트 구조 (Project Folder Structure)
+## 📂 Project Structure
 
 ```text
 Hyeonseok93.github.io/
@@ -118,7 +118,7 @@ Hyeonseok93.github.io/
 
 <br />
 
-## 📄 글 작성
+## 📄 Writing Posts
 
 아래 순서대로 작성하면 됩니다.
 
@@ -174,7 +174,7 @@ thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 
 <br />
 
-## 🚀 배포 (GitHub Pages + Tistory)
+## 🚀 Deploy (GitHub Pages + Tistory)
 
 `main` 브랜치에 push하면 GitHub Actions가 `npm run build:all`을 실행합니다.
 
@@ -201,7 +201,7 @@ GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
 
 <br />
 
-## 🧭 빌드 흐름 이해하기
+## 🧭 Build Pipeline
 
 이 프로젝트는 **글 원본(Markdown) + 템플릿**을 합쳐 GitHub Pages용 결과물과 Tistory 스킨 결과물을 각각 만들어냅니다.
 
@@ -220,7 +220,7 @@ GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
 
 <br />
 
-## 🔧 어디를 수정해야 하나?
+## 🔧 Where to Edit
 
 <table align="center">
   <thead>
