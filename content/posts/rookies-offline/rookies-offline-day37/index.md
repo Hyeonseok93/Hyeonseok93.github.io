@@ -3,7 +3,7 @@ title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 37 — Play
 date: 2026-07-10
 tags:
   - KDT
-  - "SK Rookie"
+  - "SK Rookies"
   - "SK shieldus"
   - "국비지원"
   - "루키즈 개발 5기"
