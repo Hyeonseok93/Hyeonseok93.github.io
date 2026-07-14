@@ -9,7 +9,7 @@
     "build:html:vite-index": "node build-html.js --target=vite-index",
     "build:html:gh-pages": "node build-html.js --target=gh-pages && node scripts/validate-gh-pages.js",
     "build:html:tistory": "node build-html.js --target=tistory && node scripts/validate-tistory-skin.js",
-    "build:assets": "npm run build:html:vite-index && vite build",
+    "build:assets": "npm run build:html:vite-index && vite build && node scripts/prune-legacy-woff.js",
     "build:tistory:js": "vite build --config vite.config.tistory.js",
     "dev": "npm run build:posts && npm run build:html:preview && vite",
     "build:tistory": "npm run build:assets && npm run build:tistory:js && npm run build:html:tistory",

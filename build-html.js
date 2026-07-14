@@ -9,6 +9,7 @@ const {
   copyRecursiveSync,
   readFile,
 } = require('./scripts/template-engine');
+const { pruneLegacyWoff } = require('./scripts/prune-legacy-woff');
 
 const SITE_BUILD_TARGET = 'gh-pages';
 
@@ -177,6 +178,20 @@ function copyTistoryPreviews(outDir) {
   writeTistoryPreviewGif(outDir);
 }
 
+function pruneProjectPngWhenJpgExists(imgDir) {
+  // Keep PNG masters in src/, but don't ship both formats (Tistory 20MB cap).
+  const names = ['mini1', 'mini2', 'mini3', 'final1', 'final2'];
+  for (const name of names) {
+    for (const rel of [`projects/${name}.png`, `${name}.png`]) {
+      const pngPath = path.join(imgDir, rel);
+      const jpgPath = pngPath.replace(/\.png$/i, '.jpg');
+      if (fs.existsSync(pngPath) && fs.existsSync(jpgPath)) {
+        fs.unlinkSync(pngPath);
+      }
+    }
+  }
+}
+
 function compile() {
   const categoryTreeHtml = getGhPagesCategoryTree();
   let htmlContent;
@@ -222,46 +237,55 @@ function compile() {
     copyTistoryPreviews(outDir);
   }
 
-  if (target === 'tistory' || target === 'gh-pages') {
-    const imgDir = path.join(outDir, 'images');
-    copyRecursiveSync(path.join(SRC_DIR, 'assets'), imgDir);
+    if (target === 'tistory' || target === 'gh-pages') {
+      const imgDir = path.join(outDir, 'images');
+      copyRecursiveSync(path.join(SRC_DIR, 'assets'), imgDir);
 
-    if (target === 'gh-pages') {
-      const assetsSrc = path.join(PROJECT_ROOT, 'dist', 'assets');
-      const assetsDest = path.join(outDir, 'assets');
-      copyRecursiveSync(assetsSrc, assetsDest);
+      if (target === 'gh-pages') {
+        const assetsSrc = path.join(PROJECT_ROOT, 'dist', 'assets');
+        const assetsDest = path.join(outDir, 'assets');
+        copyRecursiveSync(assetsSrc, assetsDest);
 
-      const viteImagesSrc = path.join(PROJECT_ROOT, 'dist', 'images');
-      if (fs.existsSync(viteImagesSrc)) {
-        copyRecursiveSync(viteImagesSrc, imgDir);
+        const viteImagesSrc = path.join(PROJECT_ROOT, 'dist', 'images');
+        if (fs.existsSync(viteImagesSrc)) {
+          copyRecursiveSync(viteImagesSrc, imgDir);
+        }
+
+        pruneProjectPngWhenJpgExists(imgDir);
+
+        const postsSrc = path.join(PROJECT_ROOT, 'public', 'posts');
+        const postsDest = path.join(outDir, 'posts');
+        copyRecursiveSync(postsSrc, postsDest);
+
+        fs.writeFileSync(path.join(outDir, '.nojekyll'), '', 'utf8');
+        pruneLegacyWoff(path.join(outDir, 'style.css'), imgDir);
       }
 
-      const postsSrc = path.join(PROJECT_ROOT, 'public', 'posts');
-      const postsDest = path.join(outDir, 'posts');
-      copyRecursiveSync(postsSrc, postsDest);
+      if (target === 'tistory') {
+        // Self-hosted fonts / FA webfonts from the Vite CSS bundle
+        const viteImagesSrc = path.join(PROJECT_ROOT, 'dist', 'images');
+        if (fs.existsSync(viteImagesSrc)) {
+          copyRecursiveSync(viteImagesSrc, imgDir);
+        }
 
-      fs.writeFileSync(path.join(outDir, '.nojekyll'), '', 'utf8');
+        pruneProjectPngWhenJpgExists(imgDir);
+
+        const xmlSrc = path.join(PROJECT_ROOT, 'skin', 'index.xml');
+        const xmlDest = path.join(outDir, 'index.xml');
+        if (fs.existsSync(xmlSrc)) {
+          fs.copyFileSync(xmlSrc, xmlDest);
+        }
+
+        const flattened = flattenTistoryImages(imgDir);
+        if (flattened > 0) {
+          console.log(`Flattened ${flattened} nested image(s) into images/ (Tistory flat paths).`);
+        }
+
+        // Flatten moves projects/*.jpg → images/*.jpg; prune again for any leftover PNG
+        pruneProjectPngWhenJpgExists(imgDir);
+        pruneLegacyWoff(path.join(outDir, 'style.css'), imgDir);
+      }
     }
-
-    if (target === 'tistory') {
-      // Self-hosted fonts / FA webfonts from the Vite CSS bundle
-      const viteImagesSrc = path.join(PROJECT_ROOT, 'dist', 'images');
-      if (fs.existsSync(viteImagesSrc)) {
-        copyRecursiveSync(viteImagesSrc, imgDir);
-      }
-
-      const xmlSrc = path.join(PROJECT_ROOT, 'skin', 'index.xml');
-      const xmlDest = path.join(outDir, 'index.xml');
-      if (fs.existsSync(xmlSrc)) {
-        fs.copyFileSync(xmlSrc, xmlDest);
-      }
-
-      const flattened = flattenTistoryImages(imgDir);
-      if (flattened > 0) {
-        console.log(`Flattened ${flattened} nested image(s) into images/ (Tistory flat paths).`);
-      }
-    }
-  }
 }
 
 compile();
