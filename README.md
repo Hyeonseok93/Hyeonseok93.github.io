@@ -22,7 +22,7 @@
 
 <br />
 
-## 🛠 기술 스택
+## 🛠 Built With
 
 <p align="center">
   <picture>
@@ -53,7 +53,7 @@
 
 <br />
 
-## 💻 실행/빌드 명령어
+## 💻 Run & Build Commands
 
 <table align="center">
   <thead>
