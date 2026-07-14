@@ -193,6 +193,12 @@ function compileLayout(options = {}) {
       './src/assets/badges/dark/': './images/',
       './src/assets/badges/': './images/',
       './src/assets/': './images/',
+      // Project cards: GH Pages paths → published Tistory permalinks
+      './posts/rookies-showcase-mini1/': 'https://bulldog93.tistory.com/45',
+      './posts/rookies-showcase-mini2/': 'https://bulldog93.tistory.com/46',
+      './posts/rookies-showcase-mini3/': 'https://bulldog93.tistory.com/47',
+      './posts/rookies-showcase-final1/': 'https://bulldog93.tistory.com/48',
+      './posts/rookies-showcase-final2/': 'https://bulldog93.tistory.com/49',
     });
     html = stripTistoryRegions(html);
     return html;
