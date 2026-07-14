@@ -1,6 +1,6 @@
 ---
 title: "[Project] SK 쉴더스 루키즈 5기 미니 프로젝트 3차 - MACTA"
-date: 2026-04-01
+date: 2026-05-19
 tags:
   - KDT
   - "SK Rookies"

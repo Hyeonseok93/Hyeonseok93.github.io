@@ -1,6 +1,6 @@
 ---
 title: "[Project] SK 쉴더스 루키즈 5기 미니 프로젝트 2차 - MATE"
-date: 2026-03-15
+date: 2026-04-09
 tags:
   - KDT
   - "SK Rookies"
