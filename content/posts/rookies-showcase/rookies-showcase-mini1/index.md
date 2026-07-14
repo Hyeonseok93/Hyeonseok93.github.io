@@ -1,5 +1,5 @@
 ---
-title: "SK 쉴더스 루키즈 5기 미니 프로젝트 1차 - CVS-EVENT-COMPARATOR"
+title: "[Project] SK 쉴더스 루키즈 5기 미니 프로젝트 1차 - CVS-EVENT-COMPARATOR"
 date: 2026-03-01
 tags:
   - KDT

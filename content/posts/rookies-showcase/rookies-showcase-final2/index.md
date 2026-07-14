@@ -1,5 +1,5 @@
 ---
-title: "SK 쉴더스 루키즈 5기 최종 프로젝트 - ARGUS"
+title: "[Project] SK 쉴더스 루키즈 5기 최종 프로젝트 - ARGUS"
 date: 2026-06-01
 tags:
   - KDT

@@ -1,5 +1,5 @@
 ---
-title: "SK 쉴더스 루키즈 5기 미니 프로젝트 2차 - MATE"
+title: "[Project] SK 쉴더스 루키즈 5기 미니 프로젝트 2차 - MATE"
 date: 2026-03-15
 tags:
   - KDT
