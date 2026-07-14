@@ -53,8 +53,34 @@ function removeBlock(html, tagName) {
 }
 
 function removeSectionById(html, sectionId) {
-  const re = new RegExp(`<section id="${sectionId}"[\\s\\S]*?<\\/section>\\s*`, 'g');
-  return html.replace(re, '');
+  const openRe = new RegExp(`<section\\b[^>]*\\bid="${sectionId}"[^>]*>`, 'i');
+  const openMatch = openRe.exec(html);
+  if (!openMatch) return html;
+
+  const start = openMatch.index;
+  let i = start + openMatch[0].length;
+  let depth = 1;
+
+  while (i < html.length && depth > 0) {
+    const nextOpen = html.indexOf('<section', i);
+    const nextClose = html.indexOf('</section>', i);
+    if (nextClose === -1) break;
+
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      depth += 1;
+      i = nextOpen + '<section'.length;
+      continue;
+    }
+
+    depth -= 1;
+    i = nextClose + '</section>'.length;
+  }
+
+  if (depth !== 0) return html;
+
+  let end = i;
+  while (end < html.length && /\s/.test(html[end])) end += 1;
+  return html.slice(0, start) + html.slice(end);
 }
 
 function replaceBlock(html, tagName, content) {
