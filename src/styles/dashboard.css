@@ -266,8 +266,11 @@
   padding: 0.15rem 0 0.5rem 1.55rem;
 }
 .projects-group__body--cards {
-  padding-left: 0.15rem;
-  padding-top: 0.35rem;
+  padding: 0.55rem 0 0.35rem 1.55rem;
+  margin-top: 0.15rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  margin-left: 0.45rem;
+  padding-left: 1.15rem;
 }
 
 .projects-showcase {
@@ -279,10 +282,10 @@
 
 .projects-block__label {
   margin: 0 0 0.9rem;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #e5e7eb;
+  letter-spacing: 0.04em;
+  color: #d1d5db;
 }
 
 .projects-grid {
@@ -370,8 +373,10 @@
     margin-left: 0;
     justify-content: center;
   }
-  .projects-group__body {
-    padding-left: 0.35rem;
+  .projects-group__body,
+  .projects-group__body--cards {
+    margin-left: 0.2rem;
+    padding-left: 0.85rem;
   }
   .projects-grid--mini,
   .projects-grid--final {

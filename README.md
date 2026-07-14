@@ -128,18 +128,19 @@ content/posts/
 ┃   ┗━━ 📂 post-slug/                  # 포스트 slug (URL 폴더명)
 ┃       ┣━━ 📄 index.md                # 본문 (필수)
 ┃       ┣━━ 🖼️ thumbnail.png           # 목록/상단 썸네일 (선택)
-┃       ┗━━ 📂 images/                 # 본문 이미지 (선택)
-┃           ┗━━ 🖼️ screenshot.png
+┃       ┣━━ 🖼️ fig1.png                # 본문 이미지 (선택, 같은 폴더에 배치)
+┃       ┗━━ 🖼️ fig2.png
 ┗━━ ...
 ```
 
 - **카테고리 폴더명** → `src/data/categories.json`의 ID와 동일
 - **포스트 폴더명** → URL slug (`/posts/post-slug/`)
+- **본문 이미지** → 별도 `images/` 폴더 없이 포스트 폴더에 두고, 본문에서는 `./fig1.png`처럼 상대 경로로 참조
 
 ### 2) 작성 순서
 
 1. `content/posts/{category}/{slug}/` 폴더 생성
-2. `index.md` 작성 + 필요하면 `thumbnail.png`, `images/` 추가
+2. `index.md` 작성 + 필요하면 `thumbnail.png`, `fig1.png` 등 같은 폴더에 추가
 3. `npm run dev` 또는 `npm run build:gh-pages`로 확인 후 push
 
 > [!TIP]
