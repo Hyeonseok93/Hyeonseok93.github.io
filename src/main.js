@@ -1,4 +1,5 @@
 import './style.css';
+import './prism-setup.js';
 import './sidebar.js';
 import './chapters.js';
 import './features/category-posts/index.js';

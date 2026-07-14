@@ -2,6 +2,7 @@
  * Tistory skin runtime bundle (IIFE).
  * Modules self-register on DOMContentLoaded — import order matches init dependencies.
  */
+import './prism-setup.js';
 import './sidebar.js';
 import './scroll-header.js';
 import './category-tree.js';

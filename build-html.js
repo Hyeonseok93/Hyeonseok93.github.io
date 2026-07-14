@@ -244,6 +244,12 @@ function compile() {
     }
 
     if (target === 'tistory') {
+      // Self-hosted fonts / FA webfonts from the Vite CSS bundle
+      const viteImagesSrc = path.join(PROJECT_ROOT, 'dist', 'images');
+      if (fs.existsSync(viteImagesSrc)) {
+        copyRecursiveSync(viteImagesSrc, imgDir);
+      }
+
       const xmlSrc = path.join(PROJECT_ROOT, 'skin', 'index.xml');
       const xmlDest = path.join(outDir, 'index.xml');
       if (fs.existsSync(xmlSrc)) {
