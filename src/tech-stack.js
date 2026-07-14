@@ -51,6 +51,7 @@ const TECH_BADGES = [
   { id: 'gemini', category: 'ai', label: 'Gemini' },
   { id: 'antigravity', category: 'ai', label: 'Antigravity' },
   { id: 'cursor', category: 'ai', label: 'Cursor AI' },
+  { id: 'pytorch', category: 'ai', label: 'PyTorch' },
   { id: 'roberta', category: 'ai', label: 'RoBERTa' },
   { id: 'huggingface', category: 'ai', label: 'Hugging Face' },
 ];
