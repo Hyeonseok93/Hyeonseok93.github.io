@@ -1,5 +1,5 @@
 ---
-title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 39 — 아르고스 PDF 결과서와 다운로드"
+title: "[Devlog] SK 쉴더스 루키즈 5기 오프라인 세션 Day 39 — 아르고스 PDF 결과서 생성과 다운로드"
 date: 2026-07-14
 tags:
   - KDT
