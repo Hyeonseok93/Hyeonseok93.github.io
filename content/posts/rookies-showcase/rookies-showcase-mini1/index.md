@@ -1,6 +1,6 @@
 ---
 title: "[Project] SK 쉴더스 루키즈 5기 미니 프로젝트 1차 - CVS-EVENT-COMPARATOR"
-date: 2026-07-14
+date: 2026-02-28
 tags:
   - KDT
   - "SK Rookies"
