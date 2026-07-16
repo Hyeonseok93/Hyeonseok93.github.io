@@ -12,7 +12,6 @@ tags:
   - portfolio
   - presentation
   - responsive
-  - documentation
 thumbnail: thumbnail.png
 ---
 
