@@ -44,9 +44,9 @@ thumbnail: thumbnail.png
 
 로컬에서는 편의를 위해 포트를 호스트에 노출해 두었지만, 실서버에서는 **진단 도구와 관제 화면을 인터넷에 직접 열지 않는 편이 낫습니다.** 악성 업로드·인젝션 페이로드를 실제로 쏘는 도구이기도 해서, Argus EC2 전체를 **Private Subnet**에 두고 ALB만 퍼블릭으로 받는 구조로 잡았습니다.
 
-![Fig.1 Argus AWS Private Subnet 배포 아키텍처](./fig1.png)
-
-*Fig.1 — 퍼블릭 ALB만 외부 요청을 받고, Argus와 진단 대상은 같은 VPC의 Private Subnet에서 통신하는 구조*
+<figure class="article-figure-center article-figure-center--full">
+  <img src="./fig1.png" alt="Argus AWS Private Subnet 배포 아키텍처" loading="lazy" />
+</figure>
 
 **통신 원칙은 간단합니다.**
 
@@ -205,5 +205,3 @@ ZAP·Playwright·PDF 생성은 로그와 이미지 산출물을 빠르게 늘립
 # 9. 마무리
 
 오늘은 PDF·다운로드 기능을 넘어, **Argus를 AWS Private Subnet에 올리기 위한 설계**를 코드 설정과 함께 문서로 남긴 날입니다. localhost·사설 IP·Docker Desktop 전용 호스트명을 AWS 주소체계로 바꾸는 것에서 시작해, ALB 경로 라우팅과 헬스체크, 접근 통제, 배포 후 검증, 로그·롤백 기준까지 확인했습니다.
-
-아직 실제 배포 결과가 아니라 **배포 전 설계와 Runbook** 단계입니다. 다음 주에는 이 기준대로 EC2에 올리고, 예상과 달랐던 설정과 실제 리소스 사용량까지 확인해 후속 글로 남길 예정입니다.
