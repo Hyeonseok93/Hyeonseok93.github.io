@@ -60,17 +60,16 @@ React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JP
 | **Frontend Core** | JavaScript, React/React DOM 19.2.4, Vite 8.0.3 | 컴포넌트 기반 SPA 렌더링·개발 서버·프로덕션 번들 |
 | **Routing & UI** | React Router DOM 7.13.2, MUI/MUI Icons 7.3.9, Emotion 11.14 | 페이지 라우팅·보호 경로·공통 컴포넌트·테마와 CSS-in-JS |
 | **State & HTTP** | Zustand 5.0.12, Axios 1.14.0 | 인증·게시글 전역 상태, API 모듈, JWT 인터셉터와 토큰 재발급 |
-| **Frontend Dev & Quality** | MSW 2.12.14, ESLint 9.39.4, React Hooks/Refresh Plugins | API 모킹 레이어(현재 런타임 비활성), 정적 분석·Hooks 규칙 검사 |
+| **Frontend Dev & Quality** | MSW 2.12.14, Vitest 4, jsdom, Testing Library, ESLint 9.39.4 | 선택형 API 모킹, 유틸·컴포넌트 단위 테스트, 정적 분석·Hooks 규칙 검사 |
 | **Backend Core** | Java 17, Spring Boot 3.5.13, Spring Web MVC, Bean Validation | REST API·서비스 계층·요청값 검증·전역 예외 처리 |
 | **Persistence** | Spring Data JPA, Hibernate ORM 6.6.45, MariaDB JDBC 3.5.7 | 엔티티 매핑·리포지토리·도메인 관계와 운영 데이터 영속화 |
-| **Database Support** | H2 2.3.232, Flyway 11.7.2 | 테스트용 인메모리 DB; Flyway는 의존성만 있으며 개발 환경에서 비활성·마이그레이션 파일 없음 |
+| **Database Support** | H2 2.3.232 | 테스트 프로필의 인메모리 DB로 로컬 MariaDB와 격리된 회귀 테스트 실행 |
 | **Security** | Spring Security, JJWT 0.12.7, BCrypt | Access/Refresh Token 발급·검증, 인증 필터, 비밀번호 해싱, 권한 제어 |
 | **Admin View** | Thymeleaf, Spring Security Form Login | 관리자 로그인·대시보드·회원·프로젝트·감사 로그 서버 렌더링 |
 | **Media** | Cloudinary Java SDK 1.36 | 프로필 이미지 업로드·CDN URL 관리, 로컬 정적 업로드 경로 지원 |
 | **Backend Utilities** | Jackson, Lombok, Servlet Multipart | JSON 직렬화·보일러플레이트 절감·멀티파트 파일 처리 |
 | **Build & Development** | Maven Wrapper 3.9.14, Spring Boot DevTools | 백엔드 빌드·의존성 관리·로컬 개발 편의 기능 |
-| **Monitoring Dependencies** | Spring Boot Actuator, Spring Boot Admin Client 3.5.8 | 의존성만 선언된 상태이며 관리 엔드포인트·Admin 서버 연결 설정은 없음 |
-| **Backend Test** | Spring Boot Test, JUnit 5, AssertJ, H2 | 애플리케이션 컨텍스트와 JPA 엔티티·DTO 매핑 검증 |
+| **Backend Test** | Spring Boot Test, Spring Security Test, JUnit 5, AssertJ, H2 | 컨텍스트·JPA 매핑·권한·JWT·CSRF·삭제/복구 수명주기 회귀 검증 |
 
 프론트는 초기에 **MSW**로 API를 모킹해 백엔드와 병렬로 화면을 붙였고, 연결 후에는 Axios Interceptor가 `401` 시 Refresh로 Access를 갱신한 뒤 원 요청을 재시도합니다.
 
@@ -126,8 +125,8 @@ Application과 ProjectMember를 **일부러 나눈** 이유입니다. 지원 이
 | GET | `/api/auth/check-email` | 이메일 중복 확인 |
 | GET | `/api/auth/check-nickname` | 닉네임 중복 확인 |
 | GET | `/api/auth/check-phone` | 전화번호 중복 확인 |
-| POST | `/api/auth/find-email` | 전화번호로 이메일 찾기 |
-| POST | `/api/auth/reset-password` | 임시 비밀번호 발급 |
+| POST | `/api/auth/find-email` | 계정 복구 안내(전달 채널 연결 전 비활성) |
+| POST | `/api/auth/reset-password` | 비밀번호 복구 안내(전달 채널 연결 전 비활성) |
 | POST | `/api/auth/login` | 로그인 · Access/Refresh 발급 |
 | POST | `/api/auth/logout` | 로그아웃 · Refresh 제거 |
 | POST | `/api/auth/refresh` | Access 재발급 |
@@ -187,7 +186,7 @@ README Key Implementation과 같은 6개 축을, 블로그에서는 **왜 그렇
 
 - **명세 그대로의 모킹 레이어** — `mocks/handlers.js`에 auth·projects·applications·board·comments 전 구간을 33개 핸들러로 깔았습니다. 단순히 고정 JSON을 뱉는 게 아니라, `localStorage`를 가짜 DB(`mock-db`)로 써서 로그인·모집글 CRUD·지원·수락/거절이 **상태를 유지하며** 돌도록 만들었습니다. 덕분에 백엔드 없이도 "지원하면 목록에 뜨고, 수락하면 멤버가 되는" 실제 시나리오를 로컬에서 검증할 수 있었습니다.
 - **응답 규격 선합의** — 모킹부터 설계서 v1.1 공통 포맷(`{ success, data, message, timestamp }`)과 `AUTH_001` 같은 에러 코드를 그대로 흉내 냈습니다. 그래서 실제 API로 붙일 때 화면 로직이 아니라 **네트워크 계층만** 바꾸면 됐습니다.
-- **런타임 스위치** — 실서버 연결 뒤에는 `main.jsx`의 `enableMocking()`을 주석 처리해 모킹을 끄고 실서버로 전환했습니다. 워커 등록 코드만 걷어내면 되도록 진입점에 스위치를 몰아 둔 구조라, 모킹/실서버를 오가는 비용이 거의 없었습니다.
+- **런타임 스위치** — 초기에는 `main.jsx`의 `enableMocking()`을 주석 처리해 모킹을 끄고 실서버로 전환했습니다. 이후 리팩토링에서 이 토글을 `VITE_ENABLE_MSW` 환경 변수로 옮겨, `main.jsx`가 `isMswEnabled`일 때만 워커를 등록하도록 정리했습니다. 이제 코드를 건드리지 않고 환경 변수만으로 모킹/실서버를 오갈 수 있고, 프로덕션에서는 항상 꺼집니다.
 
 ### Axios Interceptor · Silent JWT 갱신
 
@@ -311,7 +310,98 @@ Access Token은 수명이 짧아 자주 만료됩니다. 만료될 때마다 로
 
 대시보드는 **전체 회원·전체 모집글 수**, 최근 가입 회원, 최근 게시글, 활동 로그를 한 화면에 모읍니다. 회원·게시글은 각각 상세 조회와 Soft Delete/복구가 가능하며, 삭제 시 연관 프로젝트·멤버십을 함께 처리하고 작업 이력을 `AdminLog`에 남깁니다. 회원·게시글·활동 로그는 페이징하고, 상단 통합 검색으로 이메일·닉네임·프로젝트 제목·작성자·로그 내용을 찾을 수 있게 했습니다.
 
-# 8. 마무리 소감
+# 8. 미니 이후의 리팩토링 — 기능에서 안전한 구조로
+
+미니 프로젝트 기간에는 모집 → 지원 → 수락 → 팀 게시판이라는 흐름을 완성하는 것이 우선이었습니다. 기능은 돌아갔지만, 프로젝트가 끝난 뒤 전체 코드를 다시 보니 **권한 검증이 빠진 조회 API**, Access/Refresh를 구분하지 않는 JWT, 관리자 삭제와 일반 삭제의 서로 다른 동작, Write/Edit 화면의 복제처럼 데모만으로는 드러나지 않는 문제가 남아 있었습니다.
+
+리팩토링은 **보안·데이터 무결성 → 백엔드 도메인 수명주기 → 프론트 중복 제거 → 테스트·CI** 순서로 진행했습니다. API 경로와 기존 DB 데이터는 최대한 유지하고, 한 번에 갈아엎기보다 문제별 회귀 테스트를 먼저 붙이는 쪽을 택했습니다.
+
+## 지원자 목록은 방장만 볼 수 있어야 한다
+
+지원자 목록에는 닉네임뿐 아니라 지원 동기·포지션·연락처·링크가 들어갑니다. 그런데 기존 `GET /api/applications/projects/{projectId}`는 프로젝트 존재 여부만 검사하고, **현재 사용자가 그 프로젝트의 방장인지 확인하지 않았습니다**. 로그인만 하면 다른 프로젝트의 지원자 정보까지 조회할 수 있는 IDOR(Insecure Direct Object Reference) 문제였습니다.
+
+수락·거절 로직에서 이미 쓰던 소유자 검증을 목록 조회에도 동일하게 적용했습니다. 현재 사용자 ID와 `project.owner.id`가 다르면 `AUTH_ACCESS_DENIED`로 막고, **방장만 지원자 목록을 열 수 있음**을 테스트로 고정했습니다.
+
+## Access Token과 Refresh Token을 구분하다
+
+처음 구현은 Access와 Refresh가 만료 시간만 다르고, JWT 내부 구조는 같았습니다. 인증 필터도 서명과 만료만 맞으면 토큰을 받아서, 수명이 긴 Refresh Token을 Bearer Access Token처럼 쓸 여지가 있었습니다.
+
+토큰에 `tokenType=access|refresh` claim을 추가하고 역할을 분리했습니다.
+
+- 인증 필터는 **access** 타입만 보호 API의 Bearer 토큰으로 받습니다.
+- `/api/auth/refresh`는 **refresh** 타입만 허용합니다.
+- Access Token을 재발급 API에 넣거나 Refresh Token으로 일반 API를 호출하면 인증에 실패합니다.
+로그인·재설정 경로에 남아 있던 평문 비밀번호 디버그 로그도 제거했습니다. 처음에는 임시 비밀번호를 응답에서만 숨긴 채 DB 비밀번호와 RefreshToken을 바꾸도록 수정했지만, 전달 채널이 없는 상태에서는 제3자가 이메일·전화번호 조합만 알아도 계정을 잠글 수 있었습니다.
+
+이메일/SMS가 연결되기 전까지 `/find-email`과 `/reset-password`는 사용자 조회나 상태 변경을 하지 않고, 존재 여부와 관계없이 같은 안내를 반환하도록 막았습니다. 운영 단계에서는 일회용 토큰을 검증된 채널로 전달한 뒤에만 비밀번호를 바꾸는 흐름으로 교체해야 합니다.
+
+## 관리자 화면의 CSRF와 저장형 XSS
+
+REST API는 Bearer JWT를 사용하지만, Thymeleaf 관리자는 세션 쿠키 기반 Form Login입니다. 둘을 같은 기준으로 보고 관리자 CSRF까지 꺼 둔 것이 문제였습니다. 관리자 체인에는 CSRF를 다시 켜고, 삭제·복구 POST 폼에 토큰을 포함시켰습니다.
+
+회원·프로젝트 상세 모달은 서버에서 받은 제목·본문을 `innerHTML` 문자열로 조립하고 있었습니다. 사용자가 모집글에 HTML 이벤트 속성을 넣으면 관리자 브라우저에서 실행될 수 있어, DOM 노드를 만들고 `textContent`로 값을 넣는 방식으로 교체했습니다. 이제 사용자 입력은 **마크업이 아니라 텍스트**로만 렌더링됩니다.
+
+## Soft Delete는 삭제보다 복구가 더 어려웠다
+
+기존 관리자 삭제는 REST 삭제와 처리 범위가 달랐습니다. 회원을 관리자 화면에서 지우면 RefreshToken·지원서·멤버십·게시글 일부가 살아 있었고, 프로젝트를 복구해도 멤버는 삭제 상태인데 `currentCount`만 0인 모순이 생겼습니다.
+
+삭제·복구 책임을 `DomainDeletionService` 한곳으로 모았습니다.
+
+1. 회원 삭제는 소유 프로젝트, 지원서, 멤버십, 게시글·댓글을 같은 시각으로 Soft Delete하고 RefreshToken을 폐기합니다.
+2. 프로젝트 삭제도 지원서·멤버십·게시글·댓글을 같은 cascade timestamp로 기록합니다.
+3. 복구할 때는 **부모와 동일한 삭제 시각을 가진 행만** 되살립니다. 과거에 개별 삭제된 데이터를 추측해서 복구하지 않기 위한 기준입니다.
+4. 프로젝트 복구 후 활성 `ProjectMember` 수를 다시 세어 `currentCount`를 맞춥니다.
+
+또 하나는 `(project_id, user_id)` UNIQUE와 Soft Delete의 충돌이었습니다. 탈퇴한 멤버 행은 DB에 남아 있는데 일반 조회에서는 보이지 않아, 같은 사용자를 다시 수락하면 새 INSERT가 UNIQUE 제약에 걸렸습니다. 이제 삭제 포함 조회로 기존 멤버십을 찾고, 있으면 새로 만들지 않고 **기존 행을 복구해 역할·포지션을 갱신**합니다.
+
+## 오래된 테스트가 운영 DB를 보고 있었다
+
+`MappingTest`는 `Application.position`과 `ProjectMember.position`이 필수가 된 뒤에도 해당 값을 넣지 않아 실패했습니다. 더 큰 문제는 테스트 프로필을 고정하지 않아, 환경에 따라 로컬 MariaDB를 바라볼 수 있었다는 점입니다.
+
+테스트를 H2 기반 `test` 프로필로 고정하고, 오래된 빌더와 `data.sql`에 필수 포지션을 반영했습니다. 이후 권한·JWT·CSRF·비밀번호 노출·삭제/복구·멤버 재수락 테스트를 추가했습니다.
+
+최종 백엔드 결과는 **20 tests passed / 0 failed**입니다. 로컬 MariaDB나 `.env` 없이도 같은 테스트가 돌아가도록 만들었습니다.
+
+## 프론트 페이지 복제에서 공통 모듈로
+
+프론트는 `PostWritePage`와 `PostEditPage`가 날짜 계산·유효성 검증·진행 방식 매핑·입력 UI를 거의 그대로 복제하고 있었습니다. `MyPage`는 프로필·지원 현황·지원자 모달을 한 파일에서 다루고, `BoardPage`도 멤버·게시글·댓글 로직을 함께 품고 있었습니다.
+
+리팩토링 후에는 다음 경계를 만들었습니다.
+
+- `ProjectFormFields` — 작성/수정 화면의 공통 입력 UI와 날짜·기술 스택 처리
+- `apiUtils` — API 에러 메시지, project/application ID, 페이징 응답, 날짜 정규화
+- `runtime` — API 기준 URL과 이미지 URL 해석, MSW 활성화 여부
+- `features/board` — 멤버 사이드바와 게시글 목록
+- `sharedStyles` — 반복되던 입력 필드 스타일
+
+배포 환경에서도 프로필 이미지가 `localhost:8080`을 보던 하드코딩을 제거하고 `VITE_API_BASE_URL`에서 에셋 기준 주소를 계산합니다. `application.id`를 `projectId` fallback으로 사용해 “이미 지원함”이 잘못 뜨던 조건도 분리했습니다. 필터 변경 시 store와 `useEffect`가 각각 요청하던 이중 fetch도 한 경로로 줄였습니다.
+
+연결되지 않으면서 마이페이지 탭과 기능이 겹치던 `MyPostsPage`·`MyAppliesPage`, 사용되지 않던 `FormInput`·`SkeletonCard`·커스텀 Pagination도 제거했습니다. MSW는 프로젝트의 병렬 개발 기록을 보존하기 위해 삭제하지 않고, `VITE_ENABLE_MSW=true`일 때만 켜지는 **선택형 개발 도구**로 정리했습니다.
+
+프론트 구조 리팩토링 구간은 대략 **+388줄 / −1024줄**, 순감 **636줄**입니다. 코드를 줄이는 것 자체보다, 에러·URL·폼 규칙을 한곳만 고쳐도 전체 화면에 적용되게 만드는 것이 목적이었습니다.
+
+## 테스트와 CI로 다시 깨지지 않게
+
+프론트에는 Vitest + jsdom을 추가해 API 에러 추출, 에셋 URL, ID 정규화, 상태 계산, 빈 닉네임 Avatar 등을 **40개 단위 테스트**로 묶었습니다. 백엔드 20개 테스트와 함께 GitHub Actions에서 다음 순서로 자동 검증합니다.
+
+```text
+Backend: Java 17 → Maven test (H2)
+Frontend: npm ci → ESLint → Vitest → Vite production build
+```
+
+최종 확인은 **백엔드 20/20**, **프론트 40/40**, ESLint 0 errors, 프로덕션 빌드 성공입니다.
+
+## 아직 남은 한계
+
+- 이메일/SMS 전달 채널이 없어 이메일 찾기와 셀프서비스 비밀번호 재설정은 현재 비활성입니다. 운영 서비스라면 만료 시간이 짧은 일회용 링크와 검증된 전달 채널로 다시 설계해야 합니다.
+- Refresh Token은 여전히 SPA `localStorage`에 있습니다. 다음 단계에서는 HttpOnly·Secure·SameSite 쿠키와 rotation/reuse detection을 함께 설계해야 합니다.
+- 로그인·계정 찾기·재설정에 운영 수준의 rate limit과 CAPTCHA가 없습니다.
+- Flyway 의존성은 실제 마이그레이션 파일 없이 선언만 되어 있어 제거했습니다. 운영 배포 전에는 기존 스키마를 baseline으로 잡은 버전형 마이그레이션 전략이 필요합니다.
+- 프론트 프로덕션 번들은 약 780 kB로, 라우트 단위 lazy loading과 chunk 분리가 남아 있습니다.
+
+---
+
+# 9. 마무리 소감
 
 2차 미니는 **화면보다 도메인**이 먼저였습니다. 지원서와 멤버를 나누고, Soft Delete와 관리자 복구를 붙이고, JWT 갱신으로 세션을 끊기지 않게 만드는 과정이 1차의 “모아 보여 주기”와는 다른 종류의 설계 연습이었습니다.
 
