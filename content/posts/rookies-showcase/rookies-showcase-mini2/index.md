@@ -99,13 +99,9 @@ React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JP
 
 ### 관계와 상태 전이
 
-```text
-User 1 ──owns──▶ N Project
-User 1 ──applies──▶ N Application ──▶ 1 Project
-Application ACCEPTED ──creates──▶ ProjectMember
-Project 1 ──has──▶ N ProjectMember ──▶ 1 User
-Project 1 ──has──▶ N BoardPost ──has──▶ N Comment
-```
+<figure class="article-figure-center article-figure-center--full">
+  <img src="./fig4.png" alt="Fig.4 MATE 도메인 관계와 지원 상태 전이" loading="lazy" />
+</figure>
 
 1. 회원이 모집글(`Project`)을 올리면 `owner`가 되고, 생성 시점에 방장용 `ProjectMember(OWNER)`가 붙는 흐름입니다.
 2. 다른 회원은 `Application`을 남깁니다. 초기 상태는 **`PENDING`**.
