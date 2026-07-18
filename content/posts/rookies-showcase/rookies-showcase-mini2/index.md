@@ -210,7 +210,7 @@ Access가 만료될 때마다 강제 로그아웃하지 않도록, 응답 Interc
 카테고리(프로젝트/스터디)·기술 스택·키워드로 모집글을 필터하고 카드 목록으로 탐색합니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig4.png" alt="Fig.4 홈 · 모집글 목록" loading="lazy" />
+  <img src="./fig5.png" alt="Fig.5 홈 · 모집글 목록" loading="lazy" />
 </figure>
 
 ### 모집글 상세 · 지원
@@ -218,32 +218,50 @@ Access가 만료될 때마다 강제 로그아웃하지 않도록, 응답 Interc
 진행 기간·온/오프라인·모집 인원·스택·본문을 확인하고, 지원 동기·포지션·연락처/포트폴리오를 제출합니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig5.png" alt="Fig.5 모집글 상세 · 지원" loading="lazy" />
+  <img src="./fig6.png" alt="Fig.6 모집글 상세 · 지원" loading="lazy" />
 </figure>
 
-### 마이페이지 · 모집 관리
+### 마이페이지 · 내 모집글 · 내 신청 현황
 
-내가 올린 모집글의 지원자 목록을 보고 **수락/거절**합니다. 수락 시 ProjectMember가 생기고 정원이 차면 모집이 자동 마감됩니다.
+프로필(닉네임·포지션·기술 스택·프로필 이미지)을 관리하고, 탭으로 **내가 올린 모집글**과 **내 신청 현황**을 한 화면에서 오갑니다. 내 신청 현황은 지원한 글의 `PENDING` / `ACCEPTED` / `REJECTED` 상태를 그대로 보여 주고, 아직 대기 중인 지원은 취소할 수 있습니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig6.png" alt="Fig.6 내 모집글 · 지원자 관리" loading="lazy" />
+  <img src="./fig7.png" alt="Fig.7 마이페이지 · 내 모집글 · 내 신청 현황" loading="lazy" />
 </figure>
 
-### 내 신청 현황
+### 지원자 관리
 
-내가 지원한 글의 `PENDING` / `ACCEPTED` / `REJECTED` 상태를 확인합니다.
+내가 올린 모집글에 들어온 지원자 목록을 열어 지원 동기·포지션·연락처를 확인하고 **수락/거절**합니다. 수락하면 `Application`이 `ACCEPTED`로 바뀌며 **ProjectMember**가 생성되고 `currentCount`가 올라가, 정원이 차는 순간 모집이 자동으로 마감됩니다. 거절은 이력만 `REJECTED`로 남깁니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig7.png" alt="Fig.7 내 신청 현황" loading="lazy" />
+  <img src="./fig8.png" alt="Fig.8 지원자 관리 · 수락/거절" loading="lazy" />
 </figure>
 
 ### 팀 전용 게시판
 
-매칭된 멤버만 접근하는 협업 게시글·댓글입니다. 외부 유저의 목록·상세 조회를 막아 팀 공지·링크 공유용 공간으로 씁니다.
+매칭된 멤버만 접근하는 협업 게시글·댓글입니다. 외부 유저의 목록·상세 조회를 막아 팀 공지·링크 공유용 공간으로 씁니다. 방장은 이 화면에서 팀원을 제외할 수도 있습니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig8.png" alt="Fig.8 팀 전용 게시판" loading="lazy" />
+  <img src="./fig9.png" alt="Fig.9 팀 전용 게시판" loading="lazy" />
 </figure>
+
+### 커스텀 메시지
+
+알림과 확인 절차는 **브라우저 기본 `alert` / `confirm`을 쓰지 않고** 전부 자체 컴포넌트로 대체했습니다. 기본 대화상자는 디자인을 브랜드에 맞출 수 없고, 버튼 문구·위치가 OS마다 달라 전문적인 느낌을 주기 어렵고, 창이 뜨는 순간 페이지 전체를 막아 UX 흐름도 끊깁니다.
+
+**ToastMessage** — MUI `Snackbar` + `Alert` 기반 공용 토스트입니다. 화면 상단 중앙에 뜨고 약 3초 뒤 자동으로 닫히며, `success / error / info / warning` 네 종류를 아이콘·색으로 구분합니다. 흐름을 막지 않는 **비차단(non-blocking)** 피드백이라, 저장·삭제·에러 같은 결과를 알린 뒤 사용자는 그대로 작업을 이어 갑니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig10.png" alt="Fig.10 Success · Notice 커스텀 토스트 메시지" loading="lazy" />
+</figure>
+
+**ConfirmModal** — 되돌릴 수 없는 작업(게시글·댓글 삭제, 지원 취소, 회원 탈퇴, 팀원 제외, 조기 마감/재모집)에 쓰는 커스텀 확인 모달입니다. 제목·설명·확인/취소 버튼을 브랜드 톤으로 통일하고, 파괴적 동작은 `color="error"`로 빨간 버튼을 노출해 실수를 줄였습니다. 브라우저 기본 `confirm`처럼 "확인/취소"만 던지는 대신, 무엇을 왜 되돌릴 수 없는지까지 문구로 설명합니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig11.png" alt="Fig.11 게시글 삭제 커스텀 확인 모달" loading="lazy" />
+</figure>
+
+**전역 마운트 · 상태 관리** — 두 컴포넌트는 `MainLayout`에 한 번만 마운트하고, 상태는 Zustand `uiStore`(`toast` / `modal`)로 관리합니다. 그래서 어느 페이지든 `showToast(message, type)` 한 줄, `openModal('confirm', { title, message, onConfirm })` 한 줄로 동일한 UI를 띄웁니다. 닫히는 순간 직전 내용을 로컬 상태로 유지해 사라질 때 문구가 깜빡이지 않게 처리했습니다.
 
 # 8. 마무리 소감
 
