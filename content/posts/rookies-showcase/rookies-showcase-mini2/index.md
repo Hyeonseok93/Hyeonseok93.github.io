@@ -51,7 +51,7 @@ React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JP
 
 흐름은 짧게 **React SPA → Spring Boot REST → MariaDB**이고, 프로필 이미지는 **Cloudinary**, 관리자 화면은 **Thymeleaf**로 서버 렌더링합니다.
 
-<figure class="article-figure-center article-figure-center--wide">
+<figure class="article-figure-center article-figure-center--full">
   <img src="./fig2.png" alt="Fig.2 MATE 시스템 아키텍처" loading="lazy" />
 </figure>
 
