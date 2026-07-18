@@ -179,27 +179,47 @@ Application과 ProjectMember를 **일부러 나눈** 이유입니다. 지원 이
 
 # 6. 핵심 구현
 
-README Key Implementation과 같은 축을, 블로그에서는 **왜 그렇게 했는지**까지 붙입니다.
+README Key Implementation과 같은 6개 축을, 블로그에서는 **왜 그렇게 했는지**와 코드 관점까지 붙여 풉니다.
 
 ### MSW로 프론트·백엔드 병렬 개발
 
-API 연동 전에 화면이 멈추지 않도록, 기획 명세 기준으로 **MSW** 핸들러를 먼저 붙였습니다. 로그인·CRUD 플로우를 백엔드 완성 전에 검증할 수 있었고, 실제 API 연결 시 UI 흐름을 크게 바꾸지 않도록 응답 형태를 미리 맞춰 두었습니다. 현재 런타임에서는 모킹을 끄고 실서버를 봅니다.
+백엔드 API가 완성되기를 기다리면 프론트 일정이 통째로 밀립니다. 그래서 API 연동 전에, 기획 단계 명세만 가지고 **MSW(Mock Service Worker)** 로 가짜 서버를 먼저 세웠습니다.
+
+- **명세 그대로의 모킹 레이어** — `mocks/handlers.js`에 auth·projects·applications·board·comments 전 구간을 33개 핸들러로 깔았습니다. 단순히 고정 JSON을 뱉는 게 아니라, `localStorage`를 가짜 DB(`mock-db`)로 써서 로그인·모집글 CRUD·지원·수락/거절이 **상태를 유지하며** 돌도록 만들었습니다. 덕분에 백엔드 없이도 "지원하면 목록에 뜨고, 수락하면 멤버가 되는" 실제 시나리오를 로컬에서 검증할 수 있었습니다.
+- **응답 규격 선합의** — 모킹부터 설계서 v1.1 공통 포맷(`{ success, data, message, timestamp }`)과 `AUTH_001` 같은 에러 코드를 그대로 흉내 냈습니다. 그래서 실제 API로 붙일 때 화면 로직이 아니라 **네트워크 계층만** 바꾸면 됐습니다.
+- **런타임 스위치** — 실서버 연결 뒤에는 `main.jsx`의 `enableMocking()`을 주석 처리해 모킹을 끄고 실서버로 전환했습니다. 워커 등록 코드만 걷어내면 되도록 진입점에 스위치를 몰아 둔 구조라, 모킹/실서버를 오가는 비용이 거의 없었습니다.
 
 ### Axios Interceptor · Silent JWT 갱신
 
-Access가 만료될 때마다 강제 로그아웃하지 않도록, 응답 Interceptor가 `401`을 가로챕니다. Refresh Token으로 Access를 갱신한 뒤 **실패했던 원 요청을 자동 재시도**합니다. 백엔드 `RefreshToken`은 `user_id` unique라 **1인 1토큰**을 가정하고, 로그아웃·재발급 시 토큰 값을 교체합니다.
+Access Token은 수명이 짧아 자주 만료됩니다. 만료될 때마다 로그아웃시키면 UX가 최악이라, `axiosInstance`의 **Response Interceptor**에서 만료를 소리 없이 처리합니다.
 
-### Mapper로 Entity ↔ DTO 분리
+- **정확한 트리거** — 모든 `401`이 아니라 `status === 401 && error.code === 'AUTH_002'`(액세스 만료)일 때만 갱신을 시도합니다. `AUTH_003`(유효하지 않은 토큰)은 즉시 강제 로그아웃으로 갈랐습니다.
+- **원 요청 자동 재시도** — Refresh Token으로 Access를 재발급한 뒤, 실패했던 **원래 요청을 그대로 다시 던집니다**. 사용자는 요청이 한 번 실패했다는 사실조차 모릅니다. 재발급 호출만은 인터셉터가 다시 낚아채 무한 루프에 빠지지 않도록 `axiosInstance`가 아닌 **axios 원본**으로 보냅니다.
+- **동시 요청 큐잉** — 토큰 만료 순간 여러 요청이 동시에 터지면, `isRefreshing` 플래그와 `failedQueue`로 **첫 요청만 갱신**하고 나머지는 큐에 넣어 대기시킵니다. 새 토큰이 나오면 큐를 한 번에 풀어 재시도해, 리프레시가 중복 호출되지 않습니다.
 
-서비스에 변환 코드가 섞이지 않도록 Mapper 클래스로 모았습니다. Lombok `@Builder`로 명시적 변환을 유지해, Entity 필드 변경과 API 응답 스펙 변경 지점을 갈랐습니다.
+### Mapper로 Entity ↔ DTO 관심사 분리
 
-### Zustand 정규화 브릿지
+서비스 계층에 변환 코드가 섞이면 비즈니스 로직이 지저분해집니다. 그래서 Entity ↔ DTO 변환을 **Mapper 클래스**로 모았습니다. Lombok `@Builder`로 명시적 변환을 유지해, Entity 필드 변경과 API 응답 스펙 변경 지점을 갈랐습니다. 응답 포맷을 손볼 때 서비스가 아니라 매퍼만 먼저 보면 되도록 책임을 분리한 것입니다.
 
-백엔드 필드명·페이징 포맷이 엔드포인트마다 달랐던 구간을 `authStore` / `postStore`에서 한 번 맞춥니다. `id`↔`userId`, `profileImg`↔`profileImageUrl` 등을 **프론트 내부 표준**으로 정규화해, 화면 컴포넌트는 스토어만 보게 했습니다.
+### Cloudinary 프로필 이미지 업로드
 
-### Cloudinary 프로필 이미지
+프로필 이미지를 앱 서버 디스크에 쌓으면 스토리지·백업·배포가 전부 무거워집니다. 그래서 업로드는 **Cloudinary**로 넘기고, 서버 DB에는 **CDN URL만** 저장합니다. 이미지 로딩 부하를 CDN으로 넘겨 앱 서버는 API에만 집중하고, 이미지를 지우면 기본 이미지 URL로 되돌립니다.
 
-서버 로컬 디스크에 이미지를 쌓지 않고 Cloudinary로 업로드·CDN URL만 저장합니다. 삭제 시에는 기본 이미지 URL로 되돌립니다.
+### Zustand 정규화 브릿지 (API 스펙 완충)
+
+백엔드 필드명·페이징 포맷이 엔드포인트마다 조금씩 달랐습니다. 이 흔들림을 화면까지 끌고 가지 않도록, 스토어를 **완충 계층**으로 씁니다.
+
+- `postStore`는 목록 응답이 배열이든 `content` 페이징이든 상관없이 `rawPosts`로 통일하고, `id`↔`projectId`처럼 엔드포인트마다 다른 식별자를 서로 채워 **한 객체에 둘 다** 존재하도록 매핑합니다. 페이징도 `response.page.totalPages`와 `response.totalPages`를 모두 흡수합니다.
+- `authStore` / `postStore`에서 `id`↔`userId`, `profileImg`↔`profileImageUrl` 등을 **프론트 내부 표준**으로 정규화합니다. 화면 컴포넌트는 스토어 표준 필드만 보므로, API 스펙이 흔들려도 수정 지점이 스토어 한 곳으로 좁혀집니다.
+
+### MUI Custom Theme · 디자인 토큰
+
+컴포넌트마다 색·라운드·그림자를 인라인으로 박으면 화면이 금방 파편화됩니다. 그래서 `styles/theme.js`의 `createTheme`로 **브랜드 토큰을 한곳에 고정**하고, 전 화면이 이 토큰만 바라보게 했습니다.
+
+- **컬러 · 타이포 토큰** — Primary `#6C63FF`, Primary Soft `#EDE9FF`, Accent `#FF6B9D`, 배경 `#EEF2F8` / Surface `#FFFFFF`, 텍스트 `primary/secondary/muted` 3단계를 팔레트로 정의했습니다. 폰트는 **Pretendard**를 최상위로 둔 시스템 폰트 폴백 체인으로 고정하고, 제목 `h1`은 `letterSpacing: -1.5px`까지 토큰화했습니다.
+- **셰이프 토큰** — 전역 `borderRadius: 16`을 기준으로, 카드·표면은 16, 버튼·칩은 `99`(pill)로 라운드 규칙을 나눴습니다.
+- **컴포넌트 styleOverrides** — `MuiButton` / `MuiCard` / `MuiChip`을 테마 단에서 재정의했습니다. Primary 버튼은 `0 4px 14px rgba(108,99,255,0.35)` 그림자에 hover 시 더 깊어지고, 카드는 공통 그림자·1px 보더, 칩은 pill+`fontWeight 600`으로 통일했습니다. 개별 컴포넌트에서 스타일을 다시 쓰지 않아도 **버튼 하나·카드 하나가 어디서든 같은 톤**을 갖도록 만든 것이 핵심입니다.
+- **적용 지점** — 이 테마는 `App.jsx`의 `ThemeProvider` + `CssBaseline`로 앱 최상단에 한 번만 주입합니다. 토큰 하나만 바꾸면 전 화면 톤이 함께 움직입니다.
 
 # 7. 화면으로 보는 기능
 
