@@ -57,12 +57,20 @@ React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JP
 
 | 구분 | 기술 | 역할 |
 |------|------|------|
-| Frontend | React 19, Vite, MUI, Zustand, Axios | SPA · 라우팅 · 전역 상태 · JWT 인터셉터 |
-| Backend | Java 17, Spring Boot 3.5, Spring Security | REST API · 서비스 · 예외 · 권한 |
-| Persistence | Spring Data JPA, Hibernate, MariaDB | 엔티티 · Soft Delete · 도메인 관계 |
-| Auth | JWT (Access/Refresh), BCrypt | 로그인 세션 · 토큰 재발급 |
-| Media | Cloudinary | 프로필 이미지 CDN |
-| Admin | Thymeleaf + Form Login | 회원·프로젝트 대시보드 · 복구 |
+| **Frontend Core** | JavaScript, React/React DOM 19.2.4, Vite 8.0.3 | 컴포넌트 기반 SPA 렌더링·개발 서버·프로덕션 번들 |
+| **Routing & UI** | React Router DOM 7.13.2, MUI/MUI Icons 7.3.9, Emotion 11.14 | 페이지 라우팅·보호 경로·공통 컴포넌트·테마와 CSS-in-JS |
+| **State & HTTP** | Zustand 5.0.12, Axios 1.14.0 | 인증·게시글 전역 상태, API 모듈, JWT 인터셉터와 토큰 재발급 |
+| **Frontend Dev & Quality** | MSW 2.12.14, ESLint 9.39.4, React Hooks/Refresh Plugins | API 모킹 레이어(현재 런타임 비활성), 정적 분석·Hooks 규칙 검사 |
+| **Backend Core** | Java 17, Spring Boot 3.5.13, Spring Web MVC, Bean Validation | REST API·서비스 계층·요청값 검증·전역 예외 처리 |
+| **Persistence** | Spring Data JPA, Hibernate ORM 6.6.45, MariaDB JDBC 3.5.7 | 엔티티 매핑·리포지토리·도메인 관계와 운영 데이터 영속화 |
+| **Database Support** | H2 2.3.232, Flyway 11.7.2 | 테스트용 인메모리 DB; Flyway는 의존성만 있으며 개발 환경에서 비활성·마이그레이션 파일 없음 |
+| **Security** | Spring Security, JJWT 0.12.7, BCrypt | Access/Refresh Token 발급·검증, 인증 필터, 비밀번호 해싱, 권한 제어 |
+| **Admin View** | Thymeleaf, Spring Security Form Login | 관리자 로그인·대시보드·회원·프로젝트·감사 로그 서버 렌더링 |
+| **Media** | Cloudinary Java SDK 1.36 | 프로필 이미지 업로드·CDN URL 관리, 로컬 정적 업로드 경로 지원 |
+| **Backend Utilities** | Jackson, Lombok, Servlet Multipart | JSON 직렬화·보일러플레이트 절감·멀티파트 파일 처리 |
+| **Build & Development** | Maven Wrapper 3.9.14, Spring Boot DevTools | 백엔드 빌드·의존성 관리·로컬 개발 편의 기능 |
+| **Monitoring Dependencies** | Spring Boot Actuator, Spring Boot Admin Client 3.5.8 | 의존성만 선언된 상태이며 관리 엔드포인트·Admin 서버 연결 설정은 없음 |
+| **Backend Test** | Spring Boot Test, JUnit 5, AssertJ, H2 | 애플리케이션 컨텍스트와 JPA 엔티티·DTO 매핑 검증 |
 
 프론트는 초기에 **MSW**로 API를 모킹해 백엔드와 병렬로 화면을 붙였고, 연결 후에는 Axios Interceptor가 `401` 시 Refresh로 Access를 갱신한 뒤 원 요청을 재시도합니다.
 
