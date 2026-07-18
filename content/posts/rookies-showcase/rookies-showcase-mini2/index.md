@@ -62,14 +62,14 @@ React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JP
 | **State & HTTP** | Zustand 5.0.12, Axios 1.14.0 | 인증·게시글 전역 상태, API 모듈, JWT 인터셉터와 토큰 재발급 |
 | **Frontend Dev & Quality** | MSW 2.12.14, Vitest 4, jsdom, Testing Library, ESLint 9.39.4 | 선택형 API 모킹, 유틸·컴포넌트 단위 테스트, 정적 분석·Hooks 규칙 검사 |
 | **Backend Core** | Java 17, Spring Boot 3.5.13, Spring Web MVC, Bean Validation | REST API·서비스 계층·요청값 검증·전역 예외 처리 |
-| **Persistence** | Spring Data JPA, Hibernate ORM 6.6.45, MariaDB JDBC 3.5.7 | 엔티티 매핑·리포지토리·도메인 관계와 운영 데이터 영속화 |
+| **Persistence** | Spring Data JPA, Hibernate ORM 6.6.45, MariaDB JDBC 3.5.7, Flyway | 엔티티 매핑·운영 데이터 영속화와 버전형 스키마 마이그레이션 |
 | **Database Support** | H2 2.3.232 | 테스트 프로필의 인메모리 DB로 로컬 MariaDB와 격리된 회귀 테스트 실행 |
-| **Security** | Spring Security, JJWT 0.12.7, BCrypt | Access/Refresh Token 발급·검증, 인증 필터, 비밀번호 해싱, 권한 제어 |
+| **Security** | Spring Security, JJWT 0.12.7, BCrypt | HttpOnly Refresh 쿠키·회전/재사용 감지, 인증 API rate limit, 권한 제어 |
 | **Admin View** | Thymeleaf, Spring Security Form Login | 관리자 로그인·대시보드·회원·프로젝트·감사 로그 서버 렌더링 |
 | **Media** | Cloudinary Java SDK 1.36 | 프로필 이미지 업로드·CDN URL 관리, 로컬 정적 업로드 경로 지원 |
 | **Backend Utilities** | Jackson, Lombok, Servlet Multipart | JSON 직렬화·보일러플레이트 절감·멀티파트 파일 처리 |
 | **Build & Development** | Maven Wrapper 3.9.14, Spring Boot DevTools | 백엔드 빌드·의존성 관리·로컬 개발 편의 기능 |
-| **Backend Test** | Spring Boot Test, Spring Security Test, JUnit 5, AssertJ, H2 | 컨텍스트·JPA 매핑·권한·JWT·CSRF·삭제/복구 수명주기 회귀 검증 |
+| **Backend Test** | Spring Boot Test, Spring Security Test, JUnit 5, AssertJ, H2 | 권한·JWT 쿠키 회전·rate limit·CSRF·삭제/복구 수명주기 회귀 검증 |
 
 프론트는 초기에 **MSW**로 API를 모킹해 백엔드와 병렬로 화면을 붙였고, 연결 후에는 Axios Interceptor가 `401` 시 Refresh로 Access를 갱신한 뒤 원 요청을 재시도합니다.
 
@@ -91,7 +91,7 @@ React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JP
 | **ProjectMember** | `project_members` | 확정 멤버. Project–User N:M 해소, `project_id+user_id` 유니크, `OWNER/MEMBER` |
 | **BoardPost** | `board_posts` | 팀 전용 게시글. Project + author |
 | **Comment** | `comments` | 게시글 댓글. BoardPost + author |
-| **RefreshToken** | `refresh_tokens` | 유저당 1토큰(`user_id` unique) |
+| **RefreshToken** | `refresh_tokens` | 토큰 원문 대신 SHA-256 해시 저장, 패밀리 단위 회전·재사용 감지 |
 | **AdminLog** | `admin_logs` | 관리자 삭제·복구 등 감사 로그 |
 
 기술 스택은 User·Project 모두 `@ElementCollection`으로 `user_tech_stacks` / `project_tech_stacks`에 문자열 집합으로 둡니다. Soft Delete가 필요한 도메인은 `BaseEntity`의 `deleted_at` + `@Where(clause = "deleted_at IS NULL")`를 공통 적용합니다.
@@ -127,9 +127,9 @@ Application과 ProjectMember를 **일부러 나눈** 이유입니다. 지원 이
 | GET | `/api/auth/check-phone` | 전화번호 중복 확인 |
 | POST | `/api/auth/find-email` | 계정 복구 안내(전달 채널 연결 전 비활성) |
 | POST | `/api/auth/reset-password` | 비밀번호 복구 안내(전달 채널 연결 전 비활성) |
-| POST | `/api/auth/login` | 로그인 · Access/Refresh 발급 |
-| POST | `/api/auth/logout` | 로그아웃 · Refresh 제거 |
-| POST | `/api/auth/refresh` | Access 재발급 |
+| POST | `/api/auth/login` | 로그인 · Access 응답 + Refresh HttpOnly 쿠키 발급 |
+| POST | `/api/auth/logout` | 로그아웃 · Refresh 폐기 및 쿠키 제거 |
+| POST | `/api/auth/refresh` | 쿠키 회전 + Access 재발급 |
 | GET | `/api/users/me` | 내 프로필 |
 | PATCH | `/api/users/me` | 프로필 부분 수정 |
 | PATCH | `/api/users/profile-image` | 프로필 이미지 업로드(Cloudinary) |
@@ -193,7 +193,9 @@ README Key Implementation과 같은 6개 축을, 블로그에서는 **왜 그렇
 Access Token은 수명이 짧아 자주 만료됩니다. 만료될 때마다 로그아웃시키면 UX가 최악이라, `axiosInstance`의 **Response Interceptor**에서 만료를 소리 없이 처리합니다.
 
 - **정확한 트리거** — 모든 `401`이 아니라 `status === 401 && error.code === 'AUTH_002'`(액세스 만료)일 때만 갱신을 시도합니다. `AUTH_003`(유효하지 않은 토큰)은 즉시 강제 로그아웃으로 갈랐습니다.
-- **원 요청 자동 재시도** — Refresh Token으로 Access를 재발급한 뒤, 실패했던 **원래 요청을 그대로 다시 던집니다**. 사용자는 요청이 한 번 실패했다는 사실조차 모릅니다. 재발급 호출만은 인터셉터가 다시 낚아채 무한 루프에 빠지지 않도록 `axiosInstance`가 아닌 **axios 원본**으로 보냅니다.
+- **브라우저에서 숨긴 Refresh Token** — Refresh Token을 Zustand와 `localStorage`에서 제거하고 **HttpOnly·SameSite 쿠키**로 옮겼습니다. 운영에서는 `Secure` 플래그를 환경 변수로 켭니다. 프론트 JavaScript는 토큰 값을 읽지 않고 `withCredentials`로 쿠키만 전송합니다.
+- **회전과 재사용 감지** — 갱신할 때마다 Refresh Token을 교체하고 DB에는 원문 대신 SHA-256 해시와 `familyId`를 저장합니다. 이미 회전된 토큰이 다시 들어오면 탈취 가능성으로 보고 같은 패밀리의 활성 토큰을 모두 폐기합니다.
+- **원 요청 자동 재시도** — 쿠키로 Access를 재발급한 뒤, 실패했던 **원래 요청을 그대로 다시 던집니다**. 재발급 호출만은 인터셉터가 다시 낚아채 무한 루프에 빠지지 않도록 `axiosInstance`가 아닌 **axios 원본**으로 보냅니다.
 - **동시 요청 큐잉** — 토큰 만료 순간 여러 요청이 동시에 터지면, `isRefreshing` 플래그와 `failedQueue`로 **첫 요청만 갱신**하고 나머지는 큐에 넣어 대기시킵니다. 새 토큰이 나오면 큐를 한 번에 풀어 재시도해, 리프레시가 중복 호출되지 않습니다.
 
 ### Mapper로 Entity ↔ DTO 관심사 분리
@@ -360,7 +362,7 @@ REST API는 Bearer JWT를 사용하지만, Thymeleaf 관리자는 세션 쿠키 
 
 테스트를 H2 기반 `test` 프로필로 고정하고, 오래된 빌더와 `data.sql`에 필수 포지션을 반영했습니다. 이후 권한·JWT·CSRF·비밀번호 노출·삭제/복구·멤버 재수락 테스트를 추가했습니다.
 
-최종 백엔드 결과는 **20 tests passed / 0 failed**입니다. 로컬 MariaDB나 `.env` 없이도 같은 테스트가 돌아가도록 만들었습니다.
+최종 백엔드 결과는 **23 tests passed / 0 failed**입니다. 로컬 MariaDB나 `.env` 없이도 같은 테스트가 돌아가도록 만들었습니다.
 
 ## 프론트 페이지 복제에서 공통 모듈로
 
@@ -378,33 +380,39 @@ REST API는 Bearer JWT를 사용하지만, Thymeleaf 관리자는 세션 쿠키 
 
 연결되지 않으면서 마이페이지 탭과 기능이 겹치던 `MyPostsPage`·`MyAppliesPage`, 사용되지 않던 `FormInput`·`SkeletonCard`·커스텀 Pagination도 제거했습니다. MSW는 프로젝트의 병렬 개발 기록을 보존하기 위해 삭제하지 않고, `VITE_ENABLE_MSW=true`일 때만 켜지는 **선택형 개발 도구**로 정리했습니다.
 
-프론트 구조 리팩토링 구간은 대략 **+388줄 / −1024줄**, 순감 **636줄**입니다. 코드를 줄이는 것 자체보다, 에러·URL·폼 규칙을 한곳만 고쳐도 전체 화면에 적용되게 만드는 것이 목적이었습니다.
+프론트 구조 리팩토링 구간은 대략 **+388줄 / −1024줄**로, 전체 코드가 **636줄** 줄었습니다. 코드를 줄이는 것 자체보다, 에러·URL·폼 규칙을 한곳만 고쳐도 전체 화면에 적용되게 만드는 것이 목적이었습니다.
 
 ## 테스트와 CI로 다시 깨지지 않게
 
-프론트에는 Vitest + jsdom을 추가해 API 에러 추출, 에셋 URL, ID 정규화, 상태 계산, 빈 닉네임 Avatar 등을 **40개 단위 테스트**로 묶었습니다. 백엔드 20개 테스트와 함께 GitHub Actions에서 다음 순서로 자동 검증합니다.
+프론트에는 Vitest + jsdom을 추가해 API 에러 추출, 에셋 URL, ID 정규화, 상태 계산, 빈 닉네임 Avatar 등을 **40개 단위 테스트**로 묶었습니다. 백엔드 23개 테스트와 함께 GitHub Actions에서 다음 순서로 자동 검증합니다.
 
 ```text
 Backend: Java 17 → Maven test (H2)
 Frontend: npm ci → ESLint → Vitest → Vite production build
 ```
 
-최종 확인은 **백엔드 20/20**, **프론트 40/40**, ESLint 0 errors, 프로덕션 빌드 성공입니다.
+최종 확인은 **백엔드 23/23**, **프론트 40/40**, ESLint 0 errors, 프로덕션 빌드 성공입니다.
+
+## 추가로 적용한 운영 개선
+
+- **인증 API rate limit** — 로그인은 IP·경로별 분당 5회, 계정 찾기·재설정은 분당 3회로 제한했습니다. 단일 인스턴스용 메모리 윈도 방식이며 초과 시 `429 / AUTH_006`을 반환합니다.
+- **Flyway baseline** — 기존 MariaDB 스키마를 V1 baseline으로 잡고 Refresh Token 구조 변경을 V2 마이그레이션으로 분리했습니다. Hibernate는 `ddl-auto=validate`만 사용해 애플리케이션 기동 중 임의로 스키마를 바꾸지 않습니다.
+- **라우트 단위 lazy loading** — `React.lazy`와 `Suspense`로 페이지를 분리하고 Vite에서 React·MUI·데이터 라이브러리 chunk를 나눴습니다. 기존 약 780 kB 단일 앱 번들 대신 페이지별 파일과 최대 381 kB 수준의 vendor chunk로 분리됐습니다.
 
 ## 아직 남은 한계
 
-- 이메일/SMS 전달 채널이 없어 이메일 찾기와 셀프서비스 비밀번호 재설정은 현재 비활성입니다. 운영 서비스라면 만료 시간이 짧은 일회용 링크와 검증된 전달 채널로 다시 설계해야 합니다.
-- Refresh Token은 여전히 SPA `localStorage`에 있습니다. 다음 단계에서는 HttpOnly·Secure·SameSite 쿠키와 rotation/reuse detection을 함께 설계해야 합니다.
-- 로그인·계정 찾기·재설정에 운영 수준의 rate limit과 CAPTCHA가 없습니다.
-- Flyway 의존성은 실제 마이그레이션 파일 없이 선언만 되어 있어 제거했습니다. 운영 배포 전에는 기존 스키마를 baseline으로 잡은 버전형 마이그레이션 전략이 필요합니다.
-- 프론트 프로덕션 번들은 약 780 kB로, 라우트 단위 lazy loading과 chunk 분리가 남아 있습니다.
+- 이메일/SMS 전달 채널이 없어 이메일 찾기와 셀프서비스 비밀번호 재설정은 현재 비활성입니다. 검증된 전달 채널과 만료 시간이 짧은 일회용 링크를 연결해야 실제 복구 기능으로 전환할 수 있습니다.
+- CAPTCHA처럼 외부 서비스 연동이 필요한 자동화 요청 방어는 적용하지 않았습니다.
+- 현재 rate limit은 단일 서버 메모리를 기준으로 합니다. 서버를 여러 대 운영한다면 Redis 같은 공용 저장소 기반 제한으로 바꿔야 합니다.
 
 ---
 
 # 9. 마무리 소감
 
-2차 미니는 **화면보다 도메인**이 먼저였습니다. 지원서와 멤버를 나누고, Soft Delete와 관리자 복구를 붙이고, JWT 갱신으로 세션을 끊기지 않게 만드는 과정이 1차의 “모아 보여 주기”와는 다른 종류의 설계 연습이었습니다.
+프론트엔드와 백엔드로 역할을 나눠 협업하며, 서비스가 어떤 메커니즘으로 맞물려 동작하는지 직접 체감할 수 있었던 시간이었습니다. 실제 구현에 들어가 보니 기획 단계에서 생각했던 것보다 훨씬 세세한 데이터와 다양한 예외 상황을 고려해야 한다는 것도 알게 되었습니다.
 
-프론트는 MSW로 먼저 흐름을 고정하고, 백엔드는 Entity·상태 전이·권한을 코드로 고정했습니다. README에는 요약과 이 글로의 링크만 남겨 두었습니다.
+개발 과정에서 백엔드 팀에 수정과 추가 요청을 계속 전달할 수밖에 없었지만, 이 조율을 반복하면서 프론트엔드와 백엔드가 어떻게 연결되고 각 영역이 어떤 차이를 가지는지 더 깊이 이해할 수 있었습니다.
 
-함께 백엔드·프론트를 맞춰 준 팀원들 덕분에 모집에서 팀 게시판까지 한 줄로 이을 수 있었습니다.
+서로 다른 파트의 코드를 하나로 합치고 데이터가 흐르는 전체 구조를 파악하는 과정에서도 많은 것을 배웠습니다. 여러 번의 수정 요청이 번거로울 수 있었음에도 매번 유연하게 대응하고 함께 고민해 준 팀원들 덕분에 프로젝트를 무사히 마칠 수 있었습니다.
+
+함께한 팀원들에게 고맙다는 말을 전하고 싶습니다. 이번 경험을 통해 협업에서의 커뮤니케이션이 프로젝트의 완성도를 높이는 데 얼마나 큰 힘이 되는지 배울 수 있었습니다.
