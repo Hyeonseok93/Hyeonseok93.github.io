@@ -81,7 +81,7 @@ function closeZoom() {
       stageImg.removeAttribute('src');
       stageImg.alt = '';
     }
-    lastFocused?.focus?();
+    lastFocused?.focus?.();
     lastFocused = null;
   };
 
@@ -93,7 +93,7 @@ function onDocumentClick(event) {
   if (!isGitHubArticlePage()) return;
   if (overlay?.classList.contains('is-open')) return;
 
-  const img = event.target.closest?('.article-content img');
+  const img = event.target.closest?.('.article-content img');
   if (!img || !document.querySelector('.article-content')?.contains(img)) return;
 
   // Leave real links alone (e.g. badge / external image links).
