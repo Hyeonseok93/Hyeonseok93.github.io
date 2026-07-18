@@ -233,12 +233,12 @@ Access Token은 수명이 짧아 자주 만료됩니다. 만료될 때마다 로
   <img src="./fig5.png" alt="Fig.5 홈 · 모집글 목록" loading="lazy" />
 </figure>
 
-### 모집글 상세 · 지원
+### 모집글 작성
 
-진행 기간·온/오프라인·모집 인원·스택·본문을 확인하고, 지원 동기·포지션·연락처/포트폴리오를 제출합니다.
+프로젝트/스터디 유형, 제목, 모집 인원, 마감일, 진행 방식, 기술 스택과 상세 소개를 한 번에 입력합니다. 우측의 작성 팁과 등록 전 체크리스트가 필수 입력 항목을 안내해, 긴 폼에서도 현재 작성 상태를 놓치지 않게 했습니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig6.png" alt="Fig.6 모집글 상세 · 지원" loading="lazy" />
+  <img src="./fig6.png" alt="Fig.6 프로젝트 · 스터디 모집글 작성" loading="lazy" />
 </figure>
 
 ### 마이페이지 · 내 모집글 · 내 신청 현황
@@ -282,6 +282,34 @@ Access Token은 수명이 짧아 자주 만료됩니다. 만료될 때마다 로
 </figure>
 
 **전역 마운트 · 상태 관리** — 두 컴포넌트는 `MainLayout`에 한 번만 마운트하고, 상태는 Zustand `uiStore`(`toast` / `modal`)로 관리합니다. 그래서 어느 페이지든 `showToast(message, type)` 한 줄, `openModal('confirm', { title, message, onConfirm })` 한 줄로 동일한 UI를 띄웁니다. 닫히는 순간 직전 내용을 로컬 상태로 유지해 사라질 때 문구가 깜빡이지 않게 처리했습니다.
+
+### 상태별 커스텀 에러 페이지
+
+존재하지 않는 주소에서 브라우저 기본 오류 화면이나 빈 화면이 나오지 않도록 **공통 `ErrorPage`**를 만들었습니다. `App.jsx`의 마지막 `path="*"` 라우트가 등록되지 않은 모든 경로를 받아, 기본적으로 404 화면을 렌더링합니다.
+
+- **상태별 메시지·색상 분기** — 기본 404는 Primary 보라색으로 "페이지를 찾을 수 없음", 403은 Amber로 "접근 권한 없음", 500은 Red로 "서버 오류 발생"을 표시합니다. 라우터나 API 처리부가 `location.state`에 `status / code / message`를 전달하면 같은 컴포넌트가 상황에 맞는 화면으로 바뀝니다.
+- **사용자에게 다음 행동 제공** — 오류 코드만 보여 주고 막다른 길로 만들지 않고, `navigate(-1)`을 호출하는 **이전 페이지로** 버튼과 `/`로 이동하는 **홈으로 이동** 버튼을 함께 제공합니다.
+- **디자인 시스템 유지** — MUI `Paper`·`Typography`·`Stack`과 공통 `CustomButton`을 사용해 정상 화면과 같은 라운드·색상·버튼 톤을 유지합니다. 모바일에서는 버튼을 세로로, 넓은 화면에서는 가로로 배치해 오류 상황에서도 조작이 불편하지 않게 했습니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig12.png" alt="Fig.12 404 페이지를 찾을 수 없음 커스텀 에러 페이지" loading="lazy" />
+</figure>
+
+### Thymeleaf 관리자 화면
+
+사용자용 React SPA와 별도로, 운영 기능은 Spring Boot가 렌더링하는 **Thymeleaf 관리자 화면**으로 분리했습니다. `/admin/**` 전용 `SecurityFilterChain`을 우선순위 `@Order(1)`로 두고, JWT 대신 DB 계정을 조회하는 **Form Login**을 적용했습니다. 로그인한 계정에 `ROLE_ADMIN` 권한이 있어야 관리자 URL에 접근할 수 있습니다.
+
+<figure class="article-figure-center">
+  <img src="./fig13.png" alt="Fig.13 MATE 관리자 로그인" loading="lazy" />
+</figure>
+
+로그인 성공 시 `/admin/dashboard`로 이동합니다. 사용자 화면과 같은 Primary 보라색을 사용하되, 이메일·비밀번호 입력과 로그인 버튼의 폭을 동일하게 맞춰 독립된 운영 진입점이라는 인상을 유지했습니다.
+
+<figure class="article-figure-center article-figure-center--full">
+  <img src="./fig14.png" alt="Fig.14 Thymeleaf 관리자 대시보드" loading="lazy" />
+</figure>
+
+대시보드는 **전체 회원·전체 모집글 수**, 최근 가입 회원, 최근 게시글, 활동 로그를 한 화면에 모읍니다. 회원·게시글은 각각 상세 조회와 Soft Delete/복구가 가능하며, 삭제 시 연관 프로젝트·멤버십을 함께 처리하고 작업 이력을 `AdminLog`에 남깁니다. 회원·게시글·활동 로그는 페이징하고, 상단 통합 검색으로 이메일·닉네임·프로젝트 제목·작성자·로그 내용을 찾을 수 있게 했습니다.
 
 # 8. 마무리 소감
 
