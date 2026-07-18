@@ -78,7 +78,7 @@ React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JP
 
 핵심은 **모집글에 지원하고, 수락된 사람만 팀 멤버가 되는** 흐름입니다. README에는 요약만 두고, 관계·상태·설계 이유는 아래에 정리합니다.
 
-<figure class="article-figure-center article-figure-center--wide">
+<figure class="article-figure-center article-figure-center--full">
   <img src="./fig3.png" alt="Fig.3 MATE ERD" loading="lazy" />
 </figure>
 

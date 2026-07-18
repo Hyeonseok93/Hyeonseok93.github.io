@@ -1,0 +1,79 @@
+/* GitHub Pages only - imported from article-image-zoom.js (not Tistory bundle). */
+
+.article-content img {
+  cursor: zoom-in;
+}
+
+.article-image-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(8, 10, 16, 0.88);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.article-image-zoom.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.article-image-zoom__stage {
+  max-width: min(96vw, 100%);
+  max-height: min(96vh, 100%);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: 0.5rem;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  background: transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.article-image-zoom__stage img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  cursor: zoom-out;
+  border-radius: 0.5rem;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.article-image-zoom__close {
+  position: fixed;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 10001;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s ease;
+}
+
+.article-image-zoom__close:hover,
+.article-image-zoom__close:focus-visible {
+  background: rgba(255, 255, 255, 0.22);
+  outline: none;
+}
+
+body.article-image-zoom-open {
+  overflow: hidden;
+}
