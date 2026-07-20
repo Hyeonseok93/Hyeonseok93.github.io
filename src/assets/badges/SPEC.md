@@ -1,53 +1,44 @@
 # Tech Badge Spec
 
 README / Built With 배지 공통 규격입니다.
-**새 배지는 반드시 이 규칙으로 만든 뒤** `src/assets/badges/{dark,light}/`에 넣고,
-프로젝트 README에는 여기서 복사해서 사용합니다.
+새 배지는 **반드시** `src/assets/badges/{dark,light}/`에 만든 뒤, 프로젝트 README로 복사합니다.
 
-> 주의: shields.io 결과물은 글자 간격·좌우 패딩이 기존 인벤토리와 다릅니다.
-> 반드시 아래 레이아웃 + `make-badge.mjs`(또는 동일 파라미터)로 생성하세요.
+## 절대 하지 말 것
+
+- shields.io PNG를 그대로 쓰지 마세요. 글자 간격·패딩이 인벤토리와 다릅니다.
+- Arial 등으로 새로 렌더링하지 마세요. 기존 배지와 획 두께가 어긋납니다.
+
+## 권장 생성 방식 (글리프 조립)
+
+기존 dark 배지에서 **글자 조각(안티앨리어싱 포함)** 을 잘라 새 라벨을 조립합니다.
+아이콘만 Simple Icons → 14×14 PNG로 넣고, 글자는 인벤토리에서 **잉크 밀도가 높은** 조각을 고릅니다.
+배치는 **흰 글자 잉크 기준**으로 맞춥니다 (DOCKER와 동일).
 
 ## 레이아웃 (px)
 
 | 항목 | 값 |
 |------|-----|
-| 높이 | **28** (고정) |
+| 높이 | **28** |
 | 왼쪽 패딩 | **9** |
-| 아이콘 | **14×14** (세로 중앙) |
-| 아이콘→글자 간격 | **9** |
-| 글자 간격 (tracking) | **1** (글자 사이 1px) |
-| 단어 간격 (공백) | **7** (예: `ARGO CD`, `SPRING BOOT`) |
-| 오른쪽 패딩 | **13** |
-| 너비 | `9 + 14 + 9 + textWidth + 13` (가변) |
+| 아이콘 | **14×14** 캔버스 (세로 중앙) |
+| 아이콘 → 글자 잉크 | **10** |
+| 글자 사이(잉크) | **3** (DOCKER/TYPESCRIPT) |
+| 단어 간격(잉크) | **8** (`SPRING SECURITY`) |
+| 오른쪽 패딩(잉크 뒤) | **14** |
+| Dark 배경 | `#363B44` `(54,59,68)` |
+| Light 배경 | `#E8ECF0` `(232,236,240)` |
+| Light 글자 | `#24292F` `(36,41,47)` — dark 조립본을 재채색 |
 
-## 스타일
-
-| 항목 | Dark | Light |
-|------|------|-------|
-| 배경 | `#363B44` = `(54,59,68)` | `#E8ECF0` = `(232,236,240)` |
-| 글자색 | `#FFFFFF` | `#24292F` = `(36,41,47)` |
-| 폰트 | **Arial Bold 11px** (`arialbd.ttf`) | 동일 |
-| 텍스트 | 대문자 | 동일 |
-| 아이콘 | Simple Icons SVG → PNG 14px, 브랜드 컬러 | 동일 |
-
-## 파일
-
-- 경로: `src/assets/badges/dark/{name}.png`, `src/assets/badges/light/{name}.png`
-- 파일명: 소문자, 공백 없음 (`argocd.png`, `reacthookform.png`)
-
-## 생성
-
-Node + `sharp` 필요. `SHARP_CWD`에 sharp가 있는 프로젝트 경로를 지정하거나,
-`long-screenshot-tool`이 형제 디렉터리에 있으면 자동 탐색합니다.
+## 도구
 
 ```bash
-node src/assets/badges/make-badge.mjs Kubernetes kubernetes 326CE5
-node src/assets/badges/make-badge.mjs "Argo CD" argo EF7B4D argocd
+# 글리프 조립 (권장) — kubernetes / argocd 재생성
+python src/assets/badges/compose-badge.py
 ```
 
-인자: `<Label> <simpleicons-slug> <logoHex> [filename]`
+`make-badge.py` / `make-badge.mjs`는 레거시 래퍼이며, 새 배지는 `compose-badge.py`를 쓰세요.
 
-## README에 붙일 때
+## README 마크업
 
 ```html
 <picture>
@@ -56,5 +47,3 @@ node src/assets/badges/make-badge.mjs "Argo CD" argo EF7B4D argocd
   <img src="assets/readme/badges/dark/{name}.png" alt="{Label}" height="28" />
 </picture>
 ```
-
-프로젝트 쪽은 깃페이지 배지를 **복사**만 합니다.
