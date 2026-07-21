@@ -47,12 +47,12 @@ React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JP
 
 1차(CVS)가 데이터 수집·대시보드였다면, 2차는 **REST API · JPA 관계 · JWT 인증 · 권한**을 한 제품 흐름으로 묶는 쪽이었습니다. 화면만 늘리는 것보다 **User–Project–Application–ProjectMember** 관계와 Soft Delete·토큰 갱신 같은 운영 규칙을 코드로 고정하는 데 집중했습니다.
 
-# 3. 전체 아키텍처
+# 3. 서비스 흐름
 
 흐름은 짧게 **React SPA → Spring Boot REST → MariaDB**이고, 프로필 이미지는 **Cloudinary**, 관리자 화면은 **Thymeleaf**로 서버 렌더링합니다.
 
 <figure class="article-figure-center article-figure-center--full">
-  <img src="./fig2.png" alt="Fig.2 MATE 시스템 아키텍처" loading="lazy" />
+  <img src="./fig2.png" alt="Fig.2 MATE 서비스 흐름" loading="lazy" />
 </figure>
 
 | 구분 | 기술 | 역할 |
