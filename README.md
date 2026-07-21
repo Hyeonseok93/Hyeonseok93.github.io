@@ -1,14 +1,14 @@
 # 🐶 Bulldog's House
 
 <p align="center">
-  <a href="https://hyeonseok93.github.io/" style="text-decoration:none;"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme_badges/dark/github-pages.png" /><img src="assets/readme_badges/light/github-pages.png" alt="GitHub Pages" height="40" /></picture></a>&#8194;<a href="https://bulldog93.tistory.com/" style="text-decoration:none;"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/readme_badges/dark/tistory.png" /><img src="assets/readme_badges/light/tistory.png" alt="Tistory" height="40" /></picture></a><br />
+  <a href="https://hyeonseok93.github.io/" style="text-decoration:none;"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/github-pages.png" /><img src=".github/readme/badges/light/github-pages.png" alt="GitHub Pages" height="40" /></picture></a>&#8194;<a href="https://bulldog93.tistory.com/" style="text-decoration:none;"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/tistory.png" /><img src=".github/readme/badges/light/tistory.png" alt="Tistory" height="40" /></picture></a><br />
   <a href="https://hyeonseok93.github.io/">https://hyeonseok93.github.io/</a>
   ·
   <a href="https://bulldog93.tistory.com/">https://bulldog93.tistory.com/</a>
 </p>
 
 <p align="center">
-  <picture><img src="assets/confidently.gif" alt="Bulldog Confident" width="420" /></picture>
+  <picture><img src=".github/readme/confidently.gif" alt="Bulldog Confident" width="420" /></picture>
 </p>
 
 <p align="center">
@@ -26,28 +26,32 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/html5.png" />
-    <img src="assets/badges/light/html5.png" alt="HTML5" height="28" />
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/html5.png" />
+    <img src=".github/readme/badges/light/html5.png" alt="HTML5" height="28" />
   </picture>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/css3.png" />
-    <img src="assets/badges/light/css3.png" alt="CSS3" height="28" />
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/css3.png" />
+    <img src=".github/readme/badges/light/css3.png" alt="CSS3" height="28" />
   </picture>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/javascript.png" />
-    <img src="assets/badges/light/javascript.png" alt="JavaScript" height="28" />
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/javascript.png" />
+    <img src=".github/readme/badges/light/javascript.png" alt="JavaScript" height="28" />
   </picture>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/vite.png" />
-    <img src="assets/badges/light/vite.png" alt="Vite" height="28" />
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/vite.png" />
+    <img src=".github/readme/badges/light/vite.png" alt="Vite" height="28" />
   </picture>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/tailwindcss.png" />
-    <img src="assets/badges/light/tailwindcss.png" alt="Tailwind CSS" height="28" />
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/tailwindcss.png" />
+    <img src=".github/readme/badges/light/tailwindcss.png" alt="Tailwind CSS" height="28" />
   </picture>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/badges/dark/githubactions.png" />
-    <img src="assets/badges/light/githubactions.png" alt="GitHub Actions" height="28" />
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/githubactions.png" />
+    <img src=".github/readme/badges/light/githubactions.png" alt="GitHub Actions" height="28" />
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/vercel.png" />
+    <img src=".github/readme/badges/light/vercel.png" alt="Vercel" height="28" />
   </picture>
 </p>
 
@@ -88,10 +92,9 @@
 
 ```text
 Hyeonseok93.github.io/
-┣━━ 📂 assets/                        # 정적 에셋 (이미지/뱃지 등)
-┃   ┣━━ 📂 badges/dark/               # README 기술 스택 뱃지 (다크)
-┃   ┣━━ 📂 badges/light/              # README 기술 스택 뱃지 (라이트)
-┃   ┗━━ 📂 readme_badges/             # README 플랫폼 뱃지 (dark/light)
+┣━━ 📂 .github/readme/                # README 전용 에셋
+┃   ┣━━ 📂 badges/dark/               # README 뱃지 (다크)
+┃   ┗━━ 📂 badges/light/              # README 뱃지 (라이트)
 ┣━━ 📂 content/
 ┃   ┗━━ 📂 posts/                     # 글 원본 (category/slug/index.md)
 ┣━━ 📂 scripts/                       # 빌드/생성/검증 스크립트

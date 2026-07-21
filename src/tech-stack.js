@@ -39,6 +39,7 @@ const TECH_BADGES = [
   { id: 'kubernetes', category: 'devops', label: 'Kubernetes' },
   { id: 'terraform', category: 'devops', label: 'Terraform' },
   { id: 'githubactions', category: 'devops', label: 'GitHub Actions' },
+  { id: 'vercel', category: 'devops', label: 'Vercel' },
   { id: 'argocd', category: 'devops', label: 'Argo CD' },
   { id: 'cloudinary', category: 'devops', label: 'Cloudinary' },
   { id: 'pandas', category: 'data-science', label: 'Pandas' },
