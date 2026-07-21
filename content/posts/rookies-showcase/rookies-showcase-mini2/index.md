@@ -49,29 +49,33 @@ React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JP
 
 # 3. 서비스 흐름
 
-흐름은 짧게 **React SPA → Spring Boot REST → MariaDB**이고, 프로필 이미지는 **Cloudinary**, 관리자 화면은 **Thymeleaf**로 서버 렌더링합니다.
+MATE의 핵심 흐름은 모집글을 올리는 데서 끝나지 않습니다. **모집 → 지원 → 검토 → 팀 확정 → 팀 공간**으로 이어지며, 지원이 수락된 사용자만 실제 팀원으로 전환됩니다.
 
 <figure class="article-figure-center article-figure-center--full">
   <img src="./fig2.png" alt="Fig.2 MATE 서비스 흐름" loading="lazy" />
 </figure>
 
-| 구분 | 기술 | 역할 |
-|------|------|------|
-| **Frontend Core** | JavaScript, React/React DOM 19.2.4, Vite 8.0.3 | 컴포넌트 기반 SPA 렌더링·개발 서버·프로덕션 번들 |
-| **Routing & UI** | React Router DOM 7.13.2, MUI/MUI Icons 7.3.9, Emotion 11.14 | 페이지 라우팅·보호 경로·공통 컴포넌트·테마와 CSS-in-JS |
-| **State & HTTP** | Zustand 5.0.12, Axios 1.14.0 | 인증·게시글 전역 상태, API 모듈, JWT 인터셉터와 토큰 재발급 |
-| **Frontend Dev & Quality** | MSW 2.12.14, Vitest 4, jsdom, Testing Library, ESLint 9.39.4 | 선택형 API 모킹, 유틸·컴포넌트 단위 테스트, 정적 분석·Hooks 규칙 검사 |
-| **Backend Core** | Java 17, Spring Boot 3.5.13, Spring Web MVC, Bean Validation | REST API·서비스 계층·요청값 검증·전역 예외 처리 |
-| **Persistence** | Spring Data JPA, Hibernate ORM 6.6.45, MariaDB JDBC 3.5.7, Flyway | 엔티티 매핑·운영 데이터 영속화와 버전형 스키마 마이그레이션 |
-| **Database Support** | H2 2.3.232 | 테스트 프로필의 인메모리 DB로 로컬 MariaDB와 격리된 회귀 테스트 실행 |
-| **Security** | Spring Security, JJWT 0.12.7, BCrypt | HttpOnly Refresh 쿠키·회전/재사용 감지, 인증 API rate limit, 권한 제어 |
-| **Admin View** | Thymeleaf, Spring Security Form Login | 관리자 로그인·대시보드·회원·프로젝트·감사 로그 서버 렌더링 |
-| **Media** | Cloudinary Java SDK 1.36 | 프로필 이미지 업로드·CDN URL 관리, 로컬 정적 업로드 경로 지원 |
-| **Backend Utilities** | Jackson, Lombok, Servlet Multipart | JSON 직렬화·보일러플레이트 절감·멀티파트 파일 처리 |
-| **Build & Development** | Maven Wrapper 3.9.14, Spring Boot DevTools | 백엔드 빌드·의존성 관리·로컬 개발 편의 기능 |
-| **Backend Test** | Spring Boot Test, Spring Security Test, JUnit 5, AssertJ, H2 | 권한·JWT 쿠키 회전·rate limit·CSRF·삭제/복구 수명주기 회귀 검증 |
+### 1. 방장이 모집글을 만든다
 
-프론트는 초기에 **MSW**로 API를 모킹해 백엔드와 병렬로 화면을 붙였고, 연결 후에는 Axios Interceptor가 `401` 시 Refresh로 Access를 갱신한 뒤 원 요청을 재시도합니다.
+로그인한 사용자가 프로젝트·스터디 유형, 모집 포지션과 정원을 정해 모집글을 등록합니다. 작성자는 해당 모집의 방장이 되고, 다른 사용자는 목록과 상세 화면에서 조건을 확인합니다.
+
+### 2. 사용자가 원하는 포지션에 지원한다
+
+지원자는 희망 포지션과 메시지를 작성해 지원합니다. 서버는 마감된 모집인지, 방장 본인의 지원인지, 이미 지원했거나 팀에 참여 중인지 확인한 뒤 지원서를 `PENDING` 상태로 저장합니다.
+
+### 3. 방장이 지원서를 검토한다
+
+지원자 목록은 해당 모집의 방장만 볼 수 있습니다. 방장이 수락하면 지원서는 `ACCEPTED`, 거절하면 `REJECTED`로 바뀌며, 이미 처리된 지원서를 다시 처리할 수 없도록 막습니다.
+
+### 4. 수락된 지원자가 팀원이 된다
+
+수락 시 지원자 정보가 `ProjectMember`로 등록되고 현재 인원이 증가합니다. 정원이 모두 차면 모집 상태가 자동으로 마감되어 이후 지원을 받지 않습니다.
+
+### 5. 확정된 팀만 전용 공간을 사용한다
+
+방장과 수락된 팀원만 팀 게시판의 글과 댓글을 조회·작성할 수 있습니다. 지원 단계의 사용자와 실제 팀원을 분리해, **수락 결과가 권한으로 이어지는 흐름**을 완성했습니다.
+
+이 과정에서 React 화면은 Spring Boot REST API를 호출하고, 인증·모집·지원·팀 정보는 MariaDB에 저장됩니다. 프로필 이미지는 Cloudinary에 보관하며, 관리자 기능은 일반 사용자 흐름과 분리된 Thymeleaf 화면에서 처리합니다.
 
 # 4. 도메인 · ERD
 
