@@ -12,7 +12,6 @@ tags:
   - aws
   - cicd
   - github-actions
-  - github-app
 thumbnail: thumbnail.png
 ---
 
