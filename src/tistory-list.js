@@ -168,6 +168,20 @@ function ensureListThumbnails(root) {
   });
 }
 
+/** Mark Tistory's .selected paging digit with the same is-active look as GH Pages. */
+function enhanceTistoryPagination(root) {
+  const nav = root.querySelector('.tistory-native-pagination');
+  if (!nav) return;
+
+  nav.querySelectorAll('a.num, a.category-posts-pagination__btn--num').forEach((link) => {
+    const isCurrent =
+      link.classList.contains('selected') || Boolean(link.querySelector('.selected'));
+    if (!isCurrent) return;
+    link.classList.add('is-active');
+    link.setAttribute('aria-current', 'page');
+  });
+}
+
 export async function initTistoryListCards() {
   const root = document.getElementById('tistory-native-list');
   if (!root) return;
@@ -176,6 +190,7 @@ export async function initTistoryListCards() {
   root.querySelectorAll('.category-post-card__meta').forEach(normalizeMetaLine);
   await enrichListExcerpts(root);
   ensureListThumbnails(root);
+  enhanceTistoryPagination(root);
 }
 
 if (typeof document !== 'undefined') {

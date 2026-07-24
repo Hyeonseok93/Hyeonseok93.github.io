@@ -292,3 +292,35 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+
+/* Tistory native <s_paging>: current page gets .selected (often on an inner span). */
+.tistory-native-pagination a.category-posts-pagination__btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.tistory-native-pagination a.category-posts-pagination__btn:has(.selected),
+.tistory-native-pagination a.category-posts-pagination__btn.selected,
+.tistory-native-pagination a.num:has(.selected),
+.tistory-native-pagination a.num.selected {
+  color: #fff;
+  border-color: rgba(217, 119, 6, 0.45);
+  background-color: rgba(217, 119, 6, 0.15);
+}
+
+.tistory-native-pagination .selected {
+  color: inherit;
+  font-weight: 600;
+}
+
+.tistory-native-pagination a.no-more-prev,
+.tistory-native-pagination a.no-more-next,
+.tistory-native-pagination a.no_more_prev,
+.tistory-native-pagination a.no_more_next {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: not-allowed;
+}
