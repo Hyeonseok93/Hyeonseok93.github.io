@@ -73,18 +73,26 @@
     </tr>
     <tr>
       <td><code>npm run dev</code></td>
-      <td>로컬 개발 (Vite HMR)</td>
+      <td>로컬 개발 (Vite HMR). 시작 시 <code>build:posts</code> 포함</td>
+    </tr>
+    <tr>
+      <td><code>npm run build:posts</code></td>
+      <td><code>content/posts/**</code> → 글 HTML + <code>posts-manifest</code> 생성</td>
     </tr>
     <tr>
       <td><code>npm run build:gh-pages</code></td>
-      <td>배포용 빌드 → <code>dist/gh-pages/</code></td>
+      <td>배포용 빌드 → <code>dist/gh-pages/</code> (<code>build:posts</code> 포함). <code>main</code> push 시 Actions도 동일</td>
     </tr>
     <tr>
       <td><code>npm run build:tistory</code></td>
-      <td>티스토리 스킨 → <code>dist/tistory/</code></td>
+      <td>티스토리 스킨 → <code>dist/tistory/</code> (글 본문 빌드 아님, 스킨만)</td>
     </tr>
   </tbody>
 </table>
+
+<p align="center">
+  <sub>PowerShell에서 <code>npm.ps1</code> 실행 정책 오류가 나면 <code>npm.cmd run …</code> 을 사용합니다.</sub>
+</p>
 
 <br />
 
