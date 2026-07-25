@@ -2,6 +2,7 @@ import { escapeHtml } from './utils/escape-html.js';
 
 const TECH_BADGES = [
   { id: 'typescript', category: 'languages', label: 'TypeScript' },
+  { id: 'java', category: 'languages', label: 'Java' },
   { id: 'python', category: 'languages', label: 'Python' },
   { id: 'javascript', category: 'languages', label: 'JavaScript' },
   { id: 'c', category: 'languages', label: 'C' },
@@ -42,6 +43,8 @@ const TECH_BADGES = [
   { id: 'vercel', category: 'devops', label: 'Vercel' },
   { id: 'argocd', category: 'devops', label: 'Argo CD' },
   { id: 'cloudinary', category: 'devops', label: 'Cloudinary' },
+  { id: 'windows', category: 'os', label: 'Windows' },
+  { id: 'ubuntu', category: 'os', label: 'Ubuntu' },
   { id: 'pandas', category: 'data-science', label: 'Pandas' },
   { id: 'plotly', category: 'data-science', label: 'Plotly' },
   { id: 'jupyter', category: 'data-science', label: 'Jupyter' },
@@ -52,6 +55,7 @@ const TECH_BADGES = [
   { id: 'msw', category: 'tools', label: 'Mock Service Worker' },
   { id: 'vitest', category: 'tools', label: 'Vitest' },
   { id: 'qt', category: 'tools', label: 'Qt' },
+  { id: 'pyside6', category: 'tools', label: 'PySide6' },
   { id: 'opencv', category: 'tools', label: 'OpenCV' },
   { id: 'pyinstaller', category: 'tools', label: 'PyInstaller' },
   { id: 'groq', category: 'ai', label: 'Groq' },
