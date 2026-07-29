@@ -842,11 +842,11 @@
   color: #fff;
   font-weight: 700;
   text-align: left;
-  background: rgba(255, 255, 255, 0.05);
 }
 
 #tt-body-page .article-content thead th {
   color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -859,6 +859,7 @@
   color: #f3f4f6;
   font-weight: 700;
   white-space: nowrap;
+  background: transparent;
 }
 
 #tt-body-page .article-content .article-ref-table {
@@ -919,11 +920,11 @@
   color: #fff;
   font-weight: 700;
   text-align: left;
-  background: rgba(255, 255, 255, 0.05);
 }
 
 .article-content thead th {
   color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -935,6 +936,7 @@
   color: #f3f4f6;
   font-weight: 700;
   white-space: nowrap;
+  background: transparent;
 }
 
 .article-content .article-ref-table {
