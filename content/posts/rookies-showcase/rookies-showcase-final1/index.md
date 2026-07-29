@@ -438,7 +438,7 @@ Leaflet 마커로 숙소 위치를 올리고, 드래그·확대 시 Bounds와 �
 
 ### 11. 통합 예외 대응 및 권한 제어 (Error Page) — `/error`
 
-상태 코드별 일러스트·원인 메시지로 홈·이전 화면 복귀를 유도합니다. 스크린샷은 **403 · 404 · 500 · 503**입니다. (README의 401 화면은 별도 캡처가 없어 생략했습니다.)
+상태 코드별 일러스트·원인 메시지로 홈·이전 화면 복귀를 유도합니다. 스크린샷은 **403 · 404 · 500 · 503**입니다.
 
 <div class="article-figure-row article-figure-row--4">
   <figure class="article-figure-row__item">
@@ -485,7 +485,7 @@ Leaflet 마커로 숙소 위치를 올리고, 드래그·확대 시 Bounds와 �
 
 최종 기간에는 **진단할 대상 서비스**를 바이브 코딩으로 빨리 올리는 것이 우선이었습니다. 숙소·항공·렌터카·결제·셀러/어드민까지 흐름은 돌았지만, 취약점 진단 뒤에는 Access Token이 JS에 남을 여지, 화면·응답의 PII 평문 노출, FE만 믿은 입력·업로드처럼 데모만으로는 안 보이던 구멍이 드러났습니다.
 
-[UR-VULN](https://github.com/UR-VULN) 조직의 FE/BE `audit/*/hs` 브랜치에 **이행점검**을 반영했습니다. 순서는 **쿠키 세션·JWT subject → PII 마스킹/reveal → 입력·업로드·에러 sanitization → Admin BO·엣지**였고, API 경로와 기존 데이터는 최대한 유지한 채 문제별로 고친 뒤 테스트로 확인했습니다.
+취약점 진단을 마친 뒤, 지적된 항목을 **이행점검**으로 반영했습니다. 순서는 **쿠키 세션·JWT subject → PII 마스킹/reveal → 입력·업로드·에러 sanitization → Admin BO·엣지**였고, API 경로와 기존 데이터는 최대한 유지한 채 문제별로 고친 뒤 테스트로 확인했습니다.
 
 ## 토큰을 JS에서 빼다
 
@@ -520,7 +520,7 @@ Leaflet 마커로 숙소 위치를 올리고, 드래그·확대 시 Bounds와 �
 
 # 10. 미니 이후의 리팩토링 — 결제 서버 신뢰와 운영 fail-closed
 
-이행점검(hs) 이후, 모노레포 `SK-Rookies5-FINAL_ONDE`에서 **추가 코드 감사**를 돌리며 Critical·구조·FE 최적화 구멍을 다시 메웠습니다. 순서는 **결제/항공 서버 신뢰·행 락 → CSRF·Admin denyAll·fallback 게이트 → Controller→Service · FE/엣지**였습니다.
+이행점검 이후, 모노레포 `SK-Rookies5-FINAL_ONDE`에서 **추가 코드 감사**를 돌리며 Critical·구조·FE 최적화 구멍을 다시 메웠습니다. 순서는 **결제/항공 서버 신뢰·행 락 → CSRF·Admin denyAll·fallback 게이트 → Controller→Service · FE/엣지**였습니다.
 
 ## 결제는 클라이언트가 아니라 서버 금액이다
 
