@@ -832,22 +832,19 @@
   border-right: none;
 }
 
-#tt-body-page .article-content tr:last-child th,
-#tt-body-page .article-content tr:last-child td {
-  border-bottom: none;
-}
-
 #tt-body-page .article-content th,
 #tt-body-page .article-content table[data-ke-style] th {
   color: #fff;
   font-weight: 700;
   text-align: left;
+  background: transparent;
 }
 
-#tt-body-page .article-content thead th {
+#tt-body-page .article-content thead th,
+#tt-body-page .article-content table[data-ke-style] thead th {
   color: var(--accent-color);
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 #tt-body-page .article-content td,
@@ -855,11 +852,22 @@
   color: #d1d5db;
 }
 
-#tt-body-page .article-content tbody th {
+/* Tistory content.css may paint all th; keep body row labels transparent so row lines show. */
+#tt-body-page .article-content tbody th,
+#tt-body-page .article-content table[data-ke-style] tbody th,
+#tt-body-page .article-content .article-ref-table tbody th {
   color: #f3f4f6;
   font-weight: 700;
   white-space: nowrap;
-  background: transparent;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+#tt-body-page .article-content tr:last-child th,
+#tt-body-page .article-content tr:last-child td,
+#tt-body-page .article-content table[data-ke-style] tr:last-child th,
+#tt-body-page .article-content table[data-ke-style] tr:last-child td {
+  border-bottom: none !important;
 }
 
 #tt-body-page .article-content .article-ref-table {
