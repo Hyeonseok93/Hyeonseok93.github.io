@@ -389,30 +389,44 @@ Chapter 5–7은 소스/응답 정보 노출 · 오류 페이지 · Method · �
 
 # 9. 미니 이후의 리팩토링 — 멀티유저 격리와 운영 fail-closed
 
-최종 제출 이후, 모노레포 `SK-Rookies5-FINAL_ARGUS`에서 **멀티유저·보안 감사**를 돌리며 Critical·High 구멍을 다시 메웠습니다. 순서는 **JWT 게이트 → 유저별 `data/` 격리 → 계정 at-rest 암호화 → progress/ZAP 경계 → prod fail-closed**였습니다.
+최종 제출 이후, 모노레포 `SK-Rookies5-FINAL_ARGUS`에서 **멀티유저·보안 감사**를 돌리며 Critical·High 구멍을 다시 메웠습니다. 순서는 **로그인 UI·JWT 게이트 → 유저별 `data/` 격리 → 계정 at-rest 암호화 → progress/ZAP 경계 → prod fail-closed**였습니다. “기능 모듈만 더 붙이기”가 아니라, **처음부터 열려 있던 공유 구조를 뜯어 고친** 구간에 가깝습니다.
 
-기존 ARGUS는 **단일 공유 워크스페이스**였습니다. ALB `/api/*`에 인증이 없고, `data/`·진단 progress·verify/report 삭제가 전역이라 A와 B가 같은 inventory·계정을 덮어쓰고, `test-accounts.json`은 평문으로 API에 노출됐습니다. Terraform에 JWT 시크릿이 있어도 앱이 안 쓰면 게이트는 없는 것과 같았습니다. (진단 대상 URL allowlist / 프라이빗 IP SSRF 차단은 **의도적으로 제외**했습니다. 제한 없이 대상을 물려야 했기 때문입니다.)
+## Before — 로그인 페이지도 없고, 전부 공유였다
 
-## API는 익명이 아니라 JWT다
+기존 ARGUS에는 **로그인 화면이 없었습니다**. 프론트는 열자마자 Attack Surface · Diagnosis로 들어갔고, ALB `/api/*`도 **무인증**이었습니다. Terraform에 `JWT_SECRET`이 있어도 앱이 안 쓰면 게이트는 없는 것과 같습니다.
 
-배포본에서 누구나 inventory·diagnosis를 읽고 쓰면, 공유 mutable state가 그대로 공격 표면이 됩니다. Infra에 있던 `JWT_SECRET`을 실제로 쓰기 위해 멀티 유저 계정(B안)을 올렸습니다.
+데이터도 **전역 한 그릇**이었습니다.
 
-- `users.json` + bcrypt + JWT(`POST /api/auth/register|login`, `GET /api/auth/me`). 보호: inventory · test-accounts · base-urls · login/upload/download · diagnosis 등 거의 전 `/api/*`.
-- 공개 유지: `/api/health`, auth login/register, 그리고 외부 타깃이 치는 redirect sink hit 경로.
-- 유저 0명이고 `ADMIN_USERNAME` / `ADMIN_PASSWORD`가 있으면 부트스트랩 admin 1명. FE는 Bearer 첨부 · 401 시 로그인 · `LoginPage` 게이트.
+| Before | 배포·동시 사용 시 |
+|--------|-------------------|
+| `data/` 전역 공유 | A가 올린 inventory·계정을 B가 그대로 보고 덮어씀 |
+| 진단 progress 전역 1개 | A 실행 중 B가 cancel/폴링으로 끼어듦 |
+| 빌드 시 verify/report 전역 삭제 | 남의 결과까지 같이 날아감 |
+| `config.yaml`을 대시보드가 전역 덮어씀 | 유저가 base/login만 바꿔도 서버 설정이 통째로 바뀜 |
+| `test-accounts.json` 평문 | 비밀번호가 API로 노출 |
+| ZAP `api.disablekey` + 8090 공개 | 스캐너 API 무단 사용 여지 |
+| redirect sink hits 무인증 조회 | 프로브 기록 누구나 열람 |
 
-“대시보드만 열리면 된다”가 아니라, **누가 API를 쓰는지**를 서버가 먼저 묻게 바꾼 것이 출발점입니다.
+팀 lab에서 “한 명씩 쓰면 된다”로 버티던 구조가, 배포·동시 사용을 전제로 하면 그대로 구멍입니다. (진단 대상 URL allowlist / 프라이빗 IP SSRF 차단은 **의도적으로 제외**했습니다. 제한 없이 대상을 물려야 했기 때문입니다.)
+
+## 로그인 페이지를 만들고, API를 JWT로 잠그다
+
+그래서 FE·BE를 같이 뜯었습니다. 백엔드는 `users.json` + bcrypt + JWT(`POST /api/auth/register|login`, `GET /api/auth/me`)를 올리고, inventory · test-accounts · base-urls · login/upload/download · diagnosis 등 거의 전 `/api/*`에 `Authorization: Bearer`를 요구했습니다. 공개는 `/api/health`, auth login/register, 외부 타깃이 치는 redirect sink hit 정도만 남겼습니다.
+
+프론트는 `LoginPage` · `auth.ts` · `api.ts` Bearer 첨부 · 401 시 세션 클리어를 붙이고, `App`을 **세션 확인 후 로그인 또는 본 앱**으로 갈랐습니다. 사이드바에 username · Sign out도 이때 생겼습니다. 유저 0명이고 `ADMIN_USERNAME` / `ADMIN_PASSWORD`가 있으면 부트스트랩 admin 1명을 만듭니다.
+
+“대시보드만 열리면 된다”에서, **누가 쓰는지 묻고 나서야** Attack Surface로 들어가게 바꾼 것이 출발점입니다.
 
 ## 데이터는 `data/`가 아니라 `data/users/{id}/`다
 
 한 폴더를 공유하면 Last-writer-wins가 팀 단위로 터집니다. 격리(A안)로 인증된 요청마다 `UserDataDir`를 ContextVar에 바인딩하고, 서비스·백그라운드 진단 워커는 그 루트만 읽습니다.
 
 - api-tree · test-accounts · base-urls · login/upload/download · uploads · report가 **유저 디렉터리 안**으로 이동했습니다.
-- 예전처럼 대시보드가 `config.yaml` / `config.docker.yaml`을 **전역 덮어쓰지 않습니다**. base/login은 유저 JSON만 저장하고, 진단 시 메모리 config에 merge합니다.
+- 대시보드가 `config.yaml` / `config.docker.yaml`을 **전역 덮어쓰지 않습니다**. base/login은 유저 JSON만 저장하고, 진단 시 메모리 config에 merge합니다.
 - 빌드 시 `_invalidate_previous_target_artifacts`도 **자기 workspace** verify/report만 지웁니다.
 - progress/cancel도 `_states[user_id]`로 갈라, A가 6-1을 돌리는 동안 B의 폴링·cancel이 A를 건드리지 않게 했습니다.
 
-수집·검증·findings를 파일로 둔 설계(4절)는 유지하되, **파일이 누구 것인지**를 계정에 묶은 리팩터입니다.
+수집·검증·findings를 파일로 둔 설계(4절)는 유지하되, **파일이 누구 것인지**를 계정에 묶은 리팩터입니다. 예전에 쌓여 있던 전역 `data/api-tree.json` 등은 새 세션에 자동으로 안 붙습니다.
 
 ## 비밀번호는 평문 JSON이 아니다
 
@@ -440,7 +454,7 @@ ZAP `api.disablekey=true` + 호스트 `8090` 공개는 스캐너 남용으로 �
 - `ARGUS_ENV=production`(또는 시크릿 fail-closed)에서 공개 register 기본 403, `JWT_SECRET` / `CREDENTIALS_KEY` 없으면 기동·발급 실패.
 - CD는 `deploy.yml` → prod compose 단일 경로(SSM). docker run 이중 경로를 걷어 ZAP key·미공개 포트와 맞춤.
 
-8절 화면의 Sign in / workspace는 이 리팩터 이후의 전제입니다. 기능을 더 붙이기보다, **인증·격리·시크릿·ZAP 경계를 운영 기본값으로 닫는** 쪽에 무게를 뒀습니다. (evidence capture의 `ARGUS_DATA_DIR` 구멍·ZAP 볼륨에 `users/`가 보이는 문제 등은 후속 High로 남겼습니다.)
+8절에 보이는 Sign in · username · 유저별 workspace는 **이 리팩터 이전에는 없던 전제**입니다. 기능을 더 붙이기보다, **열려 있던 공유 ARGUS를 인증·격리·시크릿·ZAP 경계로 닫은** 쪽에 무게를 뒀습니다. (evidence capture의 `ARGUS_DATA_DIR` 구멍·ZAP 볼륨에 `users/`가 보이는 문제 등은 후속 High로 남겼습니다.)
 
 # 10. 마무리 소감
 
