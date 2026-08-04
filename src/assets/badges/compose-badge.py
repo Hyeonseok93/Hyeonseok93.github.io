@@ -17,7 +17,7 @@ from PIL import Image
 
 BLOG = Path(__file__).resolve().parent
 MACTA = Path(r"C:\Users\hyunm\WorkStation\github\SK-Rookies5-MINI3_MACTA\assets\readme\badges")
-SHARP_CWD = Path(r"C:\Users\hyunm\WorkStation\github\long-screenshot-tool")
+SHARP_CWD = Path(r"C:\Users\hyunm\Workstation\Github\Hyeonseok93.github.io")
 
 H = 28
 PAD_L = 9
@@ -152,6 +152,38 @@ def pick(bank: dict[str, list[dict]], ch: str) -> dict:
     return max(candidates, key=lambda g: g["density"])
 
 
+def _rasterize_svg_with_node(tmp_svg: Path, tmp_png: Path) -> None:
+    js = (
+        "const sharp=require('sharp');const fs=require('fs');"
+        f"sharp(fs.readFileSync({json.dumps(str(tmp_svg))}))"
+        f".resize({ICON},{ICON},{{fit:'contain',background:{{r:0,g:0,b:0,alpha:0}}}})"
+        f".png().toFile({json.dumps(str(tmp_png))})"
+        ".then(()=>console.log('ok')).catch(e=>{console.error(e);process.exit(1)})"
+    )
+    subprocess.check_call(["node", "-e", js], cwd=str(SHARP_CWD))
+
+
+def _rasterize_svg_with_playwright(tmp_svg: Path, tmp_png: Path) -> None:
+    from playwright.sync_api import sync_playwright
+
+    svg = tmp_svg.read_text(encoding="utf-8")
+    html = (
+        "<!doctype html><html><body style='margin:0;background:transparent'>"
+        f"<div id='i' style='width:{ICON}px;height:{ICON}px;display:flex;"
+        "align-items:center;justify-content:center'>"
+        f"{svg}</div></body></html>"
+    )
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page(
+            viewport={"width": ICON, "height": ICON},
+            device_scale_factor=1,
+        )
+        page.set_content(html, wait_until="load")
+        page.locator("#i").screenshot(path=str(tmp_png), omit_background=True)
+        browser.close()
+
+
 def fetch_icon(slug: str, hexcolor: str) -> Image.Image:
     req = urllib.request.Request(
         f"https://cdn.simpleicons.org/{slug}/{hexcolor}",
@@ -161,14 +193,11 @@ def fetch_icon(slug: str, hexcolor: str) -> Image.Image:
     tmp_svg = Path(tempfile.gettempdir()) / "_badge_icon.svg"
     tmp_png = Path(tempfile.gettempdir()) / "_badge_icon.png"
     tmp_svg.write_bytes(svg)
-    js = (
-        "const sharp=require('sharp');const fs=require('fs');"
-        f"sharp(fs.readFileSync({json.dumps(str(tmp_svg))}))"
-        f".resize({ICON},{ICON},{{fit:'contain',background:{{r:0,g:0,b:0,alpha:0}}}})"
-        f".png().toFile({json.dumps(str(tmp_png))})"
-        ".then(()=>console.log('ok')).catch(e=>{console.error(e);process.exit(1)})"
-    )
-    subprocess.check_call(["node", "-e", js], cwd=str(SHARP_CWD))
+    try:
+        _rasterize_svg_with_node(tmp_svg, tmp_png)
+    except (FileNotFoundError, subprocess.CalledProcessError, OSError) as exc:
+        print(f"sharp/node unavailable ({exc}); using playwright")
+        _rasterize_svg_with_playwright(tmp_svg, tmp_png)
     icon = Image.open(tmp_png).convert("RGBA")
     # Force exact ICON×ICON canvas (sharp contain can yield 12–13 wide icons).
     canvas = Image.new("RGBA", (ICON, ICON), (0, 0, 0, 0))
@@ -248,7 +277,10 @@ def compose(label: str, icon: Image.Image, filename: str, bank: dict[str, list[d
         g, place_x = item
         img.paste(g["img"], (place_x, 0), g["img"])
 
-    for root in (BLOG, MACTA):
+    roots = [BLOG]
+    if MACTA.exists():
+        roots.append(MACTA)
+    for root in roots:
         dark_dir = root / "dark"
         light_dir = root / "light"
         dark_dir.mkdir(parents=True, exist_ok=True)

@@ -53,6 +53,7 @@ const TECH_BADGES = [
   { id: 'streamlit', category: 'tools', label: 'Streamlit' },
   { id: 'selenium', category: 'tools', label: 'Selenium' },
   { id: 'playwright', category: 'tools', label: 'Playwright' },
+  { id: 'zap', category: 'tools', label: 'ZAP' },
   { id: 'beautifulsoup', category: 'tools', label: 'BeautifulSoup' },
   { id: 'msw', category: 'tools', label: 'Mock Service Worker' },
   { id: 'vitest', category: 'tools', label: 'Vitest' },
