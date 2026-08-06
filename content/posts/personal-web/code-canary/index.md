@@ -48,6 +48,70 @@ NVD에서 부여하는 **공식 CVE**와, 오픈소스 쪽에서 쌓이는 **OSV
 
 그래서 CRUD만 도는 단순 도메인보다, NVD·OSV처럼 **관계가 얽힌 데이터를 수집·정제·집계**하는 쪽이 맞다고 봤습니다. 피드가 서로 다른 스키마로 들어오고, 정규화한 뒤에도 탐색·차트·파이프라인 상태가 한 제품 안에서 이어져야 해서, 백엔드·DB·Worker를 같이 밀어 볼 수 있는 주제였습니다.
 
+# 3. 서비스 흐름
+
+Code Canary의 핵심 흐름은 피드를 받는 데서 끝나지 않습니다. **수집 → 적재 → 정제 → 탐색 → 운영**으로 이어지며, 공개 Explorer·대시보드와 운영자 Roost가 같은 파이프라인 결과 위에서 만납니다.
+
+<figure class="article-figure-center article-figure-center--full">
+  <img src="./fig2.png" alt="Fig.2 Code Canary 서비스 흐름 — 수집 · 적재 · 정제 · 탐색 · 운영" loading="lazy" />
+</figure>
+
+### 1. NVD·OSV 피드를 수집한다
+
+Worker가 NVD API와 OSV `all.zip`을 받아 `/data` 스테이징에 baseline으로 쌓습니다. NVD는 full / incremental 모드를 두고, OSV는 zip과 manifest를 함께 둡니다.
+
+### 2. bronze에 원본을 적재한다
+
+스테이징 JSON을 **bronze.`raw_vulnerability_data`** 로 upsert합니다. `source_type` + `vulnerability_id`와 content-hash로 중복을 다루고, 원본은 JSONB로 남깁니다. 정제 전 상태는 `PENDING` / `PROCESSED` / `ERROR`로 추적합니다.
+
+### 3. silver로 정규화한다
+
+bronze 배치를 DB 함수로 풀어 **CVE hub · OSV hub**와 child 테이블(설명·CWE·CVSS·패키지 영향 등)에 넣습니다. 화면이 바로 조인하기 어려운 원본 스키마를, 검색·상세용 표 형태로 맞추는 단계입니다.
+
+### 4. Explorer와 대시보드에서 탐색한다
+
+silver를 집계해 **gold** 스냅샷·Explorer MV를 갱신하면, 공개 SPA는 gold만 읽어 목록·상세·차트·KEV를 보여 줍니다. NVD와 OSV를 같은 Explorer에서 넘나들며 비교하는 지점입니다.
+
+### 5. Roost에서 파이프라인을 운영한다
+
+장시간 collect / load / silver / gold 는 Roost Control Plane에서 단계를 큐에 넣고, Job Monitor로 진행·성공·실패를 봅니다. 운영자만 로그인하며, JWT(HttpOnly 쿠키)로 세션을 유지합니다.
+
+이 과정에서 React 화면은 Spring Boot REST API를 호출하고, 적재·정제는 Python Worker가 PostgreSQL·`/data`를 다룹니다. 로컬은 Docker Compose, 배포는 ECS · EFS · RDS · Redis 위에 같은 흐름을 올립니다.
+
+# 4. 도메인 · ERD
+
+핵심은 **management(운영) · bronze(원본) · silver(정규화) · gold(화면용)** 네 스키마로 층을 나눈 Medallion입니다. 관계·상태는 아래와 ERD에 맞춰 정리합니다.
+
+<figure class="article-figure-center article-figure-center--full">
+  <img src="./fig3.png" alt="Fig.3 Code Canary Domain ERD — management · bronze · silver · gold" loading="lazy" />
+</figure>
+
+### 핵심 엔티티
+
+| 층 | 테이블 | 역할 |
+|----|--------|------|
+| **management** | `users` | 운영자 계정. username · password · `ROLE_ADMIN` · 활성 여부 |
+| **management** | `revoked_tokens` | 로그아웃·폐기 JWT `jti` |
+| **management** | `pipeline_jobs` / `pipeline_job_logs` | Roost 잡 큐·로그. `step_key` · status · staging_ref · collect_mode |
+| **bronze** | `raw_vulnerability_data` | NVD/OSV 원본 JSONB. `(source_type, vulnerability_id)` · content_hash · processed_status |
+| **silver** | `cve_vulnerabilities` | CVE hub. description · weakness · metrics · reference · configuration child |
+| **silver** | `osv_vulnerabilities` | OSV hub. identifiers · affected · severities child |
+| **silver** | `osv_identifiers` | ALIAS/RELATED 등. `target_id`로 CVE와 **soft link** |
+| **gold** | `v_explorer_inventory` (MV) | Explorer 목록·필터용 통합 inventory |
+| **gold** | `dashboard_snapshots` / `intel_summary` | 대시보드 차트·요약 지표 |
+| **gold** | `latest_kev_insights` | CISA KEV 인사이트 |
+| **gold** | `ingestion_sync` | 소스별 collect · silver · gold 시각·상태 |
+
+### 관계와 설계 선택
+
+1. **bronze**는 원본을 통째로 남기고, silver refine이 끝난 행만 `PROCESSED`로 올립니다. 원본 추적과 재정제를 끊지 않기 위함입니다.
+2. **silver**는 CVE와 OSV를 **각각의 hub + CASCADE child**로 둡니다. 스키마가 다른 두 피드를 한 마스터 테이블에 억지로 합치지 않습니다.
+3. OSV → CVE는 FK가 아니라 `osv_identifiers.target_id` **soft link**입니다. 모든 OSV가 CVE를 갖지 않고, ID 표기도 제각각이라 강제 FK보다 탐색·조인에 유리합니다.
+4. **gold**는 화면 API가 읽는 층입니다. Explorer·대시보드는 bronze/silver를 직접 조인하지 않고 MV·스냅샷을 봅니다.
+5. **management**의 `pipeline_jobs`는 데이터 hub와 분리합니다. 파이프라인 실행 이력이 취약점 카탈로그 스키마를 오염시키지 않게 하려는 선택입니다.
+
+bronze / silver / gold를 **일부러 나눈** 이유입니다. 원본 보관 · 정규화 검색 · 차트용 집계를 한 테이블에 섞으면 “다시 받기 / 다시 풀기 / 화면만 갱신”이 한꺼번에 꼬입니다. **원본 = bronze**, **표 = silver**, **화면 = gold**로 역할을 갈랐습니다.
+
 ---
 
-다음 글에서는 **핵심 기능**부터 정리할 예정입니다. Medallion(**bronze → silver → gold**), NVD·OSV를 묶는 Explorer, 장시간 파이프라인을 돌리는 **Roost** 콘솔이 여기에 해당합니다.
+다음 글에서는 **핵심 기능**을 더 깊게 정리할 예정입니다. Medallion 배치 설계, Explorer 통합 검색, Roost 잡 오케스트레이션이 여기에 해당합니다.
