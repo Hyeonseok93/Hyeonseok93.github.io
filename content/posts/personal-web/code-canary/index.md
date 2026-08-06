@@ -112,6 +112,53 @@ silver를 집계해 **gold** 스냅샷·Explorer MV를 갱신하면, 공개 SPA�
 
 bronze / silver / gold를 **일부러 나눈** 이유입니다. 원본 보관 · 정규화 검색 · 차트용 집계를 한 테이블에 섞으면 “다시 받기 / 다시 풀기 / 화면만 갱신”이 한꺼번에 꼬입니다. **원본 = bronze**, **표 = silver**, **화면 = gold**로 역할을 갈랐습니다.
 
+# 5. 주요 API
+
+프론트가 쓰는 REST는 `/api` 아래에 모았습니다. **공개 analytics / Explorer** 와 **운영자(admin) 파이프라인** 을 권한으로 갈랐고, 아래는 **실제 컨트롤러 매핑** 기준 요약입니다. 로그인 JWT는 HttpOnly 쿠키로 두고, 상태 변경이 있는 호출은 CSRF 토큰을 함께 씁니다.
+
+### Auth · Session
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/auth/csrf` | CSRF 헤더명 · 토큰 발급 (공개) |
+| POST | `/api/auth/login` | 운영자 로그인 · JWT 쿠키 발급 · IP/계정 rate limit |
+| GET | `/api/admin/session` | 세션 조회. 비로그인·비관리자면 anonymous |
+| POST | `/api/admin/logout` | 로그아웃 · `jti` revoke + 쿠키 삭제 (인증 필요) |
+
+공개 회원가입 API는 두지 않았습니다. 운영자 계정은 `management.users`에 두고 Roost만 로그인합니다.
+
+### Analytics · Explorer (공개)
+
+대시보드·Explorer는 gold 스냅샷·MV를 읽습니다. `/api/analytics/**` 는 인증 없이 열려 있고, Redis 레이트 리밋으로 남용을 막습니다.
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/analytics/metrics` | 요약 지표 (`intel_summary`) |
+| GET | `/api/analytics/sync` | NVD·OSV ingestion sync 시각·상태 |
+| GET | `/api/analytics/dashboard` | 대시보드 소스·리스크 등 집계 |
+| GET | `/api/analytics/vector` | Attack vector 분석 |
+| GET | `/api/analytics/ecosystem` | 생태계 분석 |
+| GET | `/api/analytics/weakness` | CWE/약점 분석 |
+| GET | `/api/analytics/remediation` | 조치·패치 관련 분석 |
+| GET | `/api/analytics/kev-insights` | 최신 KEV 인사이트 목록 |
+| GET | `/api/analytics/explorer` | Explorer 목록·필터·페이징 (`ExplorerQueryParams`) |
+| GET | `/api/analytics/explorer/{vulnId}` | 취약점 상세 (NVD/OSV 통합) |
+
+### Admin · Pipeline (ROLE_ADMIN)
+
+Roost Control Plane · Job Monitor가 호출합니다. `/api/admin/**` 은 `ROLE_ADMIN` 만 허용합니다.
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/admin/pipeline/status` | NVD/OSV/gold 단계 상태·카운트 |
+| GET | `/api/admin/pipeline/activity` | 최근 잡 로그 (`limit`, 기본 50) |
+| GET | `/api/admin/pipeline/staging` | NVD·OSV staging baseline 목록 |
+| POST | `/api/admin/pipeline/jobs` | 잡 enqueue (`stepKey` · stagingRef · collectMode) → `202 Accepted` |
+| POST | `/api/admin/pipeline/jobs/stop` | collect 단계 중단 요청 |
+| POST | `/api/admin/pipeline/jobs/stuck/release` | stuck running 잡 해제 |
+
+Worker는 이 API로 쌓인 `pipeline_jobs`를 폴링해 collect / load / silver / gold 를 실행합니다. 백엔드는 **오케스트레이션·권한·조회** 에 머물고, 무거운 적재·정제는 Worker SQL이 담당합니다.
+
 ---
 
 다음 글에서는 **핵심 기능**을 더 깊게 정리할 예정입니다. Medallion 배치 설계, Explorer 통합 검색, Roost 잡 오케스트레이션이 여기에 해당합니다.
