@@ -298,41 +298,97 @@ NVD CVE와 OSV(GHSA 등)를 한 목록에서 보고 싶었지만, silver hub 스
 
 # 8. 화면으로 보는 기능
 
-대시보드·Explorer 상세·Roost Control Plane·Job Monitor가 화면에서 어떻게 이어지는지 봅니다. (공개 홈 대시보드는 **1. 메인 화면**의 `fig1`과 같습니다.)
+대시보드 Analytical Deep-dive 탭부터 Explorer · Roost까지, 공개 탐색과 운영 화면이 어떻게 이어지는지 봅니다. (홈 상단 동기화·메트릭·KEV 카드는 **1. 메인 화면**의 `fig1`과 같습니다.)
 
-### 1. 대시보드 — 동기화 · 메트릭 · KEV
+### 1. Source Profile — 소스 비중 · 성장
 
-공개 SPA 첫 화면입니다. NVD·OSV 동기화 시각, 카탈로그 규모·심각도·KEV 요약, 소스 비중·성장 차트, Known Exploited 목록이 한곳에 있습니다. 상단 검색은 Explorer로 이어지고, 운영자 콘솔(Roost)은 별도 경로입니다. 숫자는 gold 스냅샷·`intel_summary`를 읽습니다.
-
-<figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig1.png" alt="Fig.1 Code Canary 대시보드 — NVD/OSV 동기화 · 메트릭 · 소스 프로필 · KEV" loading="lazy" />
-</figure>
-
-### 2. Explorer 상세 — NVD · CVSS · KEV
-
-목록에서 한 건을 고르면 같은 라우트에서 상세로 들어갑니다. 소스 배지(NVD Intelligence 등), 요약, CVSS 게이지·Exploitability/Impact, Attack Context(벡터·복잡도·권한·상호작용·범위), Impact, CWE, 영향 제품, 참고 링크가 이어집니다. CISA KEV에 올라간 건은 조치 기한·Required Action 블록이 붙습니다. 7번에서 말한 soft link(ALIAS/RELATED)로 다른 ID로 넘어갈 수 있습니다.
+Analytical Deep-dive의 첫 탭입니다. 도넛으로 OSV · NVD · MAL 비중과 총 intel 건수를 보고, 오른쪽 시계열로 소스별 성장(2012–2026)을 봅니다. gold 대시보드 집계를 그대로 읽는 화면입니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig6.png" alt="Fig.6 Explorer 취약점 상세 — CVSS · Attack Context · KEV · CWE" loading="lazy" />
+  <img src="./fig5.png" alt="Fig.5 Analytical Deep-dive — Source Profile" loading="lazy" />
 </figure>
 
-### 3. Roost Control Plane — 단계별 enqueue
+### 2. Risk Profile — 심각도 · 유입 타임라인
 
-운영자 로그인 뒤 Control Plane입니다. NVD · OSV 각각 Collect → Bronze(load) → Silver 카드와, 아래 공유 **Gold Layer Snapshot**이 있습니다. bronze/silver 행 수·pending, 마지막 잡 상태·소요 시간이 보이고, Collect mode · Staging baseline을 고른 뒤 RUN / REFRESH GOLD로 `pipeline_jobs`에 넣습니다. Worker step key가 카드에 그대로 노출되어, 7번의 step_key와 화면이 같습니다.
+심각도(Critical~Low) 비중과 연도별 유입 추이를 나란히 둡니다. 평균 점수와 severity band가 한눈에 보이게 해, “지금 카탈로그가 얼마나 위험한지”를 먼저 잡습니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig5.png" alt="Fig.5 Roost Control Plane — NVD/OSV 단계 · Gold refresh" loading="lazy" />
+  <img src="./fig6.png" alt="Fig.6 Analytical Deep-dive — Risk Profile" loading="lazy" />
 </figure>
 
-### 4. Job Monitor — 진행 · 로그
+### 3. Attack Vector — 벡터 분포 · 진화
 
-사이드바 Job Monitor에서 큐에 넣은 잡의 진행·성공·실패와 `pipeline_job_logs`를 봅니다. Control Plane이 “무엇을 돌릴지”라면, Monitor는 “지금 무엇이 돌고 있는지”입니다. collect 중단·stuck release도 이 운영 흐름에서 이어집니다.
+NETWORK · LOCAL · ADJACENT · PHYSICAL 분포와, 같은 축의 연도별 진화 차트입니다. `/api/analytics/vector` gold 집계를 화면으로 옮긴 탭입니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig7.png" alt="Fig.7 Roost Job Monitor — 잡 진행 · 로그" loading="lazy" />
+  <img src="./fig7.png" alt="Fig.7 Analytical Deep-dive — Attack Vector" loading="lazy" />
 </figure>
 
-공개 탐색(대시보드·Explorer)과 운영(Roost)이 같은 Medallion 결과 위에 얹혀 있고, 화면만 경로·권한으로 갈라져 있습니다.
+### 4. Remediation — 조치 준비도 · 성숙 추이
+
+Patch Ready · Unpatched · Solution Provided 등 조치 상태 비중과, 연도별 stacked 추이입니다. “얼마나 많은 건이 패치 가능한지”를 카탈로그 단위로 봅니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig8.png" alt="Fig.8 Analytical Deep-dive — Remediation" loading="lazy" />
+</figure>
+
+### 5. Ecosystem — 생태계 분포 · 연간 추이
+
+npm · Ubuntu · Debian · PyPI 등 생태계별 건수·비율 표와 stacked 연간 추이입니다. OSV affected 쪽이 특히 잘 보이는 탭입니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig9.png" alt="Fig.9 Analytical Deep-dive — Ecosystem" loading="lazy" />
+</figure>
+
+### 6. Weakness — CWE · 카테고리
+
+왼쪽 pillar(Injection · Memory Safety · Auth 등)로 묶고, 오른쪽 테이블에 CWE ID · 이름 · 건수를 둡니다. 검색으로 약점을 좁힐 수 있습니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig10.png" alt="Fig.10 Analytical Deep-dive — Weakness Explorer (CWE)" loading="lazy" />
+</figure>
+
+### 7. Inventory Explorer — 통합 목록
+
+NVD·OSV(·MAL)를 한 피드로 스크롤합니다. 카드마다 소스 배지·ID·날짜·KEV due·요약과 CVSS · status · vector · remediation · weakness · ecosystem 칩이 붙습니다. gold `v_explorer_inventory` 목록 API 결과입니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig11.png" alt="Fig.11 Inventory Explorer — 통합 취약점 목록" loading="lazy" />
+</figure>
+
+### 8. Explorer 필터 — severity · source · KEV
+
+검색 옆 필터 패널입니다. severity · source · vector · status · remediation · weakness · ecosystem · 게시일 구간 · **CISA KEV ONLY** 토글이 `ExplorerQueryParams`와 1:1로 맞습니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig12.png" alt="Fig.12 Inventory Explorer — 필터 패널" loading="lazy" />
+</figure>
+
+### 9. Explorer 상세 — CVSS · Attack Context · KEV
+
+목록에서 한 건을 고르면 같은 라우트 상세로 들어갑니다. CVSS 게이지·Exploitability/Impact, Attack Context, Impact, CWE, 영향 제품, 참고 링크가 이어지고, KEV면 Required Action 블록이 붙습니다. soft link(ALIAS/RELATED)로 다른 ID로 넘어갈 수 있습니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig13.png" alt="Fig.13 Explorer 취약점 상세 — CVSS · Attack Context · KEV · CWE" loading="lazy" />
+</figure>
+
+### 10. Roost Control Plane — 단계별 enqueue
+
+운영자 로그인 뒤 Control Plane입니다. NVD · OSV 각각 Collect → Bronze(load) → Silver 카드와, 아래 공유 **Gold Layer Snapshot**이 있습니다. staging · collect mode를 고른 뒤 RUN / REFRESH GOLD로 `pipeline_jobs`에 넣고, Worker step key가 카드에 그대로 보입니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig14.png" alt="Fig.14 Roost Control Plane — NVD/OSV 단계 · Gold refresh" loading="lazy" />
+</figure>
+
+### 11. Job Monitor — Worker Activity · 로그
+
+Job Monitor의 Worker Activity입니다. `pipeline_job_logs`를 시간순으로 보여 주고(auto-refresh), Control Plane에서 넣은 collect/load/silver/gold 시작·성공·실패를 추적합니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig15.png" alt="Fig.15 Roost Job Monitor — Worker Activity · pipeline job logs" loading="lazy" />
+</figure>
+
+공개 Deep-dive · Explorer와 운영 Roost가 같은 Medallion(gold) 결과 위에 얹혀 있고, 화면만 경로·권한으로 갈라져 있습니다.
 
 ---
 
