@@ -251,13 +251,13 @@ DB 비밀번호 · JWT · NVD API Key처럼 민감한 값은 이미지·레포�
 
 로컬 Compose와 클라우드가 **같은 세 프로세스 + Postgres + Redis + `/data`** 를 공유하는 점이 이 인프라의 축입니다. 차이는 오케스트레이션이 Docker인지 ECS인지, 볼륨이 로컬 bind인지 EFS인지뿐입니다.
 
-# 7. 핵심 기능
+# 7. 핵심 구현
 
-인프라·API는 **5·6번**에서 다뤘으므로, 여기서는 앱의 뼈대만 깊게 갑니다. **Medallion 배치**, **Explorer 통합 검색**, **Roost 잡 오케스트레이션** 세 축입니다.
+인프라·라우팅은 **6번**에서, API 표면은 **5번**에서 다뤘으므로, 여기서는 앱에서 **왜 그렇게 짰는지**만 깊게 갑니다. **Medallion 배치**, **Explorer 통합 inventory**, **Roost 잡 큐** 세 축입니다.
 
 ### Medallion 배치 — collect · load · silver · gold
 
-피드를 “한 번에 DB에 넣고 화면까지” 돌리면 재수집·재정제·차트 갱신이 한 트랜잭션처럼 꼬입니다. 그래서 단계를 **step_key**로 갈라 Worker만 실행하게 했습니다.
+피드를 “한 번에 DB에 넣고 화면까지” 돌리면 재수집·재정제·차트 갱신이 한 트랜잭션처럼 꼬입니다. 그래서 단계를 **step_key**로 갈라 Worker만 실행하게 했습니다. FE · BE · Worker가 같은 키(`nvd-collect` … `gold-refresh`)를 공유합니다.
 
 | Step key | 역할 |
 |----------|------|
@@ -266,44 +266,74 @@ DB 비밀번호 · JWT · NVD API Key처럼 민감한 값은 이미지·레포�
 | `nvd-silver` / `osv-silver` | `silver.refine_*_batch` 루프 (기본 5k) |
 | `gold-refresh` | 스냅샷·`v_explorer_inventory` · `intel_summary` 갱신 |
 
-- **Collect** — NVD는 full / incremental, OSV는 zip+manifest. 결과는 `NVD_BASELINE_*` / `OSV_BASELINE_*` 로 스테이징에만 쌓입니다. 받기 ≠ DB 적재입니다.
-- **Load** — JSON을 `bronze.raw_vulnerability_data`에 upsert합니다. canonical JSON의 SHA-256 `content_hash`로 동일 본문은 skip하고, 바뀐 행만 `PENDING`으로 되돌립니다.
-- **Silver** — `PENDING|ERROR` 행을 DB 함수 배치로 hub+child에 풀고 `PROCESSED`로 올립니다. 남은 PENDING이 있으면 finalize가 실패해, 반쯤 정제된 상태로 gold를 돌리지 않게 막습니다.
-- **Gold** — silver를 조인해 스냅샷·MV를 **통째로 refresh**합니다. 공개 API는 이 층만 읽습니다.
+- **Collect ≠ Load** — 받기는 `/data`의 `NVD_BASELINE_*` / `OSV_BASELINE_*` 에만 쌓습니다. NVD는 full / incremental, OSV는 zip+manifest입니다. 적재는 운영자가 staging을 고른 뒤 별도 잡으로 돌립니다.
+- **Bronze idempotency** — canonical JSON의 SHA-256 `content_hash`로 동일 본문은 skip하고, 바뀐 행만 upsert한 뒤 `processed_status='PENDING'`으로 되돌립니다. “다시 받아도 안 바뀐 CVE”를 재정제하지 않기 위함입니다.
+- **Silver batch** — `PENDING|ERROR`만 partial index로 집어 `refine_*_batch`에 넘깁니다. 배치가 끝나면 남은 PENDING이 있으면 finalize가 실패해, 반쯤 정제된 상태로 gold를 돌리지 않게 막습니다.
+- **Gold full refresh** — silver를 조인해 스냅샷·MV를 통째로 갱신합니다. 공개 API는 bronze/silver를 직접 조인하지 않고 이 층만 읽습니다.
 
-효과는 단순합니다. **다시 받기 / 다시 풀기 / 화면만 갱신**을 서로 다른 잡으로 돌릴 수 있습니다.
+효과는 **다시 받기 / 다시 풀기 / 화면만 갱신**을 서로 다른 잡으로 돌릴 수 있다는 점입니다.
 
-### Explorer 통합 검색 — 한 inventory, soft link
+### Explorer 통합 inventory — MV · soft link
 
-NVD CVE와 OSV(GHSA 등)를 화면에서 같은 목록으로 보고 싶었습니다. silver hub는 스키마가 달라 억지로 합치지 않고, **gold `v_explorer_inventory`** 에 둘을 UNION한 뒤 Explorer는 MV만 조회합니다.
+NVD CVE와 OSV(GHSA 등)를 한 목록에서 보고 싶었지만, silver hub 스키마는 다릅니다. 억지로 한 마스터 테이블에 합치지 않고, **`gold.v_explorer_inventory`** 에 `cve_enriched` ∪ `osv_enriched` 를 올린 뒤 Explorer는 MV만 조회합니다.
 
-- **목록** — `GET /api/analytics/explorer` + `ExplorerQueryParams`(검색·source·vector·severity·ecosystem·severity·KEV·기간 등). `search_vector @@ plainto_tsquery`와 필터 인덱스로 페이징합니다.
-- **경계** — OSV 중 ID가 `CVE-%`인 행은 NVD가 이미 갖고 있으므로 inventory에서 빼, 같은 CVE가 두 줄로 나오지 않게 했습니다.
-- **상세** — `GET /api/analytics/explorer/{vulnId}`가 MV 메타를 읽고, 소스에 따라 silver child(설명·CVSS·CWE·affected 등)를 붙입니다.
-- **연결** — OSV→CVE FK는 두지 않습니다. `osv_identifiers`의 ALIAS/RELATED `target_id` **soft link**로 상세에서 다른 ID로 넘어갑니다.
+- **목록 계약** — `ExplorerQueryParams`(검색·source·vector·severity·ecosystem·severity·KEV·기간) → `search_vector @@ plainto_tsquery` + 필터. 페이지 기본 50건.
+- **중복 CVE 제거** — OSV 중 ID가 `CVE-%`인 행은 NVD가 이미 갖고 있으므로 inventory에서 빼, 같은 CVE가 두 줄로 나오지 않게 했습니다.
+- **상세** — `GET /api/analytics/explorer/{vulnId}`가 MV 메타를 읽고, 소스에 따라 silver child(설명·CVSS·CWE·affected 등)를 병렬로 붙입니다.
+- **Soft link** — OSV→CVE FK는 두지 않습니다. 모든 OSV가 CVE를 갖지 않고 ID 표기도 제각각이라, `osv_identifiers`의 ALIAS/RELATED `target_id`로 상세에서만 건너뛰게 했습니다.
+
+“한 화면에서 비교”는 **UI 라우트를 하나로 모은 것**이고, 저장은 여전히 CVE hub · OSV hub가 갈라져 있습니다.
+
+### Roost 잡 큐 — enqueue · claim · cancel
+
+장시간 collect/load/silver/gold를 API 요청 스레드에서 돌리면 타임아웃·중복 실행이 납니다. Roost는 **큐에만 넣고**, Worker가 폴링해 실행합니다.
+
+- **Enqueue** — `POST /api/admin/pipeline/jobs` → `management.pipeline_jobs`(`queued`, `step_key`, `staging_ref`, `collect_mode`). 동시에 active(queued/running)는 하나입니다. 새 잡을 넣기 전에 stale running을 먼저 회수합니다.
+- **Claim** — Worker가 `FOR UPDATE SKIP LOCKED`로 다음 잡을 집고, heartbeat(기본 60s) · cancel watcher(2s)를 켠 뒤 `run_step` 핸들러를 호출합니다. heartbeat가 오래된 running은 stale로 실패 처리합니다.
+- **Stop** — collect 단계만 `cancel_requested_at`을 받습니다. queued면 즉시 실패, running이면 Worker가 `JobCancelledError`로 빠져나옵니다. load/silver/gold는 중간에 끊으면 카탈로그가 반쯤 깨질 수 있어 중단 API를 열지 않았습니다.
+- **Stuck release** — 운영자가 직접 running을 일괄 실패 처리하고 collect 쪽 `ingestion_sync`를 리셋합니다.
+- **Auth 경계** — `/api/analytics/**` 공개, `/api/admin/**` 은 `ROLE_ADMIN` + JWT(HttpOnly 쿠키) + CSRF. Redis 레이트 리밋·로그인 잠금이 죽으면 로그인을 열어 두지 않습니다(fail-closed).
+
+세 축을 한 줄로 모으면, **스테이징·bronze 해시로 원본을 지키고 → silver 배치로 정규화하고 → gold MV로 공개 탐색하며 → Roost 큐로만 무거운 잡을 돌린다**는 흐름입니다.
+
+# 8. 화면으로 보는 기능
+
+대시보드·Explorer 상세·Roost Control Plane·Job Monitor가 화면에서 어떻게 이어지는지 봅니다. (공개 홈 대시보드는 **1. 메인 화면**의 `fig1`과 같습니다.)
+
+### 1. 대시보드 — 동기화 · 메트릭 · KEV
+
+공개 SPA 첫 화면입니다. NVD·OSV 동기화 시각, 카탈로그 규모·심각도·KEV 요약, 소스 비중·성장 차트, Known Exploited 목록이 한곳에 있습니다. 상단 검색은 Explorer로 이어지고, 운영자 콘솔(Roost)은 별도 경로입니다. 숫자는 gold 스냅샷·`intel_summary`를 읽습니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig1.png" alt="Fig.1 Code Canary 대시보드 — NVD/OSV 동기화 · 메트릭 · 소스 프로필 · KEV" loading="lazy" />
+</figure>
+
+### 2. Explorer 상세 — NVD · CVSS · KEV
+
+목록에서 한 건을 고르면 같은 라우트에서 상세로 들어갑니다. 소스 배지(NVD Intelligence 등), 요약, CVSS 게이지·Exploitability/Impact, Attack Context(벡터·복잡도·권한·상호작용·범위), Impact, CWE, 영향 제품, 참고 링크가 이어집니다. CISA KEV에 올라간 건은 조치 기한·Required Action 블록이 붙습니다. 7번에서 말한 soft link(ALIAS/RELATED)로 다른 ID로 넘어갈 수 있습니다.
 
 <figure class="article-figure-center article-figure-center--wide">
   <img src="./fig6.png" alt="Fig.6 Explorer 취약점 상세 — CVSS · Attack Context · KEV · CWE" loading="lazy" />
 </figure>
 
-한 라우트에서 NVD·OSV 상세를 넘나들며, KEV·약점·영향 범위를 같은 레이아웃으로 비교하는 지점입니다.
+### 3. Roost Control Plane — 단계별 enqueue
 
-### Roost 잡 오케스트레이션 — enqueue · claim · monitor
-
-장시간 collect/load/silver/gold를 브라우저나 API 스레드에서 돌리면 타임아웃·중복 실행이 납니다. Roost는 **큐에만 넣고**, Worker가 폴링해 실행합니다.
+운영자 로그인 뒤 Control Plane입니다. NVD · OSV 각각 Collect → Bronze(load) → Silver 카드와, 아래 공유 **Gold Layer Snapshot**이 있습니다. bronze/silver 행 수·pending, 마지막 잡 상태·소요 시간이 보이고, Collect mode · Staging baseline을 고른 뒤 RUN / REFRESH GOLD로 `pipeline_jobs`에 넣습니다. Worker step key가 카드에 그대로 노출되어, 7번의 step_key와 화면이 같습니다.
 
 <figure class="article-figure-center article-figure-center--wide">
   <img src="./fig5.png" alt="Fig.5 Roost Control Plane — NVD/OSV 단계 · Gold refresh" loading="lazy" />
 </figure>
 
-- **Enqueue** — Control Plane에서 `POST /api/admin/pipeline/jobs` → `management.pipeline_jobs`(`queued`). 동시에 active(queued/running)는 하나. 단계·staging·collect mode를 고르고 RUN합니다.
-- **Claim** — Worker가 `FOR UPDATE SKIP LOCKED`로 다음 잡을 집고, heartbeat·cancel watcher를 돌린 뒤 `run_step` 핸들러를 호출합니다. 오래된 running은 stale로 회수합니다.
-- **Monitor** — Job Monitor가 status·`pipeline_job_logs`를 폴링해 진행·성공·실패를 보여 줍니다.
-- **Stop / Stuck** — collect만 중단 요청(`cancel_requested_at`)이 있고, stuck running은 release API로 일괄 실패 처리합니다.
-- **Auth** — Roost·admin API는 `ROLE_ADMIN` + JWT(HttpOnly 쿠키) + CSRF. 공개 analytics와 운영 표면을 갈랐습니다.
+### 4. Job Monitor — 진행 · 로그
 
-세 축을 한 줄로 모으면, **스테이징·bronze 해시로 원본을 지키고 → silver 배치로 정규화하고 → gold MV로 공개 탐색하며 → Roost 큐로만 무거운 잡을 돌린다**는 흐름입니다.
+사이드바 Job Monitor에서 큐에 넣은 잡의 진행·성공·실패와 `pipeline_job_logs`를 봅니다. Control Plane이 “무엇을 돌릴지”라면, Monitor는 “지금 무엇이 돌고 있는지”입니다. collect 중단·stuck release도 이 운영 흐름에서 이어집니다.
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig7.png" alt="Fig.7 Roost Job Monitor — 잡 진행 · 로그" loading="lazy" />
+</figure>
+
+공개 탐색(대시보드·Explorer)과 운영(Roost)이 같은 Medallion 결과 위에 얹혀 있고, 화면만 경로·권한으로 갈라져 있습니다.
 
 ---
 
-다음으로는 **화면으로 보는 기능**을 더 짧게 이어 갈 예정입니다. 대시보드·Explorer 목록·Roost Job Monitor 흐름이 여기에 해당합니다.
+다음으로는 **회고 · 정리**를 짧게 이어 갈 예정입니다.
