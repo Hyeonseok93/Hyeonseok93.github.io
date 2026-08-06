@@ -25,9 +25,55 @@ function getScrollOffset() {
   return headerHeight + mobileTopBar + 20;
 }
 
-function scrollToHeading(heading) {
-  const top = heading.getBoundingClientRect().top + window.scrollY - getScrollOffset();
-  window.scrollTo({ top, behavior: 'smooth' });
+function isGitHubArticlePage() {
+  return document.body?.id === 'article';
+}
+
+/** Images that precede `el` in document order (their load shifts heading Y). */
+function imagesBeforeElement(el) {
+  const content = document.querySelector('.article-content');
+  if (!content || !el) return [];
+
+  return [...content.querySelectorAll('img')].filter((img) =>
+    Boolean(img.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)
+  );
+}
+
+function waitForImage(img) {
+  if (img.complete && img.naturalHeight > 0) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const done = () => resolve();
+    img.addEventListener('load', done, { once: true });
+    img.addEventListener('error', done, { once: true });
+    if (typeof img.decode === 'function') {
+      img.decode().then(done).catch(done);
+    }
+  });
+}
+
+function headingScrollTop(heading) {
+  return heading.getBoundingClientRect().top + window.scrollY - getScrollOffset();
+}
+
+async function scrollToHeading(heading) {
+  const before = imagesBeforeElement(heading);
+
+  before.forEach((img) => {
+    if (img.loading === 'lazy') img.loading = 'eager';
+  });
+
+  await Promise.all(before.map((img) => waitForImage(img)));
+
+  window.scrollTo({ top: headingScrollTop(heading), behavior: 'smooth' });
+
+  // Smooth scroll + late paints: snap once more if we drifted.
+  window.setTimeout(() => {
+    const target = headingScrollTop(heading);
+    if (Math.abs(window.scrollY - target) > 4) {
+      window.scrollTo({ top: target, behavior: 'auto' });
+    }
+  }, 450);
 }
 
 function buildTocLinks(items) {
@@ -55,7 +101,7 @@ function bindTocNavigation(nav) {
     const target = document.getElementById(link.dataset.tocLink);
     if (!target) return;
 
-    scrollToHeading(target);
+    void scrollToHeading(target);
   });
 }
 
@@ -217,6 +263,31 @@ function initArticleThumbnail() {
   });
 }
 
+/**
+ * GitHub Pages: ensure width/height attrs (aspect-ratio hint) once metadata is known,
+ * and eager-load the first couple of content images if markdown still marks them lazy.
+ */
+function initGitHubArticleImages() {
+  if (!isGitHubArticlePage()) return;
+
+  const imgs = [...document.querySelectorAll('.article-content img')];
+  imgs.forEach((img, index) => {
+    if (index < 2 && img.loading === 'lazy') {
+      img.loading = 'eager';
+      if (!img.getAttribute('fetchpriority')) img.setAttribute('fetchpriority', 'high');
+    }
+
+    const applySize = () => {
+      if (!img.naturalWidth || !img.naturalHeight) return;
+      if (!img.hasAttribute('width')) img.setAttribute('width', String(img.naturalWidth));
+      if (!img.hasAttribute('height')) img.setAttribute('height', String(img.naturalHeight));
+    };
+
+    if (img.complete) applySize();
+    else img.addEventListener('load', applySize, { once: true });
+  });
+}
+
 /** Strip Tistory's literal "," separators between tag links. */
 function normalizeArticleTags() {
   document.querySelectorAll('.article-tags').forEach((el) => {
@@ -233,6 +304,7 @@ function initArticlePage() {
 
   normalizeArticleTags();
   groupArticleChapters();
+  initGitHubArticleImages();
   initArticleToc();
   initArticleScrollHeader();
   initPostNavTitles();

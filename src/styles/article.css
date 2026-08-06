@@ -893,6 +893,8 @@
   border-radius: 0.5rem;
 }
 
+/* width+height attrs (from build-posts) give intrinsic aspect-ratio before decode */
+
 .article-content table {
   width: 100%;
   margin: 1.75rem 0;

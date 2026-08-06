@@ -46,6 +46,7 @@ export const RICH_HTML_ALLOWED_ATTR = [
   'target',
   'rel',
   'loading',
+  'fetchpriority',
   'width',
   'height',
 ];
@@ -56,7 +57,7 @@ export function buildSanitizeHtmlAllowedAttributes() {
 
   return {
     a: pick('href', 'title', 'target', 'rel', 'class', 'id'),
-    img: pick('src', 'alt', 'title', 'loading', 'width', 'height', 'class'),
+    img: pick('src', 'alt', 'title', 'loading', 'fetchpriority', 'width', 'height', 'class'),
     code: pick('class'),
     span: pick('class'),
     '*': pick('class', 'id'),
