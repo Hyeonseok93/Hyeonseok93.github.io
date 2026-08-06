@@ -1,5 +1,5 @@
 ---
-title: "[Project] Code Canary — 취약점 인텔리전스 · 파이프라인 콘솔"
+title: "[WEB] Code Canary — NVD·OSV 취약점 인텔리전스"
 date: 2026-08-06
 tags:
   - code-canary
