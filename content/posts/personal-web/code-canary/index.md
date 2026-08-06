@@ -390,6 +390,57 @@ Job Monitor의 Worker Activity입니다. `pipeline_job_logs`를 시간순으로 
 
 공개 Deep-dive · Explorer와 운영 Roost가 같은 Medallion(gold) 결과 위에 얹혀 있고, 화면만 경로·권한으로 갈라져 있습니다.
 
+# 9. 중요했던 고민 — 보안 경계와 Medallion
+
+기능을 붙이다 보면 “일단 되게”만 남기기 쉽습니다. Code Canary에서는 **누가 무엇을 만질 수 있는지**, 그리고 **백만 건을 어떻게 집계할지**가 먼저 벽에 부딪혔고, 그 두 축을 따로 붙잡아 두었습니다.
+
+### 정보보안 — 공개 탐색과 운영을 갈라 막기
+
+취약점 카탈로그는 공개해도, **파이프라인을 돌리는 손**은 공개하면 안 됩니다. 그래서 보안은 “기능 하나”가 아니라 **표면을 나누는 일**로 잡았습니다.
+
+**인증 · 세션**
+
+- 운영자 JWT는 `localStorage`가 아니라 **HttpOnly 쿠키**(`SameSite=Strict`, path를 admin API로 한정)에 둡니다. XSS로 스크립트가 읽어도 토큰이 JS에 없습니다.
+- 상태 변경은 **CSRF double-submit**과 함께 갑니다. CORS는 쓰지 않고 Nginx same-origin 프록시로 FE·BE를 묶었습니다.
+- 로그아웃 때는 `jti`를 `revoked_tokens`에 넣어, 쿠키가 남아 있어도 재사용하지 못하게 했습니다.
+- Spring Security는 `/api/admin/**`에 `ROLE_ADMIN`을 요구하고, **나머지 API는 `denyAll`** 입니다. “열어 둔 줄 몰랐던 엔드포인트”를 기본값으로 막았습니다.
+
+**남용 · 장애 시 열리지 않기**
+
+- 로그인 실패 잠금 · admin/analytics 레이트 리밋은 **Redis sliding window**입니다. Redis가 죽으면 한도를 건너뛰지 않고 **요청을 거절(fail-closed)** 합니다. “캐시가 없으니 일단 통과”가 로그인·스크래핑에 바로 구멍이 되기 때문입니다.
+- Nginx에도 login · admin · analytics 구간별 `limit_req`를 두고, 신뢰 프록시 CIDR 밖의 `X-Forwarded-For`는 믿지 않습니다.
+
+**운영 표면 · 엣지**
+
+- 콘솔 경로는 `/admin` 고정이 아니라 빌드 시 시크릿으로 넣고(`VITE_ADMIN_*`, 기본 `/roost`), `robots.txt`·noindex로 검색 노출을 줄였습니다.
+- go-live 때는 **operator CIDR allowlist**(Nginx · WAF)로 `/roost` · `/api/auth/login` · `/api/admin/**` 을 신뢰 IP만 통과시키게 둡니다. HTTPS · CloudFront · WAF Common/KnownBadInputs도 tfvars로 켭니다.
+- RDS·Redis는 Private, Backend는 Cloud Map으로만 찾고, 시크릿은 Secrets Manager(로컬은 Docker secrets)로 주입합니다. Actuator는 health만 노출합니다.
+
+**데이터 · 입력 경계**
+
+- Explorer 검색은 길이·페이지 상한과 LIKE escape로 과한 쿼리를 막고, staging baseline·zip 경로는 정규식·path-safe 검사로 traversal을 막습니다.
+- silver refine은 bronze에 `PENDING`/`ERROR`가 남아 있으면 “정제 완료”로 올리지 않습니다. 반쯤 깨진 카탈로그를 gold에 올리는 쪽이 더 위험하다고 봤습니다.
+
+한 줄로 말하면, **analytics는 읽기 전용으로 열고 · Roost는 좁게 잠그고 · 한도·시크릿·네트워크가 죽어도 운영 문이 열리지 않게** 맞춘 것입니다.
+
+### 데이터베이스 — 타임아웃에서 만난 Medallion
+
+처음에는 Medallion이라는 이름을 몰랐습니다. NVD·OSV를 **정제해서 표로만** DB에 넣으면 된다고 생각했습니다. 정규화된 silver만 있어도 Explorer 상세는 그럭저럭 나왔습니다.
+
+문제는 **통계**였습니다. 카탈로그가 **약 100만 건**에 가까워지자, 대시보드용으로 silver를 그때그때 `GROUP BY` · 연도별 trend · 소스 비중을 돌리면 쿼리가 길어지고 **타임아웃**이 반복됐습니다. “정제만 잘하면 화면은 빠르다”는 가정이 깨진 순간입니다.
+
+그래서 먼저 떠올린 해법은 단순했습니다. **대시보드·Deep-dive용 집계 테이블을 따로 두자.** 화면은 매번 원본(또는 silver)을 전수 스캔하지 말고, 미리 만들어 둔 분포·trend·요약만 읽으면 됩니다. Explorer 목록도 조인이 무거운 순간이 있어, 나중에 **통합 inventory MV**로 검색 레이어를 분리했습니다.
+
+그 구조를 정리하다 보니, 이미 데이터 엔지니어링에서 쓰는 이름과 같았습니다. **bronze(원본 보관) → silver(정규화 표) → gold(소비·집계)**. “통계용 테이블을 떼 둔다”가 곧 gold이고, 받기·풀기·화면 갱신을 잡으로 가른 이유가 여기에 맞닿아 있습니다.
+
+- **bronze** — 원본 JSONB와 content-hash. 다시 받아도 안 바뀐 건 skip, 바뀐 건 `PENDING`으로 재정제.
+- **silver** — CVE/OSV hub + child. 상세·조인의 기준 표.
+- **gold** — `intel_summary` · dashboard snapshots · `v_explorer_inventory`. 공개 API가 실제로 읽는 층.
+
+원본을 한 테이블에 다 욱여넣고 화면마다 집계하면, 수집 한 번이 통계·검색·운영 이력까지 한꺼번에 흔듭니다. **층이 나뉘어 있어야** “다시 받기 / 다시 풀기 / 차트만 갱신”이 가능해졌고, 100만 건 위에서 대시보드가 버티는 이유도 같습니다. Medallion을 교과서에서 고른 게 아니라, **타임아웃을 피하려다 층이 생기고, 나중에 이름이 붙은** 쪽에 가깝습니다.
+
+보안이 **누가 만질 수 있는지**를 가른다면, Medallion은 **무엇을 얼마나 무거운 채로 만질지**를 가른 설계입니다. 둘 다 “일단 되게” 다음에 온 벽이었고, Code Canary의 뼈대를 바꾼 고민이었습니다.
+
 ---
 
-다음으로는 **회고 · 정리**를 짧게 이어 갈 예정입니다.
+다음으로는 **마무리 소감**을 짧게 이어 갈 예정입니다.
