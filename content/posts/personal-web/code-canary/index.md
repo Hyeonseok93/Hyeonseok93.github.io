@@ -159,6 +159,98 @@ Roost Control Plane · Job Monitor가 호출합니다. `/api/admin/**` 은 `ROLE
 
 Worker는 이 API로 쌓인 `pipeline_jobs`를 폴링해 collect / load / silver / gold 를 실행합니다. 백엔드는 **오케스트레이션·권한·조회** 에 머물고, 무거운 적재·정제는 Worker SQL이 담당합니다.
 
+# 6. 인프라 아키텍처
+
+로컬은 Docker Compose로 같은 FE · BE · Worker · Postgres · Redis를 돌리고, 배포는 **Terraform(`Canary-infra/`)으로 AWS를 잡은 뒤 ECS Fargate**에 올립니다. 리전은 **서울(`ap-northeast-2`)** 입니다. 진입은 Route53 · CloudFront · WAF(옵션) · ALB, 컴퓨트는 ECS 세 서비스, 상태는 RDS · ElastiCache · EFS에 둡니다. CI는 GitHub Actions → ECR → ECS rolling deploy입니다.
+
+<figure class="article-figure-center article-figure-center--full">
+  <img src="./fig4.png" alt="Fig.4 Code Canary 인프라 아키텍처 — Route53 · CloudFront · ALB · ECS Fargate · RDS · Redis · EFS" loading="lazy" />
+</figure>
+
+### 구성의 축
+
+| 축 | 역할 |
+|----|------|
+| **Terraform** | VPC · Public/Private · IGW · NAT · ALB · ECS · EFS · RDS · Redis · CloudFront · WAF · Route53 · ACM · Secrets · CloudWatch · Cloud Map |
+| **ECS Fargate 3서비스** | Frontend(Nginx · React), Backend(Spring Boot), Worker(Python) |
+| **Route53 · CloudFront · ACM** | DNS · CDN · TLS. WAF는 CloudFront에 붙는 옵션 |
+| **EFS `/data`** | NVD/OSV 스테이징 baseline. Backend·Worker가 공유 마운트 |
+| **RDS · ElastiCache** | PostgreSQL 15(Medallion), Redis 7(레이트 리밋 · 로그인 잠금) |
+| **GitHub Actions → ECR → ECS** | FE/BE/Worker 이미지 push 후 rolling deploy · circuit breaker |
+
+루키즈 최종(ONDE · ARGUS)이 EC2 · compose 중심이었다면, Code Canary는 **서버리스 컨테이너(Fargate)** 로 FE · BE · Worker를 나눴습니다. 장시간 collect/load는 Worker 태스크가 맡고, 화면·API는 그 결과를 RDS · EFS에서 읽습니다.
+
+### Public / Private 분리
+
+**Public subnet**에는 외부 진입점인 **ALB**와 Private 아웃바운드용 **NAT Gateway(+EIP)** 를 둡니다. **Private subnet**에는 **ECS Fargate** 태스크(Frontend · Backend · Worker)와 **RDS · Redis · EFS** 를 둡니다.
+
+사용자는 ALB(또는 앞단 CloudFront)까지만 닿고, DB · 캐시 · 스테이징 파일 · Worker는 사설망 안에 둡니다. Private에서 ECR pull · NVD/OSV 수집이 필요할 때는 **NAT → IGW**로만 나가게 해 공격 표면을 좁혔습니다.
+
+### 요청 라우팅
+
+사용자 요청은 대략 다음 순서입니다.
+
+```text
+Browser
+  → Route53
+  → CloudFront (+ WAF, ACM TLS)   # go-live 시 tfvars로 활성
+  → Public ALB
+       /*        → ECS Frontend  → Nginx :80 (SPA)
+                     /api/*      → Backend (Cloud Map upstream)
+```
+
+ALB 기본 타깃은 Frontend입니다. Nginx가 SPA를 서빙하고 `/api/*` 를 Backend로 프록시합니다. 운영자 콘솔 경로·로그인·`/api/admin/**` 은 신뢰 IP allowlist로 좁히는 구성을 둡니다.
+
+Backend · Worker가 상태에 붙는 모습은 대략 이렇게입니다.
+
+```text
+Backend (Spring Boot)
+  → RDS PostgreSQL     (management · bronze · silver · gold)
+  → ElastiCache Redis  (레이트 리밋 · 로그인 잠금)
+  → EFS /data          (staging 목록 조회 등)
+  → Cloud Map          (서비스 디스커버리)
+
+Worker (Python)
+  → EFS /data          (collect baseline · load 원본)
+  → RDS PostgreSQL     (bronze upsert · silver/gold SQL)
+  → (egress) NAT → IGW (NVD API · OSV zip · ECR)
+```
+
+로컬 Compose의 볼륨·네트워크를 클라우드에서는 **EFS · RDS · Redis · NAT** 로 대응시킨 형태입니다. 컨테이너를 갈아끼워도 `/data` 스테이징과 DB 카탈로그는 남습니다.
+
+### CI/CD — 이미지와 ECS rolling
+
+프론트 · 백엔드 · Worker 모두 Linux 이미지로 올리고, 배포 파이프라인은 대략 한 갈래입니다.
+
+```text
+[FE / BE / Worker]
+GitHub Actions
+  → Docker build · push → ECR (frontend / backend / worker)
+  → ECS service update
+       rolling deploy · circuit breaker
+```
+
+시크릿은 워크플로에 박지 않고 **Secrets Manager** 에서 태스크 정의로 주입합니다. Container Insights · CloudWatch 로그로 태스크 상태를 보고, go-live 때는 HTTPS · CloudFront · WAF · operator CIDR을 Terraform tfvars에서 켭니다.
+
+### Secret · 운영 경계
+
+DB 비밀번호 · JWT · NVD API Key처럼 민감한 값은 이미지·레포에 하드코딩하지 않고 Secrets Manager 쪽으로 둡니다. 태스크 역할에는 ECR pull · 시크릿 읽기 · CloudWatch · EFS 등 필요한 권한만 최소로 붙입니다.
+
+공개 analytics는 열어 두되, Roost(운영자 SPA · 로그인 · admin API)는 **IP allowlist** 로 막습니다. Redis가 죽어 레이트 리밋·로그인 잠금을 못 지키면 로그인을 열어 두지 않는 쪽(fail-closed)으로 맞췄습니다.
+
+### 리소스 요약
+
+| 구분 | 연동 | 역할 |
+|------|------|------|
+| 네트워크 | VPC / Public·Private / IGW / NAT | 진입점과 Fargate · 데이터 계층 분리 |
+| DNS · 엣지 | Route53 / CloudFront / WAF / ACM | 도메인 · CDN · TLS · (옵션) WAF |
+| 로드밸런서 | ALB | Frontend 타깃 · HTTP→HTTPS |
+| 컴퓨트 | ECS Fargate (FE · BE · Worker) | SPA · API · 파이프라인 잡 |
+| 데이터 | RDS PostgreSQL 15 / ElastiCache Redis 7 / EFS | Medallion · 리밋 · `/data` 스테이징 |
+| 배포 · 관측 | ECR / Secrets Manager / Cloud Map / CloudWatch | 이미지 · 시크릿 · 디스커버리 · 로그 |
+
+로컬 Compose와 클라우드가 **같은 세 프로세스 + Postgres + Redis + `/data`** 를 공유하는 점이 이 인프라의 축입니다. 차이는 오케스트레이션이 Docker인지 ECS인지, 볼륨이 로컬 bind인지 EFS인지뿐입니다.
+
 ---
 
 다음 글에서는 **핵심 기능**을 더 깊게 정리할 예정입니다. Medallion 배치 설계, Explorer 통합 검색, Roost 잡 오케스트레이션이 여기에 해당합니다.
