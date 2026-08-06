@@ -421,7 +421,7 @@ Job Monitor의 Worker Activity입니다. `pipeline_job_logs`를 시간순으로 
 - Explorer 검색은 길이·페이지 상한과 LIKE escape로 과한 쿼리를 막고, staging baseline·zip 경로는 정규식·path-safe 검사로 traversal을 막습니다.
 - silver refine은 bronze에 `PENDING`/`ERROR`가 남아 있으면 “정제 완료”로 올리지 않습니다. 반쯤 깨진 카탈로그를 gold에 올리는 쪽이 더 위험하다고 봤습니다.
 
-한 줄로 말하면, **analytics는 읽기 전용으로 열고 · Roost는 좁게 잠그고 · 한도·시크릿·네트워크가 죽어도 운영 문이 열리지 않게** 맞춘 것입니다.
+정리하면, analytics는 공개 조회로 두고 Roost·admin은 인증·한도·IP로 막았으며, Redis나 시크릿이 빠져도 로그인이 그냥 통과하지 않게 맞춰 두었습니다.
 
 ### 데이터베이스 — 타임아웃에서 만난 Medallion
 
@@ -439,7 +439,7 @@ Job Monitor의 Worker Activity입니다. `pipeline_job_logs`를 시간순으로 
 
 원본을 한 테이블에 다 욱여넣고 화면마다 집계하면, 수집 한 번이 통계·검색·운영 이력까지 한꺼번에 흔듭니다. **층이 나뉘어 있어야** “다시 받기 / 다시 풀기 / 차트만 갱신”이 가능해졌고, 100만 건 위에서 대시보드가 버티는 이유도 같습니다. Medallion을 교과서에서 고른 게 아니라, **타임아웃을 피하려다 층이 생기고, 나중에 이름이 붙은** 쪽에 가깝습니다.
 
-보안이 **누가 만질 수 있는지**를 가른다면, Medallion은 **무엇을 얼마나 무거운 채로 만질지**를 가른 설계입니다. 둘 다 “일단 되게” 다음에 온 벽이었고, Code Canary의 뼈대를 바꾼 고민이었습니다.
+보안 쪽은 운영 API·콘솔 접근을 줄이는 일이었고, Medallion은 집계·검색을 silver 전수 스캔에서 빼내는 일이었습니다. 둘 다 기능을 붙인 뒤에야 제대로 손댄 부분입니다.
 
 ---
 
