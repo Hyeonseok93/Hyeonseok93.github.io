@@ -28,7 +28,7 @@ function renderCategoryLeaf(id, labels) {
 
   return `  <li class="category-tree__item category-tree__item--leaf">
     <a href="#category-${escapeHtml(id)}" data-category-id="${escapeHtml(id)}" data-category-label="${escapeHtml(label)}" class="category-tree__link category-tree__link--branch-level">
-      <i class="fa-regular fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+      <i class="fa-solid fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
       <span class="category-tree__label">${escapeHtml(label)}</span>
       <span class="category-tree__count"></span>
     </a>
@@ -43,7 +43,7 @@ function renderCategoryChild(id, labels) {
 
   return `      <li class="category-tree__item category-tree__item--leaf">
         <a href="#category-${escapeHtml(id)}" data-category-id="${escapeHtml(id)}" data-category-label="${escapeHtml(label)}" class="category-tree__link category-tree__link--child">
-          <i class="fa-regular fa-folder-open text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+          <i class="fa-solid fa-folder-open text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
           <span class="category-tree__label">${escapeHtml(label)}</span>
           <span class="category-tree__count"></span>
         </a>
@@ -59,7 +59,7 @@ function renderCategoryBranch(node, labels) {
   return `  <li class="category-tree__item category-tree__item--branch${openClass}" data-category-branch>
     <div class="category-tree__row">
       <a href="#" class="category-tree__link category-tree__link--branch" aria-expanded="${ariaExpanded}">
-        <i class="fa-regular fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
+        <i class="fa-solid fa-folder text-accentAmber w-4 text-center shrink-0" aria-hidden="true"></i>
         <span class="category-tree__label">${escapeHtml(node.branch)}</span>
         <span class="category-tree__count"></span>
       </a>

@@ -70,9 +70,9 @@ function bindCategoryBranches(root) {
 
 function folderIconClass({ root = false, branch = false, child = false } = {}) {
   if (root) return 'fa-solid fa-folder';
-  if (child) return 'fa-regular fa-folder-open';
-  if (branch) return 'fa-regular fa-folder';
-  return 'fa-regular fa-folder';
+  if (child) return 'fa-solid fa-folder-open';
+  if (branch) return 'fa-solid fa-folder';
+  return 'fa-solid fa-folder';
 }
 
 function getPostsRootLabel(host) {
