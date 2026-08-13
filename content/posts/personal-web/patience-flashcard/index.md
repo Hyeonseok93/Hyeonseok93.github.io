@@ -275,30 +275,30 @@ API·도메인·Compose는 앞에서 다뤘으므로, 여기서는 앱에서 **�
   <img src="./fig9.png" alt="Fig.9 세트 편집 — 이름 · 엑셀 교체 · 카드 추가" loading="lazy" />
 </figure>
 
-### 7. 플레이 — 확대 레이아웃 · 다층 보드
+### 7. 카드 UI 설정 — 클래식과 확대
 
-`/play/:deckId`입니다. `engine` / `actions`가 층·대기열·기억·까먹음·다음을 돌리고, 진행은 `study_progress`에 카드 id JSON으로 upsert합니다. **확대**(`glance`) 모드는 현재 카드를 크게 두고 오른쪽에 층별 스택을 나란히 둡니다.
+플레이 설정 패널(`usePlaySettings` · `layout.ts`)입니다. **클래식**이 원래 형태에 가깝고, 오프라인에서 카드를 넘기던 상황과는 화면이 달라서, 웹에서 현재 장·층이 더 잘 보이게 **확대** 모드를 따로 두었습니다. 여기서 클래식/확대를 고르고, **이번만 앞뒤 바꾸기**(세션만 · progress 미저장), 글자·크기·앞/뒤 배경·글자색도 맞춥니다. 레이아웃·색은 로컬에 두고, 보드 진행만 서버에 남깁니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig10.png" alt="Fig.10 플레이 — 확대 레이아웃 · 4층 보드" loading="lazy" />
+  <img src="./fig12.png" alt="Fig.12 플레이 설정 — 클래식 · 확대 · 앞뒤 바꾸기 · 색" loading="lazy" />
+</figure>
+
+### 8. 플레이 — 확대 · 가로 화면
+
+`/play/:deckId`에서 확대를 켠 뒤, **가로로 넓은 화면**에 맞춘 배치입니다. `engine` / `actions`가 층·대기열·기억·까먹음·다음을 돌리고, 진행은 `study_progress`에 카드 id JSON으로 upsert합니다. 현재 카드를 크게 왼쪽(또는 주 영역)에 두고, 층별 스택은 오른쪽에 나란히 둡니다(`min-width: 1024px`, `useDesktopGlance`).
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig10.png" alt="Fig.10 플레이 — 확대 · 가로(데스크톱) 레이아웃" loading="lazy" />
 </figure>
 
 헤더에 남은/손/대기 장 수, 셔플·리셋·설정이 있고, 단축키는 Space·기억 1 · 까먹음 2 (1층에서는 **다음** 3)입니다. 층 한도는 `limitsFor`(1층 3 · 맨 위 7 · 중간 5)입니다.
 
-### 8. 플레이 — 클래식 · 1층의 「다음」
+### 9. 플레이 — 확대 · 세로·모바일 화면
 
-**클래식** 모드는 현재 카드를 위에 두고 아래(또는 옆)에 층 버킷을 쌓습니다. 1층(“지금 보는 카드”)에서만 **다음**이 보이며, 대기열에서 새 카드를 손(최대 3장)으로 끌어옵니다. 위층에서는 기억·까먹음만 있습니다.
-
-<figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig11.png" alt="Fig.11 플레이 — 클래식 · 기억 · 까먹음 · 다음" loading="lazy" />
-</figure>
-
-### 9. 카드 UI 설정
-
-플레이 설정 패널(`usePlaySettings` · `layout.ts`)입니다. 클래식/확대, **이번만 앞뒤 바꾸기**(세션만 · progress 미저장), 글자·크기·앞/뒤 배경·글자색을 고릅니다. 레이아웃·색은 로컬에 두고, 보드 진행만 서버에 남깁니다.
+같은 확대 모드라도 **세로로 긴 화면·모바일**에서는 배치가 바뀝니다. 현재 카드를 위에 두고, 층 버킷은 아래(또는 좁은 폭에 맞게 compact)로 쌓아 한 화면에 맞춰 둡니다. 규칙은 같고 레이아웃만 뷰포트에 맞춘 것입니다. 1층(“지금 보는 카드”)에서만 **다음**이 보이며 대기열에서 손을 채우고, 위층에서는 기억·까먹음만 있습니다.
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig12.png" alt="Fig.12 플레이 설정 — 카드 UI · 앞뒤 바꾸기 · 색" loading="lazy" />
+  <img src="./fig11.png" alt="Fig.11 플레이 — 확대 · 세로(모바일) 레이아웃" loading="lazy" />
 </figure>
 
 ### 10. Access Denied — 세트 게이트
