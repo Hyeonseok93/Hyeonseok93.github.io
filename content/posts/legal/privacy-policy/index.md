@@ -5,6 +5,7 @@ tags:
   - legal
   - privacy-policy
   - chrome-extension
+thumbnail: thumbnail.png
 ---
 
 ---
