@@ -25,7 +25,6 @@
       "branch": "개인 프로젝트",
       "children": ["personal-web", "personal-toy"]
     },
-    "papers",
-    "legal"
+    "papers"
   ]
 }

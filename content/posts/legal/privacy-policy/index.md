@@ -1,6 +1,7 @@
 ---
 title: "[Legal] 개인정보 처리방침"
 date: 2026-08-22
+hidden: true
 tags:
   - legal
   - privacy-policy

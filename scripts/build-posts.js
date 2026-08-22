@@ -196,6 +196,7 @@ function loadPosts() {
       rawDate: data.date || '',
       category: categoryId,
       categoryLabel: CATEGORY_LABELS[categoryId] || categoryId,
+      hidden: data.hidden === true,
       tags: Array.isArray(data.tags) ? data.tags : [],
       excerpt: extractExcerptFromContent(content),
       thumbnailFile,
@@ -214,6 +215,7 @@ function buildCategoryNavMaps(posts) {
   const byCategory = {};
 
   for (const post of posts) {
+    if (post.hidden) continue;
     if (!byCategory[post.category]) byCategory[post.category] = [];
     byCategory[post.category].push(post);
   }
@@ -237,7 +239,7 @@ function buildCategoryNavMaps(posts) {
 function writeManifest(posts) {
   const byCategory = {};
   for (const post of posts) {
-    if (!post.category) continue;
+    if (!post.category || post.hidden) continue;
     if (!byCategory[post.category]) byCategory[post.category] = [];
     byCategory[post.category].push({
       slug: post.slug,
@@ -289,8 +291,8 @@ function writePostPages(posts) {
       title: escapeHtml(post.title),
       date: escapeHtml(post.date),
       author: escapeHtml(post.author),
-      categoryLabel: escapeHtml(post.categoryLabel),
-      categoryLink: `${assetPrefix}#category-${post.category}`,
+      categoryLabel: escapeHtml(post.hidden ? '홈' : post.categoryLabel),
+      categoryLink: post.hidden ? `${assetPrefix}` : `${assetPrefix}#category-${post.category}`,
       content: post.html,
       tagsHtml: buildTagsHtml(post.tags, assetPrefix),
       thumbnailHtml: buildThumbnailHtml(post.pageThumbnail, post.title),
