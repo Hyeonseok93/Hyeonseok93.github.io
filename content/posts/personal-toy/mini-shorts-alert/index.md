@@ -22,7 +22,8 @@ YouTube Shorts나 Instagram Reels·Stories는 **짧은 영상 + 무한 스크롤
   <img src="./fig1.png" alt="Shorts Alert 플로팅 위젯과 YouTube Shorts 화면" loading="lazy" />
 </figure>
 
-📦 **GitHub:** [MINI_ShortsAlert](https://github.com/Hyeonseok93/MINI_ShortsAlert)
+📦 **GitHub:** [MINI_ShortsAlert](https://github.com/Hyeonseok93/MINI_ShortsAlert)  
+🛒 **Chrome Web Store:** _준비 중… (심사 통과 후 설치 링크 추가 예정)_
 
 # 1. 왜 만들었나
 
