@@ -1,5 +1,7 @@
 import { leafCategoryLabel } from '../../category-label.js';
 
+import { decodeHtmlEntities } from '../../utils/escape-html.js';
+
 const EXCERPT_MAX_CHARS = 400;
 
 function htmlToPlainText(html) {
@@ -94,7 +96,7 @@ export async function getTistoryRecentPosts(limit = 8) {
   }
 
   const posts = [...doc.querySelectorAll('item')].slice(0, Math.max(0, limit)).map((item) => {
-    const title = item.querySelector('title')?.textContent?.trim() || 'Untitled';
+    const title = decodeHtmlEntities(item.querySelector('title')?.textContent?.trim() || 'Untitled');
     const link = item.querySelector('link')?.textContent?.trim() || '#';
     const description = item.querySelector('description')?.textContent || '';
     const categoryRaw = item.querySelector('category')?.textContent?.trim() || '';
