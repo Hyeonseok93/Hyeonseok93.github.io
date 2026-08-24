@@ -23,7 +23,7 @@ YouTube Shorts나 Instagram Reels·Stories는 **짧은 영상 + 무한 스크롤
 </figure>
 
 📦 **GitHub:** [MINI_ShortsAlert](https://github.com/Hyeonseok93/MINI_ShortsAlert)  
-🛒 **Chrome Web Store:** _준비 중… (심사 통과 후 설치 링크 추가 예정)_
+🛒 **Chrome Web Store:** [Short Alert](https://chromewebstore.google.com/detail/short-alert/bidpnigcgfoepmgjgngmcfbkodgmjnpj)
 
 # 1. 왜 만들었나
 
@@ -178,7 +178,7 @@ YouTube·Instagram은 **SPA**라 주소만 바뀌고 새로고침이 없습니�
 
 ### 설치
 
-Chrome Web Store 심사는 **대기 중**입니다. 지금은 저장소를 클론한 뒤 `chrome://extensions` → 개발자 모드 → **압축해제된 확장 프로그램 로드**로 `MINI_ShortsAlert` 루트를 선택하면 됩니다. 코드를 수정했다면 확장 **새로고침** 후 해당 탭을 새로고침하세요.
+[Chrome Web Store](https://chromewebstore.google.com/detail/short-alert/bidpnigcgfoepmgjgngmcfbkodgmjnpj)에서 설치할 수 있습니다. 개발·수정용으로는 저장소를 클론한 뒤 `chrome://extensions` → 개발자 모드 → **압축해제된 확장 프로그램 로드**로 `MINI_ShortsAlert` 루트를 선택하면 됩니다. 코드를 수정했다면 확장 **새로고침** 후 해당 탭을 새로고침하세요.
 
 ### 사용 흐름
 
