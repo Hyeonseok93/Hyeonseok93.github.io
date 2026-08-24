@@ -142,10 +142,21 @@ YouTube·Instagram은 **SPA**라 주소만 바뀌고 새로고침이 없습니�
 * **효과음 · 음성:** 비프음과 `speechSynthesis`(한국어 TTS)를 선택적으로 재생합니다.
 * **잠금 전 단계:** 한도에 도달하기 전에 미리 끊을 수 있도록, 잠금 오버레이보다 가볍게 표시됩니다.
 
-### 4.4 확장 프로그램 팝업
+### 4.4 잠금 화면 & 해제
 
 <figure class="article-figure-center article-figure-center--wide">
-  <img src="./fig5.png" alt="Shorts Alert 툴바 팝업 — 마스터 스위치와 시청 시간 요약" loading="lazy" />
+  <img src="./fig5.png" alt="Shorts Alert 잠금 오버레이 — 확언 문장 입력으로 해제" loading="lazy" />
+</figure>
+
+* **한도 도달 잠금:** 연속·누적 한도에 도달하면 `<video>`를 일시정지하고 **전면 오버레이**를 띄웁니다.
+* **확언 문장 입력:** 설정해 둔 문장(최대 50자)을 **그대로** 입력해야 `unlock-session`이 되고, 연속 시청(`sessionSeconds`)이 리셋됩니다.
+* **잠금 중 tick 정지:** `detoxActive` 동안 타이머가 멈추고, 해제 후에만 다시 재생 시간이 쌓입니다.
+* **꼬임 대비:** 확장이 이상하면 툴바 아이콘 팝업에서 **초기화**할 수 있습니다.
+
+### 4.5 확장 프로그램 팝업
+
+<figure class="article-figure-center article-figure-center--wide">
+  <img src="./fig6.png" alt="Shorts Alert 툴바 팝업 — 마스터 스위치와 시청 시간 요약" loading="lazy" />
 </figure>
 
 * **마스터 스위치:** 툴바 아이콘에서 **감지 on/off** — 끄면 위젯·tick이 모두 멈춥니다.
