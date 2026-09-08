@@ -200,17 +200,27 @@ def fetch_icon(slug: str, hexcolor: str) -> Image.Image:
         _rasterize_svg_with_playwright(tmp_svg, tmp_png)
     icon = Image.open(tmp_png).convert("RGBA")
     # Force exact ICON×ICON canvas (sharp contain can yield 12–13 wide icons).
+    # Paste WITHOUT using the image as its own mask — RGBA-as-mask premultiplies
+    # and washes out thin Simple Icons strokes (e.g. Electron orbits).
+    if icon.size == (ICON, ICON):
+        return icon
     canvas = Image.new("RGBA", (ICON, ICON), (0, 0, 0, 0))
     ox = (ICON - icon.width) // 2
     oy = (ICON - icon.height) // 2
-    canvas.paste(icon, (ox, oy), icon)
+    canvas.paste(icon, (ox, oy))
     return canvas
 
 
-def to_light(dark_img: Image.Image) -> Image.Image:
+def to_light(
+    dark_img: Image.Image,
+    *,
+    light_icon_rgb: tuple[int, int, int] | None = None,
+) -> Image.Image:
     """Recolor dark badge → light. Map ALL grayscale text/AA (not only bright cores).
 
-    Chromatic icon pixels are kept. Coverage matches inventory docker dark↔light.
+    Chromatic icon pixels are kept (optionally remapped for light contrast).
+    Icon detection is limited to the left icon column band so letter AA never
+    stays white on the light background.
     """
     a = np.array(dark_img).astype(np.int16)
     rgb = a[:, :, :3]
@@ -221,7 +231,9 @@ def to_light(dark_img: Image.Image) -> Image.Image:
         + np.abs(rgb[:, :, 1] - rgb[:, :, 2])
         + np.abs(rgb[:, :, 0] - rgb[:, :, 2])
     )
-    is_icon = (~is_bg) & (chroma >= 25)
+    cols = np.arange(a.shape[1])[None, :]
+    in_icon_cols = (cols >= PAD_L) & (cols < PAD_L + ICON)
+    is_icon = (~is_bg) & (chroma >= 25) & in_icon_cols
     is_text = (~is_bg) & (~is_icon)
 
     out = a.copy()
@@ -235,11 +247,23 @@ def to_light(dark_img: Image.Image) -> Image.Image:
         cov = max(0.0, min(1.0, (lum - bg_mean) / (255.0 - bg_mean)))
         out[y, x, :3] = (LIGHT_BG * (1.0 - cov) + LIGHT_FG * cov).astype(np.int16)
         out[y, x, 3] = 255
-    # icons already in `out` from copy
+
+    if light_icon_rgb is not None:
+        # Solid brand on icon mask — AA-blend against light bg washes thin orbits away.
+        out[is_icon, :3] = light_icon_rgb
+        out[is_icon, 3] = 255
+    # else: chromatic icon pixels already copied from dark
     return Image.fromarray(np.clip(out, 0, 255).astype(np.uint8), "RGBA")
 
 
-def compose(label: str, icon: Image.Image, filename: str, bank: dict[str, list[dict]]) -> Image.Image:
+def compose(
+    label: str,
+    icon: Image.Image,
+    filename: str,
+    bank: dict[str, list[dict]],
+    *,
+    light_icon_rgb: tuple[int, int, int] | None = None,
+) -> Image.Image:
     glyphs: list[dict | None] = []
     for ch in label.upper():
         if ch == " ":
@@ -270,7 +294,9 @@ def compose(label: str, icon: Image.Image, filename: str, bank: dict[str, list[d
 
     W = last_ink_right + 1 + PAD_R
     img = Image.new("RGBA", (W, H), DARK_BG)
-    img.paste(icon, (PAD_L, (H - ICON) // 2), icon)
+    icon_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    icon_layer.paste(icon, (PAD_L, (H - ICON) // 2))
+    img = Image.alpha_composite(img, icon_layer)
     for item in placements:
         if item is None:
             continue
@@ -286,7 +312,7 @@ def compose(label: str, icon: Image.Image, filename: str, bank: dict[str, list[d
         dark_dir.mkdir(parents=True, exist_ok=True)
         light_dir.mkdir(parents=True, exist_ok=True)
         img.save(dark_dir / f"{filename}.png")
-        to_light(img).save(light_dir / f"{filename}.png")
+        to_light(img, light_icon_rgb=light_icon_rgb).save(light_dir / f"{filename}.png")
         print(f"wrote {root.name}/{{dark,light}}/{filename}.png {img.size}")
     return img
 
@@ -332,14 +358,24 @@ def main() -> None:
             print("WORD_INK_GAP from springsecurity:", WORD_INK_GAP)
 
     bank = build_bank()
-    missing = [c for c in "KUBERNETESARGOCD" if c not in bank]
+    targets = [
+        ("KUBERNETES", "kubernetes", "326CE5", "kubernetes"),
+        ("ARGO CD", "argo", "EF7B4D", "argocd"),
+        ("ELECTRON", "electron", "9FEAF9", "electron"),
+    ]
+    needed = sorted({c for label, *_ in targets for c in label.upper() if c != " "})
+    missing = [c for c in needed if c not in bank]
     if missing:
         print("missing glyphs:", sorted(set(missing)))
         sys.exit(1)
-    compose("KUBERNETES", fetch_icon("kubernetes", "326CE5"), "kubernetes", bank)
-    compose("ARGO CD", fetch_icon("argo", "EF7B4D"), "argocd", bank)
+    for label, slug, hexcolor, filename in targets:
+        kwargs = {}
+        if filename == "electron":
+            # Dark uses bright orbits; light remaps icon to brand teal for contrast.
+            kwargs["light_icon_rgb"] = (45, 110, 122)  # deeper teal for light contrast
+        compose(label, fetch_icon(slug, hexcolor), filename, bank, **kwargs)
     print("---")
-    for n in ["docker", "terraform", "springsecurity", "kubernetes", "argocd"]:
+    for n in ["docker", "terraform", "springsecurity", "kubernetes", "argocd", "electron"]:
         analyze(BLOG / "dark" / f"{n}.png")
 
 

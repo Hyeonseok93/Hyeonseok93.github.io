@@ -32,7 +32,7 @@ README / Built With 배지 공통 규격입니다.
 ## 도구
 
 ```bash
-# 글리프 조립 — kubernetes / argocd 재생성
+# 글리프 조립 — kubernetes / argocd / electron 재생성
 python src/assets/badges/compose-badge.py
 ```
 

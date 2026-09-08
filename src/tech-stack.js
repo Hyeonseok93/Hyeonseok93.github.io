@@ -59,6 +59,7 @@ const TECH_BADGES = [
   { id: 'vitest', category: 'tools', label: 'Vitest' },
   { id: 'qt', category: 'tools', label: 'Qt' },
   { id: 'pyside6', category: 'tools', label: 'PySide6' },
+  { id: 'electron', category: 'tools', label: 'Electron' },
   { id: 'opencv', category: 'tools', label: 'OpenCV' },
   { id: 'pyinstaller', category: 'tools', label: 'PyInstaller' },
   { id: 'groq', category: 'ai', label: 'Groq' },
