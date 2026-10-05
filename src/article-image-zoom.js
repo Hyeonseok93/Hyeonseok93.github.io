@@ -1,5 +1,5 @@
 /**
- * GitHub Pages only: click article images to open a scrollable lightbox.
+ * Click article images to open a scrollable lightbox.
  * Imported from main.js.
  */
 import './styles/article-image-zoom.css';
@@ -9,8 +9,6 @@ let stageImg = null;
 let lastFocused = null;
 
 function isGitHubArticlePage() {
-  // Extra guard: Tistory pages use #tt-body-page and must not get this UX.
-  if (document.body?.id === 'tt-body-page') return false;
   return document.body?.id === 'article' || Boolean(document.querySelector('.article-content'));
 }
 

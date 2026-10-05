@@ -91,8 +91,7 @@ export function setDashboardPanel(panelId, page = 1) {
     activeCategoryId = null;
   }
 
-  const bodyId = document.body.id;
-  if (bodyId === 'tt-body-index' || bodyId === 'list') {
+  if (document.body.id === 'list') {
     document.body.dataset.activePanel = panelId;
   }
 

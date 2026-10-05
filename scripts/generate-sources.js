@@ -9,8 +9,7 @@ const ARTICLE_SOURCE_PATH = path.join(SRC_DIR, 'templates', 'article-shell.sourc
 
 const OUTPUTS = {
   categoryTree: path.join(SRC_DIR, 'components', 'CategoryTree.html'),
-  articleMustache: path.join(SRC_DIR, 'templates', 'article-page.html'),
-  articleTistory: path.join(SRC_DIR, 'components', 'Article.html'),
+  articlePage: path.join(SRC_DIR, 'templates', 'article-page.html'),
 };
 
 const GENERATED_BANNER = (source) =>
@@ -103,96 +102,24 @@ ${items.join('\n\n')}
 `;
 }
 
-const ARTICLE_VARIANTS = {
-  mustache: {
-    ARTICLE_ROOT_ATTRS: '',
-    CATEGORY_LINK: '{{categoryLink}}',
-    CATEGORY_LABEL: '{{categoryLabel}}',
-    TITLE: '{{title}}',
-    DATE: '{{date}}',
-    AUTHOR: '{{author}}',
-    TAGS: '{{tagsHtml}}',
-    THUMBNAIL: '{{thumbnailHtml}}',
-    CONTENT: '{{content}}',
-    POST_NAV: `{{prevNavHtml}}\n    {{nextNavHtml}}`,
-    WRAPPER_START: '',
-    WRAPPER_END: '',
-  },
-  tistory: {
-    ARTICLE_ROOT_ATTRS: '',
-    CATEGORY_LINK: '[##_article_rep_category_link_##]',
-    CATEGORY_LABEL: '[##_article_rep_category_##]',
-    TITLE: '[##_article_rep_title_##]',
-    DATE: '[##_article_rep_simple_date_##]',
-    AUTHOR: '[##_blogger_##]',
-    TAGS: `<s_tag_label>
-      <div class="article-tags">
-        [##_tag_label_rep_##]
-      </div>
-    </s_tag_label>`,
-    THUMBNAIL: `<s_article_rep_thumbnail>
-      <figure class="article-thumbnail">
-        <div class="article-thumbnail__frame">
-          <img src="[##_article_rep_thumbnail_raw_url_##]" alt="" loading="lazy" />
-        </div>
-      </figure>
-    </s_article_rep_thumbnail>`,
-    CONTENT: '[##_article_rep_desc_##]',
-    POST_NAV: `<s_article_prev>
-        <a href="[##_article_prev_link_##]" class="article-post-nav__card article-post-nav__card--prev">
-          <span class="article-post-nav__icon" aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
-          <span class="article-post-nav__text">
-            <span class="article-post-nav__label">이전 포스트</span>
-            <span class="article-post-nav__title">[##_article_prev_title_##]</span>
-          </span>
-        </a>
-      </s_article_prev>
-      <s_article_next>
-        <a href="[##_article_next_link_##]" class="article-post-nav__card article-post-nav__card--next">
-          <span class="article-post-nav__text">
-            <span class="article-post-nav__label">다음 포스트</span>
-            <span class="article-post-nav__title">[##_article_next_title_##]</span>
-          </span>
-          <span class="article-post-nav__icon" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
-        </a>
-      </s_article_next>`,
-    WRAPPER_START: `<s_permalink_article_rep>
-<main id="article-content" class="article-content-host flex-1 min-h-screen w-full flex justify-center">
-  <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">`,
-    WRAPPER_END: `  </div>
-</main>
-</s_permalink_article_rep>`,
-  },
+const ARTICLE_TOKENS = {
+  CATEGORY_LINK: '{{categoryLink}}',
+  CATEGORY_LABEL: '{{categoryLabel}}',
+  TITLE: '{{title}}',
+  DATE: '{{date}}',
+  AUTHOR: '{{author}}',
+  TAGS: '{{tagsHtml}}',
+  THUMBNAIL: '{{thumbnailHtml}}',
+  CONTENT: '{{content}}',
+  POST_NAV: `{{prevNavHtml}}\n    {{nextNavHtml}}`,
 };
 
-function applyArticleVariant(source, variant) {
-  let html = source;
-  for (const [token, value] of Object.entries(variant)) {
-    if (token === 'WRAPPER_START' || token === 'WRAPPER_END' || token === 'ARTICLE_ROOT_ATTRS') {
-      continue;
-    }
+function generateArticlePage() {
+  let html = fs.readFileSync(ARTICLE_SOURCE_PATH, 'utf8').trim();
+  for (const [token, value] of Object.entries(ARTICLE_TOKENS)) {
     html = html.split(`@@${token}@@`).join(value);
   }
-
-  const rootAttrs = variant.ARTICLE_ROOT_ATTRS;
-  if (rootAttrs) {
-    html = html.replace(` @@ARTICLE_ROOT_ATTRS@@`, ` ${rootAttrs}`);
-  } else {
-    html = html.replace(' @@ARTICLE_ROOT_ATTRS@@', '');
-  }
-
-  return `${variant.WRAPPER_START}${html}${variant.WRAPPER_END}`;
-}
-
-function generateArticleShells() {
-  const source = fs.readFileSync(ARTICLE_SOURCE_PATH, 'utf8').trim();
-  const mustache = applyArticleVariant(source, ARTICLE_VARIANTS.mustache);
-  const tistory = applyArticleVariant(source, ARTICLE_VARIANTS.tistory);
-
-  return {
-    mustache: `${GENERATED_BANNER('src/templates/article-shell.source.html')}${mustache}\n`,
-    tistory: `${GENERATED_BANNER('src/templates/article-shell.source.html')}${tistory}\n`,
-  };
+  return `${GENERATED_BANNER('src/templates/article-shell.source.html')}${html}\n`;
 }
 
 function writeIfChanged(filePath, content) {
@@ -204,12 +131,11 @@ function writeIfChanged(filePath, content) {
 
 function generateAllSources({ log = true } = {}) {
   const categoryTree = generateCategoryTreeHtml();
-  const articles = generateArticleShells();
+  const articlePage = generateArticlePage();
 
   const changed = [
     writeIfChanged(OUTPUTS.categoryTree, categoryTree) && OUTPUTS.categoryTree,
-    writeIfChanged(OUTPUTS.articleMustache, articles.mustache) && OUTPUTS.articleMustache,
-    writeIfChanged(OUTPUTS.articleTistory, articles.tistory) && OUTPUTS.articleTistory,
+    writeIfChanged(OUTPUTS.articlePage, articlePage) && OUTPUTS.articlePage,
   ].filter(Boolean);
 
   if (log) {
@@ -229,4 +155,4 @@ if (require.main === module) {
   generateAllSources();
 }
 
-module.exports = { generateAllSources, generateCategoryTreeHtml, generateArticleShells };
+module.exports = { generateAllSources, generateCategoryTreeHtml, generateArticlePage };

@@ -304,7 +304,6 @@ function writePostPages(posts) {
       target: compileTarget,
       categoryTreeHtml,
       articleHtml,
-      pageTitle: "Bulldog's House",
       bodyId: 'article',
       assetPrefix,
     });

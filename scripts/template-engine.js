@@ -29,27 +29,13 @@ function resolveIncludes(htmlContent, baseDir = SRC_DIR) {
   return result;
 }
 
-/** Replace literal tokens ([##_..._##] placeholders, {{mustache}} keys, etc.) */
+/** Replace literal tokens (@@LAYOUT@@ placeholders, asset paths, etc.) */
 function replaceTokens(html, tokenMap) {
   let result = html;
   for (const [token, value] of Object.entries(tokenMap)) {
     result = result.split(token).join(value);
   }
   return result;
-}
-
-/** Replace tokens whose keys are RegExp source strings (legacy preview map). */
-function replacePatternMap(html, patternMap) {
-  let result = html;
-  for (const [pattern, value] of Object.entries(patternMap)) {
-    result = result.replace(new RegExp(pattern, 'g'), value);
-  }
-  return result;
-}
-
-function removeBlock(html, tagName) {
-  const re = new RegExp(`<${tagName}>[\\s\\S]*?<\\/${tagName}>\\s*`, 'g');
-  return html.replace(re, '');
 }
 
 function removeSectionById(html, sectionId) {
@@ -81,16 +67,6 @@ function removeSectionById(html, sectionId) {
   let end = i;
   while (end < html.length && /\s/.test(html[end])) end += 1;
   return html.slice(0, start) + html.slice(end);
-}
-
-function replaceBlock(html, tagName, content) {
-  const re = new RegExp(`<${tagName}>[\\s\\S]*?<\\/${tagName}>`);
-  return html.replace(re, content);
-}
-
-function unwrapBlock(html, tagName) {
-  const re = new RegExp(`<${tagName}>([\\s\\S]*?)<\\/${tagName}>`, 'g');
-  return html.replace(re, '$1');
 }
 
 function renderTemplate(templatePath, data) {
@@ -126,7 +102,6 @@ function compileLayout(options = {}) {
     target,
     categoryTreeHtml = '',
     articleHtml = '',
-    pageTitle = "Bulldog's House",
     bodyId = 'list',
     extraTokens = {},
     assetPrefix = './',
@@ -137,42 +112,19 @@ function compileLayout(options = {}) {
   let html = readFile(path.join(SRC_DIR, 'layout.html'));
   html = resolveIncludes(html);
 
-  const previewPatternMap = {
-    '\\[##_page_title_##\\]': pageTitle,
-    '\\[##_body_id_##\\]': bodyId,
-    '\\[##_blogger_##\\]': 'Hyeonseok Kim',
-    '\\[##_image_##\\]': asset('images/profile.png'),
-    '\\[##_blog_link_##\\]': '#',
-    '\\[##_tag_board_link_##\\]': '#',
-    '\\[##_guestbook_link_##\\]': '#',
-    '\\[##_category_list_##\\]': categoryTreeHtml,
-    '\\[##_search_name_##\\]': 'search',
-    '\\[##_search_text_##\\]': '',
-    '\\[##_search_onclick_submit_##\\]': 'return false',
-    '\\[##_list_conform_##\\]': 'Recent Posts',
-    '\\[##_desc_##\\]': 'I LOVE BULLDOG',
-    '<s_list>': '',
-    '</s_list>': '',
-    '<s_search>': '',
-    '</s_search>': '',
-    '<s_t3>': '',
-    '</s_t3>': '',
-  };
-
-  html = html.replace(/<s_list_rep>[\s\S]*?<\/s_list_rep>/g, '');
+  // Fill layout tokens before the article goes in, so post content is never rewritten.
+  html = replaceTokens(html, {
+    '@@BODY_ID@@': bodyId,
+    '@@CATEGORY_TREE@@': categoryTreeHtml,
+    ...extraTokens,
+  });
 
   if (articleHtml) {
     html = removeSectionById(html, 'home-dashboard');
-    html = removeSectionById(html, 'list-section');
-    html = replaceBlock(html, 's_article_rep', wrapArticleHost(articleHtml));
+    html = replaceTokens(html, { '@@ARTICLE@@': wrapArticleHost(articleHtml) });
   } else {
     html = removeSectionById(html, 'article-section');
-    html = removeSectionById(html, 'list-section');
-    html = removeBlock(html, 's_article_rep');
   }
-
-  html = replacePatternMap(html, previewPatternMap);
-  html = replaceTokens(html, extraTokens);
 
   if (target === 'gh-pages' || target === 'preview') {
     if (target === 'gh-pages') {
@@ -228,10 +180,6 @@ module.exports = {
   readFile,
   resolveIncludes,
   replaceTokens,
-  replacePatternMap,
-  removeBlock,
-  replaceBlock,
-  unwrapBlock,
   renderTemplate,
   compileLayout,
   copyRecursiveSync,

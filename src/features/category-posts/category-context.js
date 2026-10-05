@@ -3,10 +3,6 @@ import {
   CATEGORY_DESCRIPTIONS,
 } from '../../data/category-meta.js';
 
-export function isTistoryMode() {
-  return Boolean(document.querySelector('[data-category-tree="tistory"]'));
-}
-
 export function isGhPagesSite() {
   return document.body.dataset.site === 'gh-pages';
 }
@@ -32,11 +28,6 @@ export function getCategoryLabel(categoryId) {
 
 export function getCategoryDescription(categoryId) {
   return CATEGORY_DESCRIPTIONS[categoryId] || '';
-}
-
-export function getCategoryUrl(categoryId) {
-  const link = getCategoryLink(categoryId);
-  return link?.dataset.categoryUrl || link?.getAttribute('href') || '';
 }
 
 export function getCategoryTotalCount(categoryId) {

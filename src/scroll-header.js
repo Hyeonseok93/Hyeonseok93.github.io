@@ -73,27 +73,4 @@ function initHomeScrollHeader() {
   observer.observe(banner);
 }
 
-/** Tistory native category/tag/archive list — hero title drives mini header. */
-function initNativeListScrollHeader() {
-  const bodyId = document.body?.id || '';
-  if (!['tt-body-category', 'tt-body-tag', 'tt-body-archive', 'list'].includes(bodyId)) {
-    return;
-  }
-
-  // GH SPA category list binds from category-posts/index.js instead.
-  if (bodyId === 'list' && document.getElementById('category-posts-panel')) return;
-
-  const hero = document.querySelector('#list-section .category-posts-hero');
-  const titleEl = hero?.querySelector('.category-posts-hero__title');
-  const label = titleEl?.textContent?.trim();
-  if (!hero || !label) return;
-
-  bindCategoryScrollHeader(hero, label);
-}
-
-function initScrollHeader() {
-  initHomeScrollHeader();
-  initNativeListScrollHeader();
-}
-
-document.addEventListener('DOMContentLoaded', initScrollHeader);
+document.addEventListener('DOMContentLoaded', initHomeScrollHeader);

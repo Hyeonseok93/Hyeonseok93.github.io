@@ -9,7 +9,6 @@ import './scroll-header.js';
 import './article-page.js';
 import './article-image-zoom.js';
 import './category-tree.js';
-import './category-label.js';
 import './connect-captions.js';
 
 setTechBadgeUrlMap(TECH_BADGE_URLS);

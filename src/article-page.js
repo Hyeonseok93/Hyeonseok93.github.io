@@ -139,23 +139,8 @@ function initTocScrollSpy(sectionIds) {
   sections.forEach((section) => observer.observe(section));
 }
 
-function getArticleContentRoot() {
-  const content = document.querySelector('.article-content');
-  if (!content) return null;
-
-  // Tistory often injects sibling wrappers beside the editor shell, so
-  // children.length is not always 1 — find the real contents root explicitly.
-  const nested =
-    content.querySelector(':scope > .contents_style') ||
-    content.querySelector(':scope > .tt_article_useless_p_margin') ||
-    content.querySelector('.contents_style') ||
-    content.querySelector('.tt_article_useless_p_margin');
-
-  return nested || content;
-}
-
 function groupArticleChapters() {
-  const content = getArticleContentRoot();
+  const content = document.querySelector('.article-content');
   if (!content?.children.length) return;
   if ([...content.children].some((el) => el.classList?.contains('article-chapter'))) return;
 
@@ -238,7 +223,7 @@ function initArticleScrollHeader() {
 
 function isArticlePage() {
   const bodyId = document.body.id;
-  return bodyId === 'article' || bodyId === 'tt-body-page';
+  return bodyId === 'article';
 }
 
 function initPostNavTitles() {
@@ -288,7 +273,7 @@ function initGitHubArticleImages() {
   });
 }
 
-/** Strip Tistory's literal "," separators between tag links. */
+/** Drop whitespace / "," text nodes between tag links. */
 function normalizeArticleTags() {
   document.querySelectorAll('.article-tags').forEach((el) => {
     [...el.childNodes].forEach((node) => {

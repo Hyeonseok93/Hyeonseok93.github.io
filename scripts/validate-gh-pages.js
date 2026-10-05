@@ -36,17 +36,9 @@ function main() {
     const rel = path.relative(DIST_DIR, filePath).replace(/\\/g, '/');
     const html = fs.readFileSync(filePath, 'utf8');
 
-    if (/\[##_/.test(html)) {
-      errors.push(`${rel}: contains unreplaced Tistory placeholder tokens`);
-    }
-    if (html.includes('tistory-native-list')) {
-      errors.push(`${rel}: contains tistory-native-list (should be stripped on gh-pages)`);
-    }
-    if (/<s_paging[\s>]/i.test(html)) {
-      errors.push(`${rel}: contains <s_paging> (Tistory-only paging leak)`);
-    }
-    if (/<!-- (gh-pages|tistory)-strip-start:/.test(html)) {
-      errors.push(`${rel}: contains unstripped build-strip markers`);
+    const leftover = html.match(/@@(BODY_ID|CATEGORY_TREE|ARTICLE)@@/);
+    if (leftover) {
+      errors.push(`${rel}: contains unreplaced layout token ${leftover[0]}`);
     }
   }
 

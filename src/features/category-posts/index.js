@@ -3,7 +3,6 @@ import { bindCategoryScrollHeader } from '../../scroll-header.js';
 import { CATEGORY_POSTS_PER_PAGE, RECENT_POSTS_LIMIT } from '../../data/category-meta.js';
 import {
   isKnownCategoryId,
-  isTistoryMode,
   getCategoryLabel,
   getCategoryDescription,
 } from './category-context.js';
@@ -26,9 +25,6 @@ import {
   shouldHandleCategoryInApp,
   buildCategoryHash,
   navigateToHomeSpa,
-  redirectTistoryNativeUrlsToSpa,
-  redirectTistoryCategoryHashToNative,
-  buildNativeCategoryUrl,
   bootstrapDashboardRouting,
   shouldUseHomeSpaNavigation,
   hasDashboardPanels,
@@ -108,14 +104,6 @@ async function renderCategoryPosts(categoryId, page = 1) {
 async function showCategoryPosts(categoryId, page = 1) {
   if (!isKnownCategoryId(categoryId)) return;
 
-  if (isTistoryMode()) {
-    const target = buildNativeCategoryUrl(categoryId, page);
-    if (target) {
-      window.location.href = target;
-      return;
-    }
-  }
-
   if (shouldUseHomeSpaNavigation() || !hasDashboardPanels()) {
     navigateToHomeSpa(buildCategoryHash(categoryId, page));
     return;
@@ -130,8 +118,6 @@ async function showCategoryPosts(categoryId, page = 1) {
 }
 
 function initCategoryPosts() {
-  if (isTistoryMode()) return;
-
   const host = document.getElementById('sidebar-category-host');
   const paginationEl = document.getElementById('category-posts-pagination');
 
@@ -173,9 +159,6 @@ function initCategoryPosts() {
 }
 
 function bootstrapHomeSpa() {
-  if (redirectTistoryNativeUrlsToSpa()) return;
-  if (redirectTistoryCategoryHashToNative()) return;
-
   initDashboardNav();
   initCategoryPosts();
   void renderRecentPosts();
@@ -183,15 +166,7 @@ function bootstrapHomeSpa() {
   if (!isDashboardNavReady()) return;
 
   const boot = bootstrapDashboardRouting();
-  if (boot.kind === 'redirected' || boot.kind === 'article' || boot.kind === 'no-dashboard') return;
-
-  if (boot.kind === 'native-list') {
-    if (boot.categoryId) {
-      // Category tree may still be enhancing Tistory markup; sync after DOM settles.
-      requestAnimationFrame(() => setCategoryActive(boot.categoryId));
-    }
-    return;
-  }
+  if (boot.kind === 'article' || boot.kind === 'no-dashboard') return;
 
   if (boot.kind === 'category') {
     showCategoryPosts(boot.categoryId, boot.page);
