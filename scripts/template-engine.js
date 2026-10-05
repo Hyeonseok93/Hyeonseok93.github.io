@@ -29,7 +29,7 @@ function resolveIncludes(htmlContent, baseDir = SRC_DIR) {
   return result;
 }
 
-/** Replace literal tokens (Tistory placeholders, {{mustache}} keys, etc.) */
+/** Replace literal tokens ([##_..._##] placeholders, {{mustache}} keys, etc.) */
 function replaceTokens(html, tokenMap) {
   let result = html;
   for (const [token, value] of Object.entries(tokenMap)) {
@@ -121,26 +121,6 @@ ${articleHtml}
   </main>`;
 }
 
-function stripGhPagesRegions(html) {
-  return html.replace(
-    /<!-- gh-pages-strip-start:tistory-native-list -->[\s\S]*?<!-- gh-pages-strip-end:tistory-native-list -->\s*/g,
-    ''
-  );
-}
-
-function stripTistoryRegions(html) {
-  return html.replace(
-    /<!-- tistory-strip-start:category-posts-spa -->[\s\S]*?<!-- tistory-strip-end:category-posts-spa -->\s*/g,
-    ''
-  );
-}
-
-function removeTistoryStripMarkers(html) {
-  return html
-    .replace(/<!-- tistory-strip-start:[\w-]+ -->\s*/g, '')
-    .replace(/\s*<!-- tistory-strip-end:[\w-]+ -->\s*/g, '\n');
-}
-
 function compileLayout(options = {}) {
   const {
     target,
@@ -179,31 +159,6 @@ function compileLayout(options = {}) {
     '</s_t3>': '',
   };
 
-  if (target === 'tistory') {
-    html = html.replace(
-      /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
-      '<link rel="stylesheet" href="./style.css">'
-    );
-    html = html.replace(
-      '</s_t3>',
-      '  <script src="./images/tistory.js" defer></script>\n</s_t3>'
-    );
-    html = replaceTokens(html, {
-      './src/assets/profile.png': '[##_image_##]',
-      './src/assets/badges/dark/': './images/',
-      './src/assets/badges/': './images/',
-      './src/assets/': './images/',
-      // Project cards: GH Pages paths → published Tistory permalinks
-      './posts/rookies-showcase-mini1/': 'https://bulldog93.tistory.com/45',
-      './posts/rookies-showcase-mini2/': 'https://bulldog93.tistory.com/46',
-      './posts/rookies-showcase-mini3/': 'https://bulldog93.tistory.com/47',
-      './posts/rookies-showcase-final1/': 'https://bulldog93.tistory.com/48',
-      './posts/rookies-showcase-final2/': 'https://bulldog93.tistory.com/49',
-    });
-    html = stripTistoryRegions(html);
-    return html;
-  }
-
   html = html.replace(/<s_list_rep>[\s\S]*?<\/s_list_rep>/g, '');
 
   if (articleHtml) {
@@ -218,8 +173,6 @@ function compileLayout(options = {}) {
 
   html = replacePatternMap(html, previewPatternMap);
   html = replaceTokens(html, extraTokens);
-  html = stripGhPagesRegions(html);
-  html = removeTistoryStripMarkers(html);
 
   if (target === 'gh-pages' || target === 'preview') {
     if (target === 'gh-pages') {
@@ -247,7 +200,7 @@ function compileLayout(options = {}) {
     });
   }
 
-  if (target !== 'tistory' && target !== 'gh-pages' && target !== 'preview' && !html.includes('data-site-root=')) {
+  if (target !== 'gh-pages' && target !== 'preview' && !html.includes('data-site-root=')) {
     html = replaceTokens(html, {
       '<body id="': `<body data-site-root="${assetPrefix}" id="`,
     });

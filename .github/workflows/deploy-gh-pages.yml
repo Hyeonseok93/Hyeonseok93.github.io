@@ -35,20 +35,10 @@ jobs:
       - name: Build GitHub Pages site
         run: npm run build:gh-pages
 
-      - name: Build Tistory skin
-        run: npm run build:tistory:ci
-
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist/gh-pages
-
-      - name: Upload Tistory skin artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tistory-skin
-          path: dist/tistory/
-          retention-days: 30
 
   deploy:
     needs: build

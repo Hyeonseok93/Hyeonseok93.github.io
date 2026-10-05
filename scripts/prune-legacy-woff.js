@@ -5,7 +5,7 @@ const PROJECT_ROOT = path.join(__dirname, '..');
 
 /**
  * Drop legacy .woff font files (keep .woff2 only) and strip matching CSS urls.
- * Modern browsers use woff2; shipping both bloated the Tistory skin zip.
+ * Modern browsers use woff2; shipping both only bloats the build.
  */
 function pruneLegacyWoff(styleCssPath, imagesDir) {
   let removedCss = 0;

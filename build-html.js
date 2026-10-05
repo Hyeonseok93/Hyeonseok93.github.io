@@ -15,7 +15,7 @@ const SITE_BUILD_TARGET = 'gh-pages';
 
 const args = process.argv.slice(2);
 const targetArg = args.find((arg) => arg.startsWith('--target='));
-const target = targetArg ? targetArg.split('=')[1] : 'tistory';
+const target = targetArg ? targetArg.split('=')[1] : 'gh-pages';
 
 console.log(`Running template compiler target: ${target}`);
 
@@ -84,102 +84,8 @@ function ensurePostsUpToDate() {
   }
 }
 
-/** Tistory serves skin files as flat images/* — nested badges/dark/ paths 404 on many blogs. */
-function flattenTistoryImages(imgDir) {
-  if (!fs.existsSync(imgDir)) return 0;
-
-  let flattened = 0;
-
-  function walk(dir) {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const fullPath = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        walk(fullPath);
-        continue;
-      }
-
-      if (fullPath === path.join(imgDir, entry.name)) continue;
-
-      const dest = path.join(imgDir, entry.name);
-      if (!fs.existsSync(dest)) {
-        fs.copyFileSync(fullPath, dest);
-        flattened += 1;
-      }
-    }
-  }
-
-  walk(imgDir);
-
-  for (const entry of fs.readdirSync(imgDir, { withFileTypes: true })) {
-    if (entry.isDirectory()) {
-      fs.rmSync(path.join(imgDir, entry.name), { recursive: true, force: true });
-    }
-  }
-
-  return flattened;
-}
-
-function writeTistoryPreviewGif(outDir) {
-  const customPreview = path.join(SRC_DIR, 'assets', 'preview.gif');
-  const previewDest = path.join(outDir, 'preview.gif');
-
-  if (fs.existsSync(customPreview)) {
-    fs.copyFileSync(customPreview, previewDest);
-    console.log(`Copied preview.gif to: ${previewDest}`);
-    return;
-  }
-
-  const placeholderGif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
-  fs.writeFileSync(previewDest, placeholderGif);
-  console.log(`Wrote placeholder preview.gif to: ${previewDest}`);
-}
-
-const TISTORY_PREVIEW_FILES = ['preview.gif', 'preview256.jpg', 'preview560.jpg', 'preview1600.jpg'];
-
-function ensureTistoryPreviews() {
-  const script = path.join(PROJECT_ROOT, 'scripts', 'generate-tistory-previews.py');
-  const profile = path.join(SRC_DIR, 'assets', 'profile.png');
-  const greeting = path.join(SRC_DIR, 'assets', 'greeting.gif');
-  const skinDir = path.join(PROJECT_ROOT, 'skin');
-
-  if (!fs.existsSync(script) || !fs.existsSync(profile) || !fs.existsSync(greeting)) return;
-
-  const sourceMtime = Math.max(fs.statSync(profile).mtimeMs, fs.statSync(greeting).mtimeMs);
-  const outputs = TISTORY_PREVIEW_FILES.map((name) => path.join(skinDir, name));
-  const needsRegen =
-    outputs.some((filePath) => !fs.existsSync(filePath)) ||
-    outputs.some((filePath) => fs.existsSync(filePath) && fs.statSync(filePath).mtimeMs < sourceMtime);
-
-  if (!needsRegen) return;
-
-  try {
-    execSync(`python "${script}"`, { cwd: PROJECT_ROOT, stdio: 'inherit' });
-  } catch {
-    console.warn('Warning: could not generate Tistory previews (greeting.gif + profile.png)');
-  }
-}
-
-function copyTistoryPreviews(outDir) {
-  const skinDir = path.join(PROJECT_ROOT, 'skin');
-  let copied = 0;
-
-  for (const name of TISTORY_PREVIEW_FILES) {
-    const src = path.join(skinDir, name);
-    if (!fs.existsSync(src)) continue;
-    fs.copyFileSync(src, path.join(outDir, name));
-    copied += 1;
-  }
-
-  if (copied > 0) {
-    console.log(`Copied ${copied} Tistory preview file(s) from skin/ to dist/tistory/`);
-    return;
-  }
-
-  writeTistoryPreviewGif(outDir);
-}
-
 function pruneProjectPngWhenJpgExists(imgDir) {
-  // Keep PNG masters in src/, but don't ship both formats (Tistory 20MB cap).
+  // Keep PNG masters in src/, but don't ship both formats.
   const names = ['mini1', 'mini2', 'mini3', 'final1', 'final2'];
   for (const name of names) {
     for (const rel of [`projects/${name}.png`, `${name}.png`]) {
@@ -196,13 +102,8 @@ function compile() {
   const categoryTreeHtml = getGhPagesCategoryTree();
   let htmlContent;
   let outDir;
-  let outFileName = target === 'tistory' ? 'skin.html' : 'index.html';
 
-  if (target === 'tistory') {
-    ensureTistoryPreviews();
-    htmlContent = compileLayout({ target: 'tistory' });
-    outDir = path.join(PROJECT_ROOT, 'dist', 'tistory');
-  } else if (target === 'vite-index' || target === 'preview') {
+  if (target === 'vite-index' || target === 'preview') {
     if (target === 'preview') {
       ensurePostsUpToDate();
     }
@@ -217,75 +118,32 @@ function compile() {
     process.exit(1);
   }
 
-  writeOutput(htmlContent, outDir, outFileName);
+  writeOutput(htmlContent, outDir, 'index.html');
 
-  if (target === 'tistory' || target === 'gh-pages') {
-    copyBuildAssets(outDir);
+  if (target !== 'gh-pages') return;
+
+  copyBuildAssets(outDir);
+
+  const imgDir = path.join(outDir, 'images');
+  copyRecursiveSync(path.join(SRC_DIR, 'assets'), imgDir);
+
+  const assetsSrc = path.join(PROJECT_ROOT, 'dist', 'assets');
+  const assetsDest = path.join(outDir, 'assets');
+  copyRecursiveSync(assetsSrc, assetsDest);
+
+  const viteImagesSrc = path.join(PROJECT_ROOT, 'dist', 'images');
+  if (fs.existsSync(viteImagesSrc)) {
+    copyRecursiveSync(viteImagesSrc, imgDir);
   }
 
-  if (target === 'tistory') {
-    const jsSrc = path.join(PROJECT_ROOT, 'dist', 'tistory.js');
-    const jsDest = path.join(outDir, 'images', 'tistory.js');
-    if (fs.existsSync(jsSrc)) {
-      fs.mkdirSync(path.join(outDir, 'images'), { recursive: true });
-      fs.copyFileSync(jsSrc, jsDest);
-      console.log(`Copied Tistory JS bundle to: ${jsDest}`);
-    } else {
-      console.warn('Warning: dist/tistory.js not found. Run vite build --config vite.config.tistory.js first.');
-    }
+  pruneProjectPngWhenJpgExists(imgDir);
 
-    copyTistoryPreviews(outDir);
-  }
+  const postsSrc = path.join(PROJECT_ROOT, 'public', 'posts');
+  const postsDest = path.join(outDir, 'posts');
+  copyRecursiveSync(postsSrc, postsDest);
 
-    if (target === 'tistory' || target === 'gh-pages') {
-      const imgDir = path.join(outDir, 'images');
-      copyRecursiveSync(path.join(SRC_DIR, 'assets'), imgDir);
-
-      if (target === 'gh-pages') {
-        const assetsSrc = path.join(PROJECT_ROOT, 'dist', 'assets');
-        const assetsDest = path.join(outDir, 'assets');
-        copyRecursiveSync(assetsSrc, assetsDest);
-
-        const viteImagesSrc = path.join(PROJECT_ROOT, 'dist', 'images');
-        if (fs.existsSync(viteImagesSrc)) {
-          copyRecursiveSync(viteImagesSrc, imgDir);
-        }
-
-        pruneProjectPngWhenJpgExists(imgDir);
-
-        const postsSrc = path.join(PROJECT_ROOT, 'public', 'posts');
-        const postsDest = path.join(outDir, 'posts');
-        copyRecursiveSync(postsSrc, postsDest);
-
-        fs.writeFileSync(path.join(outDir, '.nojekyll'), '', 'utf8');
-        pruneLegacyWoff(path.join(outDir, 'style.css'), imgDir);
-      }
-
-      if (target === 'tistory') {
-        // Self-hosted fonts / FA webfonts from the Vite CSS bundle
-        const viteImagesSrc = path.join(PROJECT_ROOT, 'dist', 'images');
-        if (fs.existsSync(viteImagesSrc)) {
-          copyRecursiveSync(viteImagesSrc, imgDir);
-        }
-
-        pruneProjectPngWhenJpgExists(imgDir);
-
-        const xmlSrc = path.join(PROJECT_ROOT, 'skin', 'index.xml');
-        const xmlDest = path.join(outDir, 'index.xml');
-        if (fs.existsSync(xmlSrc)) {
-          fs.copyFileSync(xmlSrc, xmlDest);
-        }
-
-        const flattened = flattenTistoryImages(imgDir);
-        if (flattened > 0) {
-          console.log(`Flattened ${flattened} nested image(s) into images/ (Tistory flat paths).`);
-        }
-
-        // Flatten moves projects/*.jpg → images/*.jpg; prune again for any leftover PNG
-        pruneProjectPngWhenJpgExists(imgDir);
-        pruneLegacyWoff(path.join(outDir, 'style.css'), imgDir);
-      }
-    }
+  fs.writeFileSync(path.join(outDir, '.nojekyll'), '', 'utf8');
+  pruneLegacyWoff(path.join(outDir, 'style.css'), imgDir);
 }
 
 compile();

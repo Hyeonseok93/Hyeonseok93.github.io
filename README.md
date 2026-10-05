@@ -1,10 +1,8 @@
 # 🐶 Bulldog's House
 
 <p align="center">
-  <a href="https://hyeonseok93.github.io/" style="text-decoration:none;"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/github-pages.png" /><img src=".github/readme/badges/light/github-pages.png" alt="GitHub Pages" height="40" /></picture></a>&#8194;<a href="https://bulldog93.tistory.com/" style="text-decoration:none;"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/tistory.png" /><img src=".github/readme/badges/light/tistory.png" alt="Tistory" height="40" /></picture></a><br />
+  <a href="https://hyeonseok93.github.io/" style="text-decoration:none;"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/github-pages.png" /><img src=".github/readme/badges/light/github-pages.png" alt="GitHub Pages" height="40" /></picture></a><br />
   <a href="https://hyeonseok93.github.io/">https://hyeonseok93.github.io/</a>
-  ·
-  <a href="https://bulldog93.tistory.com/">https://bulldog93.tistory.com/</a>
 </p>
 
 <p align="center">
@@ -12,8 +10,7 @@
 </p>
 
 <p align="center">
-  나만의 블로그 스킨을 만들고, GitHub Pages와 티스토리에 배포하기 위한 저장소입니다.<br />
-  소스는 하나고, GitHub Pages는 백업 블로그 · 티스토리는 메인 블로그로 같은 구조가 올라갑니다.
+  나만의 블로그를 만들고 GitHub Pages에 배포하기 위한 저장소입니다.
 </p>
 
 <p align="center">
@@ -83,10 +80,6 @@
       <td><code>npm run build:gh-pages</code></td>
       <td>배포용 빌드 → <code>dist/gh-pages/</code> (<code>build:posts</code> 포함). <code>main</code> push 시 Actions도 동일</td>
     </tr>
-    <tr>
-      <td><code>npm run build:tistory</code></td>
-      <td>티스토리 스킨 → <code>dist/tistory/</code> (글 본문 빌드 아님, 스킨만)</td>
-    </tr>
   </tbody>
 </table>
 
@@ -120,8 +113,7 @@ Hyeonseok93.github.io/
 ┣━━ 📂 public/
 ┃   ┗━━ 📂 posts/                     # 생성된 글 HTML (gitignore)
 ┣━━ 📂 dist/                          # 빌드 산출물
-┃   ┣━━ 📂 gh-pages/                  # GitHub Pages 배포 산출물
-┃   ┗━━ 📂 tistory/                   # 티스토리 스킨 산출물
+┃   ┗━━ 📂 gh-pages/                  # GitHub Pages 배포 산출물
 ┗━━ 📄 build-html.js                  # 타깃별 HTML 출력 (index/dist)
 ```
 
@@ -177,34 +169,13 @@ thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
 
 - frontmatter의 `category` / `slug`는 생략 가능 (폴더 구조 우선)
 
-> [!IMPORTANT]
-> 티스토리에 업로드할 때는 frontmatter(`---` 블록)를 제거하고 본문만 붙여넣으세요.  
-> 태그도 frontmatter의 `tags`를 그대로 쓰지 말고, 티스토리 에디터에서 별도로 입력해야 합니다.
-
 ---
 
 <br />
 
-## 🚀 Deploy (GitHub Pages + Tistory)
+## 🚀 Deploy (GitHub Pages)
 
-`main` 브랜치에 push하면 GitHub Actions가 `npm run build:all`을 실행합니다.
-
-### 자동으로 되는 것
-
-- **GitHub Pages**: `dist/gh-pages/`가 자동 배포됩니다.
-- **티스토리 스킨 빌드**: `dist/tistory/`가 빌드되고, `tistory-skin` 아티팩트가 생성됩니다.
-
-### 직접 해야 하는 것 (티스토리 업로드)
-
-1. 저장소 **Actions** → 최신 실행 → **Artifacts** → `tistory-skin` 다운로드
-2. 티스토리 관리자 **꾸미기 → 스킨 → 스킨 등록**으로 이동
-3. 다운로드한 zip을 풀고, 안의 파일들을 티스토리 스킨 등록 화면에 업로드
-   - 루트 파일: `index.xml`, `skin.html`, `style.css`, `preview.gif`
-   - `images/` 폴더: 내부 전체 파일 (`images/tistory.js` 포함)
-4. 저장 후 스킨 이름 입력 → **보관함**에서 적용
-
-> [!TIP]
-> 업로드 파일 목록은 로컬에서 `npm run tistory:upload-list`로 확인할 수 있습니다. 티스토리 포스팅은 `index.md` 본문 내용을 그대로 복사해 붙여넣고, 이미지는 티스토리 에디터에서 별도로 업로드해 넣으면 됩니다.
+`main` 브랜치에 push하면 GitHub Actions가 `npm run build:gh-pages`를 실행하고 `dist/gh-pages/`를 자동 배포합니다.
 
 GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
 
@@ -214,7 +185,7 @@ GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
 
 ## 🧭 Build Pipeline
 
-이 프로젝트는 **글 원본(Markdown) + 템플릿**을 합쳐 GitHub Pages용 결과물과 Tistory 스킨 결과물을 각각 만들어냅니다.
+이 프로젝트는 **글 원본(Markdown) + 템플릿**을 합쳐 GitHub Pages용 결과물을 만들어냅니다.
 
 1. **원본 준비**
    - 글 원본: `content/posts/`
@@ -225,7 +196,6 @@ GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
    - `scripts/build-posts.js`가 글 HTML과 manifest를 생성
 3. **출력 단계**
    - GitHub Pages 출력: `dist/gh-pages/`
-   - Tistory 출력: `dist/tistory/`
 
 ---
 

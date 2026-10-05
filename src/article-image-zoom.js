@@ -1,6 +1,6 @@
 /**
  * GitHub Pages only: click article images to open a scrollable lightbox.
-  * Imported from main.js - never from tistory.entry.js (Tistory has its own viewer).
+ * Imported from main.js.
  */
 import './styles/article-image-zoom.css';
 

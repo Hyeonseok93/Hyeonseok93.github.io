@@ -1,6 +1,6 @@
 /**
  * Prism syntax highlighting (self-hosted — no CDN).
- * Theme CSS lives in style.css; languages load here for GH Pages + Tistory bundles.
+ * Theme CSS lives in style.css; languages load here for the GitHub Pages bundle.
  */
 import Prism from 'prismjs';
 

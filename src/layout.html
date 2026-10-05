@@ -11,7 +11,7 @@
 <body id="[##_body_id_##]">
 <s_t3>
 
-<div id="tistory-notion-layout" class="flex min-h-screen relative">
+<div id="notion-layout" class="flex min-h-screen relative">
 
   <!-- Mobile top toggle header bar -->
   <header class="hidden max-md:flex w-full h-14 bg-bgSidebar border-b border-white/5 items-center justify-between px-4 fixed top-0 left-0 z-40">
@@ -49,7 +49,7 @@
   </section>
 
   <!-- Posts: permalink body (s_permalink_article_rep). s_index_article_rep is kept for
-       Tistory structure but hidden on home — Recent Posts uses #what-i-do-posts-list. -->
+       the template structure but hidden on home — Recent Posts uses #what-i-do-posts-list. -->
   <section id="article-section" class="article-section">
     <s_article_rep>
       <s_index_article_rep>
@@ -64,7 +64,6 @@
     <main id="list-content" class="flex-1 min-h-screen w-full flex justify-center">
       <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
         <s_list>
-          @include('./components/TistoryNativeList.html')
         </s_list>
       </div>
     </main>

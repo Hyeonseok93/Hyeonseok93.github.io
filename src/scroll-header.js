@@ -83,7 +83,7 @@ function initNativeListScrollHeader() {
   // GH SPA category list binds from category-posts/index.js instead.
   if (bodyId === 'list' && document.getElementById('category-posts-panel')) return;
 
-  const hero = document.querySelector('#list-section .category-posts-hero, .tistory-native-list .category-posts-hero');
+  const hero = document.querySelector('#list-section .category-posts-hero');
   const titleEl = hero?.querySelector('.category-posts-hero__title');
   const label = titleEl?.textContent?.trim();
   if (!hero || !label) return;
