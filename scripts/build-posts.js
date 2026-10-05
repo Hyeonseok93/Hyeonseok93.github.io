@@ -27,7 +27,6 @@ const CATEGORIES_PATH = path.join(SRC_DIR, 'data', 'categories.json');
 
 const THUMBNAIL_CANDIDATES = ['thumbnail.png', 'thumbnail.jpg', 'thumbnail.webp', 'thumbnail.jpeg'];
 
-const SITE_BUILD_TARGET = 'gh-pages';
 const LIST_EXCERPT_MAX_CHARS = 400;
 
 marked.setOptions({ gfm: true, breaks: false });
@@ -273,7 +272,6 @@ function copyPostAssets(postDir, outDir) {
 function writePostPages(posts) {
   const categoryTreeHtml = readFile(path.join(SRC_DIR, 'components', 'CategoryTree.html')).trim();
   const assetPrefix = '../../';
-  const compileTarget = SITE_BUILD_TARGET;
   const navBySlug = buildCategoryNavMaps(posts);
 
   fs.rmSync(PUBLIC_POSTS_DIR, { recursive: true, force: true });
@@ -301,7 +299,7 @@ function writePostPages(posts) {
     });
 
     const pageHtml = compileLayout({
-      target: compileTarget,
+      target: 'gh-pages',
       categoryTreeHtml,
       articleHtml,
       bodyId: 'article',
@@ -309,7 +307,7 @@ function writePostPages(posts) {
     });
 
     fs.writeFileSync(path.join(outDir, 'index.html'), pageHtml, 'utf8');
-    console.log(`Built post page: posts/${post.slug}/index.html (${compileTarget})`);
+    console.log(`Built post page: posts/${post.slug}/index.html`);
   });
 }
 

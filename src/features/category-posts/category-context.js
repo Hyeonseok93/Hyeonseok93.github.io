@@ -3,10 +3,6 @@ import {
   CATEGORY_DESCRIPTIONS,
 } from '../../data/category-meta.js';
 
-export function isGhPagesSite() {
-  return document.body.dataset.site === 'gh-pages';
-}
-
 export function isKnownCategoryId(categoryId) {
   if (CATEGORY_LABELS[categoryId]) return true;
   return Boolean(document.querySelector(`[data-category-id="${categoryId}"]`));
@@ -30,22 +26,12 @@ export function getCategoryDescription(categoryId) {
   return CATEGORY_DESCRIPTIONS[categoryId] || '';
 }
 
-export function getCategoryTotalCount(categoryId) {
-  const countEl = getCategoryLink(categoryId)?.querySelector('.category-tree__count');
-  const match = countEl?.textContent.match(/\((\d+)\)/);
-  return match ? Number(match[1]) : null;
-}
-
 export function resolvePostAssetPath(pathValue) {
   if (!pathValue) return '';
   if (/^https?:\/\//.test(pathValue)) return pathValue;
   if (pathValue.startsWith('./posts/')) return pathValue;
   if (pathValue.startsWith('./images/') || pathValue.startsWith('./src/assets/')) {
-    if (isGhPagesSite()) {
-      return pathValue.replace('./src/assets/', './images/');
-    }
-    return pathValue;
+    return pathValue.replace('./src/assets/', './images/');
   }
-  const base = isGhPagesSite() ? './images/' : './src/assets/';
-  return `${base}${pathValue.replace(/^\.\//, '')}`;
+  return `./images/${pathValue.replace(/^\.\//, '')}`;
 }

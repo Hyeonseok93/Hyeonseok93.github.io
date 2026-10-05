@@ -47,8 +47,8 @@ function main() {
     errors.push('Missing dist/gh-pages/index.html');
   } else {
     const indexHtml = fs.readFileSync(indexPath, 'utf8');
-    if (!indexHtml.includes('data-site="gh-pages"')) {
-      errors.push('index.html: missing data-site="gh-pages"');
+    if (!indexHtml.includes('data-site-root="./"')) {
+      errors.push('index.html: missing data-site-root="./"');
     }
     if (!indexHtml.includes('category-posts-anchor')) {
       errors.push('index.html: missing category-posts-anchor (GH category SPA panel)');

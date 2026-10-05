@@ -1,7 +1,5 @@
 import { isKnownCategoryId } from './category-context.js';
 
-const PANEL_IDS = new Set(['introduce-me', 'what-i-do', 'category-posts']);
-
 export function getSiteRoot() {
   const root = document.body.dataset.siteRoot;
   if (root) return root.endsWith('/') ? root : `${root}/`;
@@ -42,7 +40,6 @@ export function buildHomeSpaUrl(hash, { baseUrl = getSiteRoot() } = {}) {
   return cleanHash ? `${baseUrl}#${cleanHash}` : baseUrl;
 }
 
-
 export function parseCategoryHash(hash = location.hash) {
   const raw = String(hash).replace(/^#/, '');
   if (!raw.startsWith('category-')) return null;
@@ -53,22 +50,6 @@ export function parseCategoryHash(hash = location.hash) {
 
   if (!isKnownCategoryId(categoryId)) return null;
   return { categoryId, page };
-}
-
-export function parsePanelHash(hash = location.hash) {
-  const raw = String(hash).replace(/^#/, '');
-  if (!raw) return null;
-
-  const category = parseCategoryHash(raw);
-  if (category) {
-    return { panelId: 'category-posts', ...category };
-  }
-
-  if (PANEL_IDS.has(raw)) {
-    return { panelId: raw, categoryId: null, page: 1 };
-  }
-
-  return null;
 }
 
 export function navigateToHomeSpa(hash) {

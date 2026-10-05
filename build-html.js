@@ -11,8 +11,6 @@ const {
 } = require('./scripts/template-engine');
 const { pruneLegacyWoff } = require('./scripts/prune-legacy-woff');
 
-const SITE_BUILD_TARGET = 'gh-pages';
-
 const args = process.argv.slice(2);
 const targetArg = args.find((arg) => arg.startsWith('--target='));
 const target = targetArg ? targetArg.split('=')[1] : 'gh-pages';
@@ -21,7 +19,7 @@ console.log(`Running template compiler target: ${target}`);
 
 generateAllSources({ log: false });
 
-function getGhPagesCategoryTree() {
+function getCategoryTree() {
   return readFile(path.join(SRC_DIR, 'components', 'CategoryTree.html')).trim();
 }
 
@@ -50,11 +48,6 @@ function copyBuildAssets(outDir) {
   }
 }
 
-function readPostBuildTarget(html) {
-  const match = html.match(/data-build-target="([^"]+)"/);
-  return match?.[1] ?? null;
-}
-
 function postsNeedRebuild() {
   const postsDir = path.join(PROJECT_ROOT, 'public', 'posts');
   if (!fs.existsSync(postsDir)) return true;
@@ -64,14 +57,11 @@ function postsNeedRebuild() {
     .find((entry) => entry.isDirectory());
   if (!sampleDir) return true;
 
-  const samplePath = path.join(postsDir, sampleDir.name, 'index.html');
-  if (!fs.existsSync(samplePath)) return true;
-
-  return readPostBuildTarget(readFile(samplePath)) !== SITE_BUILD_TARGET;
+  return !fs.existsSync(path.join(postsDir, sampleDir.name, 'index.html'));
 }
 
 function ensurePostsBuilt() {
-  console.log(`Building posts (target=${SITE_BUILD_TARGET})...`);
+  console.log('Building posts...');
   execSync('node scripts/build-posts.js', {
     cwd: PROJECT_ROOT,
     stdio: 'inherit',
@@ -99,7 +89,7 @@ function pruneProjectPngWhenJpgExists(imgDir) {
 }
 
 function compile() {
-  const categoryTreeHtml = getGhPagesCategoryTree();
+  const categoryTreeHtml = getCategoryTree();
   let htmlContent;
   let outDir;
 

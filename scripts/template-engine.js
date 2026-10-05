@@ -77,18 +77,6 @@ function renderTemplate(templatePath, data) {
   return html;
 }
 
-function injectBodyDataAttrs(html, { assetPrefix, site, buildTarget }) {
-  const attrs = [
-    `data-site-root="${assetPrefix}"`,
-    site ? `data-site="${site}"` : '',
-    buildTarget ? `data-build-target="${buildTarget}"` : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  return html.replace('<body id="', `<body ${attrs} id="`);
-}
-
 function wrapArticleHost(articleHtml) {
   return `<main id="article-content" class="article-content-host flex-1 min-h-screen w-full flex justify-center">
     <div class="main-content-inner w-full max-w-[1200px] flex flex-col py-10 px-[60px] max-md:px-5 max-md:pt-20">
@@ -126,39 +114,25 @@ function compileLayout(options = {}) {
     html = removeSectionById(html, 'article-section');
   }
 
-  if (target === 'gh-pages' || target === 'preview') {
-    if (target === 'gh-pages') {
-      html = html.replace(
-        /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
-        `<link rel="stylesheet" href="${asset('style.css')}">\n  <script type="module" src="${asset('assets/main.js')}"></script>`
-      );
-      html = replaceTokens(html, {
-        './src/assets/': asset('images/'),
-      });
-    } else {
-      html = html.replace(
-        /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
-        `<script type="module" src="${asset('src/main.js')}"></script>`
-      );
-      html = replaceTokens(html, {
-        './src/assets/': asset('src/assets/'),
-      });
-    }
-
-    html = injectBodyDataAttrs(html, {
-      assetPrefix,
-      site: 'gh-pages',
-      buildTarget: 'gh-pages',
-    });
-  }
-
-  if (target !== 'gh-pages' && target !== 'preview' && !html.includes('data-site-root=')) {
+  if (target === 'gh-pages') {
+    html = html.replace(
+      /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
+      `<link rel="stylesheet" href="${asset('style.css')}">\n  <script type="module" src="${asset('assets/main.js')}"></script>`
+    );
     html = replaceTokens(html, {
-      '<body id="': `<body data-site-root="${assetPrefix}" id="`,
+      './src/assets/': asset('images/'),
+    });
+  } else {
+    html = html.replace(
+      /<script type="module" src="\.\/(src\/)?main\.js"><\/script>/g,
+      `<script type="module" src="${asset('src/main.js')}"></script>`
+    );
+    html = replaceTokens(html, {
+      './src/assets/': asset('src/assets/'),
     });
   }
 
-  return html;
+  return html.replace('<body id="', `<body data-site-root="${assetPrefix}" id="`);
 }
 
 function copyRecursiveSync(src, dest) {
