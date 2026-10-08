@@ -45,7 +45,6 @@ function layout(site, assetVersion, o) {
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/img/favicon-64.png">
 <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
-<link rel="stylesheet" href="/assets/fonts/pretendard/pretendard.css">
 <link rel="stylesheet" href="/assets/site.css?v=${assetVersion}">
 ${scripts}
 </head>

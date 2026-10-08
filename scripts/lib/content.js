@@ -66,7 +66,6 @@ function loadPosts(site) {
         slug,
         cat,
         dir,
-        rawTitle: String(data.title || slug),
         title: day ? title.replace(/^Day \d+ — /, '') : title,
         date: isoDate(data.date),
         tags: (Array.isArray(data.tags) ? data.tags : []).map((t) => String(t).trim()),
@@ -93,6 +92,7 @@ function attachSeries(site, posts) {
     p.series = 'papers';
     p.index = i;
     p.summary = site.papers.summaries[p.slug] || null;
+    p.tags = p.tags.filter((t) => t !== '논문요약'); // every paper has it; the series already says so
   });
 
   const { kinds, defaultKind, kindBySlug } = site.projects;
@@ -103,6 +103,7 @@ function attachSeries(site, posts) {
     const [name, ...rest] = p.title.split(' — ');
     p.name = name;
     p.subtitle = rest.join(' — ');
+    p.tags = p.tags.filter((t) => t !== p.slug); // some posts tag their own name
   });
   projects.sort((a, b) => kinds.indexOf(a.kind) - kinds.indexOf(b.kind) || b.date.localeCompare(a.date));
   const projectsByDate = [...projects].sort((a, b) => b.date.localeCompare(a.date));
@@ -112,6 +113,7 @@ function attachSeries(site, posts) {
   days.forEach((p) => {
     p.series = 'rookies-log';
     p.phase = phases.find((ph) => p.day >= ph.from && p.day <= ph.to);
+    if (!p.phase) throw new Error(`site.json rookies.log.phases: no phase covers Day ${p.day} (${p.slug})`);
     p.tags = p.tags.filter((t) => !site.rookies.log.hiddenTags.includes(t));
   });
 
@@ -119,11 +121,14 @@ function attachSeries(site, posts) {
     const p = visible.find((x) => x.slug === info.slug);
     if (!p) throw new Error(`site.json track: no post ${info.slug}`);
     Object.assign(p, { series: 'rookies-projects', index: i, ...info });
-    p.tags = p.tags.filter((t) => !site.rookies.log.hiddenTags.includes(t));
+    p.stageTitle = p.role ? `최종 프로젝트 · ${site.rookies.projects.finalTopic}` : `미니 프로젝트 ${p.stage.replace('미니 ', '')}`;
     return p;
   });
+
+  // one-line summary used for meta description and search
+  for (const p of posts) p.lead = p.summary?.problem || p.description || p.excerpt;
 
   return { all: posts, visible, papers, projects, projectsByDate, days, phases, track };
 }
 
-module.exports = { loadSite, loadPosts, POSTS_DIR };
+module.exports = { loadSite, loadPosts };

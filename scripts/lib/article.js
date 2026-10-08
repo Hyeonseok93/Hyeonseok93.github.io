@@ -10,9 +10,6 @@ const { esc, pad2 } = require('./util');
 
 loadLanguages(['python', 'java', 'http', 'properties', 'powershell', 'bash', 'json', 'yaml', 'typescript', 'javascript', 'sql']);
 
-const decode = (s) =>
-  s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
-
 /** "2. Attack Surface — ONDE에 …" -> "Attack Surface", "서론. 공장 …" -> "서론", "① Base URL kind" -> "Base URL kind" */
 const tocLabel = (t) =>
   t.replace(/^\d+\.\s*/, '')
@@ -25,7 +22,7 @@ const tocLabel = (t) =>
 function renderArticle(post, sizes) {
   // parse <pre> as elements (node-html-parser keeps it as raw text by default)
   const root = parse(post.html, { blockTextElements: { script: true, noscript: true, style: true } });
-  const result = { repo: null, site: null, toc: [] };
+  const result = { repo: null, deploy: null, toc: [] };
 
   // a leading horizontal rule is a leftover of the old frontmatter layout
   const first = root.childNodes.find((n) => n.nodeType === 1);
@@ -63,7 +60,7 @@ function renderArticle(post, sizes) {
     if (gh) {
       const a = gh.querySelector('a[href*="github.com"]');
       result.repo = { href: a.getAttribute('href'), name: a.text.trim() };
-      if (/배포:/.test(gh.text)) result.site = { domain: gh.querySelector('code')?.text.trim() || '', down: /접속되지 않습니다/.test(gh.text) };
+      if (/배포:/.test(gh.text)) result.deploy = { domain: gh.querySelector('code')?.text.trim() || '', down: /접속되지 않습니다/.test(gh.text) };
       gh.remove();
     }
   }
@@ -82,7 +79,7 @@ function renderArticle(post, sizes) {
   root.querySelectorAll('pre').forEach((pre) => {
     const code = pre.querySelector('code');
     const lang = ((code?.getAttribute('class') || '').match(/language-([\w-]+)/) || [])[1] || '';
-    const text = decode(code ? code.innerHTML : pre.innerHTML);
+    const text = (code || pre).text; // entity-decoded source
     const grammar = lang && Prism.languages[lang];
     const body = grammar ? Prism.highlight(text, grammar, lang) : esc(text);
     pre.replaceWith(

@@ -12,7 +12,6 @@ const { ROOT } = require('./util');
 
 const CACHE_DIR = path.join(ROOT, '.cache', 'images');
 const RASTER = /\.(png|jpe?g)$/i;
-const SKIP = /\.(md|drawio)$/i;
 
 const VARIANTS = {
   full: { width: 1600, quality: 80 },
@@ -40,9 +39,13 @@ async function toWebp(src, variant) {
 async function processPostAssets(post, outDir) {
   fs.mkdirSync(outDir, { recursive: true });
   const sizes = {};
+  // only files the post uses: its thumbnail and what the body points at (./fig1.png …);
+  // source files kept next to a post (e.g. a .drawio / .svg master) stay out of the site
+  const used = new Set([...post.html.matchAll(/\bsrc="(?:\.\/)?([^"/:?#]+)"/g)].map((m) => m[1]));
+  if (post.thumb) used.add(post.thumb);
   for (const name of fs.readdirSync(post.dir)) {
     const src = path.join(post.dir, name);
-    if (SKIP.test(name) || fs.statSync(src).isDirectory()) continue;
+    if (!used.has(name)) continue;
     if (RASTER.test(name)) {
       const base = name.replace(RASTER, '');
       const full = await toWebp(src, 'full');

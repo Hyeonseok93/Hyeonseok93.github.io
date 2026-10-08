@@ -72,10 +72,10 @@
         { "slug": "rookies-showcase-mini3", "name": "MACTA", "stage": "미니 3차", "after": "AWS · CI/CD 교육 후",
           "description": "물품을 등록하고 마감 전까지 실시간으로 입찰하는 경매 플랫폼입니다. AWS · EKS · Argo CD로 배포했습니다.",
           "stack": ["react", "spring-boot", "aws", "typescript"] },
-        { "slug": "rookies-showcase-final1", "name": "ONDE", "stage": "최종", "role": "진단 대상",
+        { "slug": "rookies-showcase-final1", "name": "ONDE", "stage": "최종", "role": "진단 대상", "partnerLabel": "이 서비스를 진단한 플랫폼",
           "description": "바이브 코딩으로 올린 여행 플랫폼. 취약점 진단과 모의해킹의 실증 대상입니다.",
           "stack": ["spring-boot", "react", "vite", "aws"] },
-        { "slug": "rookies-showcase-final2", "name": "ARGUS", "stage": "최종", "role": "진단 플랫폼",
+        { "slug": "rookies-showcase-final2", "name": "ARGUS", "stage": "최종", "role": "진단 플랫폼", "partnerLabel": "이 플랫폼이 진단한 대상",
           "description": "대상 API를 모으고 응답으로 걸러 낸 뒤, 항목별 모듈이 자동 판정하고 증적·결과서까지 이어지는 진단 플랫폼입니다.",
           "stack": ["fastapi", "react", "vite", "zap"] }
       ]

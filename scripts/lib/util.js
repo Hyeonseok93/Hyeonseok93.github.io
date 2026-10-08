@@ -28,13 +28,14 @@ function writeFile(file, content) {
   fs.writeFileSync(file, content);
 }
 
-function copyDir(src, dest) {
+/** Recursive copy; `keep(name)` can skip files. */
+function copyDir(src, dest, keep = () => true) {
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
     const from = path.join(src, entry.name);
     const to = path.join(dest, entry.name);
-    if (entry.isDirectory()) copyDir(from, to);
-    else fs.copyFileSync(from, to);
+    if (entry.isDirectory()) copyDir(from, to, keep);
+    else if (keep(entry.name)) fs.copyFileSync(from, to);
   }
 }
 

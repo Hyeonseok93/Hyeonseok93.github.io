@@ -13,6 +13,11 @@ const tagList = (tags) => (tags.length ? `<div class="tags">${tags.map((t) => `<
 const qmr = (s) => `<dl class="qmr"><dt>문제</dt><dd>${esc(s.problem)}</dd><dt>방법</dt><dd>${esc(s.method)}</dd><dt>결과</dt><dd>${esc(s.result)}</dd></dl>`;
 const stat = (items) => `<div class="stat">${items.map(([label, n]) => `<div><b>${esc(n)}</b><span>${esc(label)}</span></div>`).join('')}</div>`;
 const dayNo = (d) => `Day ${pad2(d)}`;
+/** 전체 / 웹 앱 / … filter buttons with counts; the first one starts pressed. */
+const kindChips = (kinds, posts) =>
+  `<div class="chips" data-filter>${['전체', ...kinds]
+    .map((k, i) => `<button type="button" data-kind="${esc(k)}" aria-pressed="${i === 0}">${esc(k)} <span>${k === '전체' ? posts.length : posts.filter((p) => p.kind === k).length}</span></button>`)
+    .join('')}</div>`;
 const range = (posts) => `${fmtDate(posts[0].date)} – ${fmtDate(posts.at(-1).date)}`;
 
 /** Shared header of the two 루키즈 5기 pages: group title + 일지 / 프로젝트 tabs. */
@@ -36,9 +41,6 @@ function homePage(site, c, media) {
   const papers = [...c.papers].reverse();
   const { kinds } = site.projects;
   const projects = c.projects; // grouped by kind, newest first within a kind
-  const chips = ['전체', ...kinds]
-    .map((k, i) => `<button type="button" data-kind="${esc(k)}" aria-pressed="${i === 0}">${esc(k)} <span>${k === '전체' ? projects.length : projects.filter((p) => p.kind === k).length}</span></button>`)
-    .join('');
   const last = c.phases.length - 1;
   const phaseTabs = c.phases
     .map((ph, i) => `<button type="button" role="tab" id="pt${i}" aria-controls="pe${i}" aria-selected="${i === last}"><i>Day ${ph.from}–${ph.to}</i><b>${esc(ph.name)}</b><small>${shortDate(ph.days[0].date)} – ${shortDate(ph.days.at(-1).date)}</small></button>`)
@@ -47,7 +49,7 @@ function homePage(site, c, media) {
     .map((ph, i) => `<div class="entries" role="tabpanel" id="pe${i}" aria-labelledby="pt${i}"${i === last ? '' : ' hidden'}>${ph.days.map((d) => `<a href="${d.url}"><em>${dayNo(d.day)}</em><b>${esc(d.title)}</b><time datetime="${d.date}">${shortDate(d.date)}</time></a>`).join('')}</div>`)
     .join('');
   const [l1, l2, l3] = site.home.headline;
-  const seriesCount = 4;
+  const seriesCount = [c.papers, c.projects, c.days, c.track].filter((s) => s.length).length;
 
   return `<div class="w">
   <section class="hello">
@@ -60,11 +62,11 @@ function homePage(site, c, media) {
     </picture>
   </section>
   ${shelf(esc(site.papers.label), `<span>${esc(site.papers.field)} 연구 ${c.papers.length}편</span>`, '/papers/', papers.map((p) => card(p, '논문', p.title)).join(''))}
-  ${shelf(esc(site.projects.label), `<div class="chips" data-filter>${chips}</div>`, '/projects/', projects.map((p) => card(p, p.kind, p.title)).join(''), 'personal')}
+  ${shelf(esc(site.projects.label), kindChips(kinds, projects), '/projects/', projects.map((p) => card(p, p.kind, p.title)).join(''), 'personal')}
   <section class="group"><div class="ghd"><h2>${esc(site.rookies.label)}</h2><span>${esc(site.rookies.org)} · ${esc(site.rookies.log.label)} ${c.days.length} · ${esc(site.rookies.projects.label)} ${c.track.length}</span></div>
     <section class="shelf sub"><div class="hd"><h3>${esc(site.rookies.log.label)}</h3><span>${c.days.length}일의 오프라인 세션 기록</span><a href="/rookies/log/">전체 보기 →</a></div>
       <div class="log" data-phases><div class="phases" role="tablist">${phaseTabs}</div>${phaseLists}</div></section>
-    ${shelf(esc(site.rookies.projects.label), `<span>미니 3 · 최종 2</span>`, '/rookies/projects/', [...c.track].reverse().map((p) => card(p, p.role ? `최종 · ${p.role}` : p.stage, p.name)).join(''), 'sub', 'h3')}
+    ${shelf(esc(site.rookies.projects.label), `<span>미니 ${c.track.filter((p) => !p.role).length} · 최종 ${c.track.filter((p) => p.role).length}</span>`, '/rookies/projects/', [...c.track].reverse().map((p) => card(p, p.role ? `최종 · ${p.role}` : p.stage, p.name)).join(''), 'sub', 'h3')}
   </section>
 </div>`;
 }
@@ -73,7 +75,7 @@ function homePage(site, c, media) {
 
 function papersPage(site, c, media) {
   const cards = c.papers
-    .map((p, i) => `<a class="pp" href="${p.url}"><div>${thumb(media, p)}${tagList(p.tags.filter((t) => t !== '논문요약'))}</div>
+    .map((p, i) => `<a class="pp" href="${p.url}"><div>${thumb(media, p)}${tagList(p.tags)}</div>
     <div class="tx"><div class="m"><b>${pad2(i + 1)}</b><time datetime="${p.date}">${fmtDate(p.date)}</time></div><h2>${esc(p.title)}</h2>${p.summary ? qmr(p.summary) : ''}</div></a>`)
     .join('');
   return `<div class="w">
@@ -87,18 +89,15 @@ function papersPage(site, c, media) {
 function projectsPage(site, c, media) {
   const { kinds } = site.projects;
   const all = c.projectsByDate;
-  const chips = ['전체', ...kinds]
-    .map((k, i) => `<button type="button" data-kind="${esc(k)}" aria-pressed="${i === 0}">${esc(k)} <span>${k === '전체' ? all.length : all.filter((p) => p.kind === k).length}</span></button>`)
-    .join('');
   const items = all
     .map((p) => `<a class="it" href="${p.url}" data-kind="${esc(p.kind)}" data-date="${p.date}">${thumb(media, p)}
     <div class="tx"><div class="m"><b>${esc(p.kind)}</b><time datetime="${p.date}">${fmtDate(p.date)}</time></div><h2>${esc(p.name)}${p.subtitle ? `<span>${esc(p.subtitle)}</span>` : ''}</h2><p>${esc(p.excerpt)}</p>
-    ${tagList(p.tags.filter((t) => t !== p.slug))}</div></a>`)
+    ${tagList(p.tags)}</div></a>`)
     .join('');
   return `<div class="w">
   <section class="phead"><div><span class="k">시리즈</span><h1>${esc(site.projects.label)}</h1><p>${esc(site.projects.description)}</p></div>
     ${stat(kinds.map((k) => [k, all.filter((p) => p.kind === k).length]))}</section>
-  <div class="bar"><div class="chips" data-filter>${chips}</div>
+  <div class="bar">${kindChips(kinds, all)}
     <div class="sort" data-sort><button type="button" data-order="new" aria-pressed="true">최신순</button><button type="button" data-order="old" aria-pressed="false">오래된순</button></div></div>
   <div class="list" data-list>${items}</div>
 </div>`;
@@ -151,14 +150,13 @@ function postHead(site, c, p, art) {
     const same = c.projects.filter((x) => x.kind === p.kind);
     ser = `<a href="/projects/">${esc(site.projects.label)}</a><span>›</span><span>${esc(p.kind)}</span>${same.length > 1 ? `<i>${same.indexOf(p) + 1} / ${same.length}</i>` : ''}`;
     title = `${esc(p.name)}${p.subtitle ? `<span class="st">${esc(p.subtitle)}</span>` : ''}`;
-    info = infoCard([['종류', `<b>${esc(p.kind)}</b>`]], p.tags.filter((t) => t !== p.slug), art);
+    info = infoCard([['종류', `<b>${esc(p.kind)}</b>`]], p.tags, art);
   } else if (p.series === 'rookies-projects') {
     ser = `<a href="/rookies/projects/">${esc(site.rookies.label)} · ${esc(site.rookies.projects.label)}</a><span>›</span><span>${esc(p.stage)}</span>${p.role ? `<i>${esc(p.role)}</i>` : ''}<i>${p.index + 1} / ${c.track.length}</i>`;
-    const sub = p.role ? `최종 프로젝트 · ${site.rookies.projects.finalTopic}` : `미니 프로젝트 ${p.stage.replace('미니 ', '')}`;
-    title = `${esc(p.name)}<span class="st">${esc(sub)}</span>`;
+    title = `${esc(p.name)}<span class="st">${esc(p.stageTitle)}</span>`;
     info = infoCard(p.after ? [['진행 시점', `<b>${esc(p.after)}</b>`]] : [], p.stack, art);
   }
-  const tags = p.series === 'papers' || p.series === 'rookies-log' ? p.tags.filter((t) => t !== '논문요약') : [];
+  const tags = p.series === 'papers' || p.series === 'rookies-log' ? p.tags : [];
   return `${ser ? `<div class="ser">${ser}</div>` : ''}
       <h1 class="t">${title}</h1>
       <div class="meta"><time datetime="${p.date}">${fmtDate(p.date)}</time><span>·</span><span>읽는 시간 약 ${art.readMinutes}분</span>${tags.length ? `<div class="tags">${tags.map((t) => `<span>#${esc(t)}</span>`).join('')}</div>` : ''}</div>
@@ -167,7 +165,7 @@ function postHead(site, c, p, art) {
 
 function infoCard(cells, stack, art) {
   const repo = art.repo
-    ? `<a class="gh" href="${esc(art.repo.href)}" target="_blank" rel="noopener"><small>GitHub</small><b>${esc(art.repo.name)} ↗</b>${art.site?.domain ? `<span class="dn">${esc(art.site.domain)}${art.site.down ? ' · 운영 종료' : ''}</span>` : ''}</a>`
+    ? `<a class="gh" href="${esc(art.repo.href)}" target="_blank" rel="noopener"><small>GitHub</small><b>${esc(art.repo.name)} ↗</b>${art.deploy?.domain ? `<span class="dn">${esc(art.deploy.domain)}${art.deploy.down ? ' · 운영 종료' : ''}</span>` : ''}</a>`
     : '';
   return `<div class="info">${cells.map(([k, v]) => `<div><small>${k}</small>${v}</div>`).join('')}<div class="stack"><small>스택</small>${tagList(stack)}</div>${repo}</div>`;
 }
@@ -208,7 +206,7 @@ function postBottom(site, c, p, media) {
     let extra = '';
     if (p.role) {
       const other = finals.find((x) => x !== p);
-      extra = `<div class="extra"><a href="${other.url}">${p.role === '진단 대상' ? '이 서비스를 진단한 플랫폼' : '이 플랫폼이 진단한 대상'} <b>${esc(other.name)} →</b></a><a href="/rookies/log/">만드는 과정은 <b>일지 ${c.days.length}편 →</b></a></div>`;
+      extra = `<div class="extra"><a href="${other.url}">${esc(p.partnerLabel)} <b>${esc(other.name)} →</b></a><a href="/rookies/log/">만드는 과정은 <b>일지 ${c.days.length}편 →</b></a></div>`;
     }
     const prev = c.track[p.index - 1];
     const next = c.track[p.index + 1];

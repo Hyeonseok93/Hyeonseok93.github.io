@@ -1,16 +1,19 @@
 {
   "name": "hyeonseok93-blog",
   "version": "1.0.0",
+  "private": true,
   "description": "Static blog for GitHub Pages: content/ markdown -> dist/gh-pages via scripts/build.js",
+  "author": "Hyunm",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "node scripts/dev.js",
     "build": "node scripts/build.js",
     "check": "node scripts/check.js",
     "build:gh-pages": "node scripts/build.js && node scripts/check.js"
   },
-  "keywords": [],
-  "author": "Hyunm",
-  "license": "MIT",
   "devDependencies": {
     "gray-matter": "^4.0.3",
     "marked": "^18.0.5",

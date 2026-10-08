@@ -2,6 +2,7 @@
  * Checks the built site in dist/gh-pages:
  *   - every internal link, image, script and stylesheet points at a file that exists
  *   - pages load nothing from other hosts (links to other sites are fine)
+ *   - no duplicate ids on a page
  *   - every post in content/ has a page, and the old post URLs are still there
  *   node scripts/check.js
  */
@@ -29,10 +30,12 @@ function resolve(fromFile, ref) {
 for (const file of htmlFiles) {
   const rel = path.relative(OUT, file);
   const root = parse(fs.readFileSync(file, 'utf8'));
-  const ids = new Set(root.querySelectorAll('[id]').map((el) => el.getAttribute('id')));
+  const idList = root.querySelectorAll('[id]').map((el) => el.getAttribute('id'));
+  const ids = new Set(idList);
+  if (ids.size !== idList.length) problems.push(`${rel}: duplicate id ${idList.find((id, i) => idList.indexOf(id) !== i)}`);
 
   // resources the page loads must come from this site
-  for (const [sel, attr] of [['img', 'src'], ['script', 'src'], ['link[rel=stylesheet]', 'href'], ['link[rel=icon]', 'href'], ['source', 'src'], ['video', 'src']]) {
+  for (const [sel, attr] of [['img', 'src'], ['script', 'src'], ['link[rel=stylesheet]', 'href'], ['link[rel=icon]', 'href'], ['link[rel=apple-touch-icon]', 'href'], ['source', 'srcset'], ['video', 'src']]) {
     for (const el of root.querySelectorAll(sel)) {
       const ref = el.getAttribute(attr);
       if (!ref) continue;
@@ -79,4 +82,4 @@ if (problems.length) {
   problems.forEach((p) => console.log(`  - ${p}`));
   process.exit(1);
 }
-console.log('ok: no missing files, no external resources, all post URLs present');
+console.log('ok: no missing files, no external resources, no duplicate ids, all post URLs present');

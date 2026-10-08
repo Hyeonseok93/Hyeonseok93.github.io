@@ -28,9 +28,6 @@
 .pp .m b{color:var(--accent);font-variant-numeric:tabular-nums}
 .pp h2{margin:8px 0 16px;font-size:22px;line-height:1.4;letter-spacing:-.025em;transition:color .15s}
 .pp:hover h2{color:var(--accent)}
-.qmr{display:grid;grid-template-columns:44px 1fr;gap:10px 14px;padding-top:16px;border-top:1px solid var(--line)}
-.qmr dt{font-size:13px;font-weight:700;color:var(--dim);padding-top:1px}
-.qmr dd{font-size:14.5px;line-height:1.65;color:var(--sub)}
 .link{display:flex;align-items:center;gap:14px;margin-top:18px;padding:16px 20px;border-radius:14px;border:1px dashed var(--line);font-size:14px;color:var(--sub)}
 .link b{color:var(--ink)}
 

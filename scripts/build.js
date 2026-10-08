@@ -27,15 +27,15 @@ async function pool(items, limit, fn) {
 
 function pageTitle(p) {
   if (p.series === 'rookies-log') return `Day ${p.day} — ${p.title}`;
-  if (p.series === 'rookies-projects') return `${p.name} · ${p.stage === '최종' ? '최종 프로젝트' : `미니 프로젝트 ${p.stage.replace('미니 ', '')}`}`;
+  if (p.series === 'rookies-projects') return `${p.name} · ${p.stageTitle.split(' · ')[0]}`;
   return p.title;
 }
 
 function seriesLabel(site, p) {
   if (p.series === 'papers') return site.papers.label;
   if (p.series === 'projects') return `${site.projects.label} · ${p.kind}`;
-  if (p.series === 'rookies-log') return `${site.rookies.label} · 일지 · ${p.phase.name}`;
-  if (p.series === 'rookies-projects') return `${site.rookies.label} · 프로젝트 · ${p.stage}`;
+  if (p.series === 'rookies-log') return `${site.rookies.label} · ${site.rookies.log.label} · ${p.phase.name}`;
+  if (p.series === 'rookies-projects') return `${site.rookies.label} · ${site.rookies.projects.label} · ${p.stage}`;
   return '';
 }
 
@@ -48,10 +48,13 @@ async function build() {
   fs.mkdirSync(OUT, { recursive: true });
 
   // static assets: one stylesheet, page scripts, fonts, icons
-  const css = CSS_ORDER.map((n) => fs.readFileSync(path.join(SRC, 'css', `${n}.css`), 'utf8')).join('\n');
+  // Pretendard's @font-face list (unicode-range subsets) goes first, then the site styles
+  const css = [path.join(SRC, 'assets', 'fonts', 'pretendard', 'pretendard.css'), ...CSS_ORDER.map((n) => path.join(SRC, 'css', `${n}.css`))]
+    .map((f) => fs.readFileSync(f, 'utf8'))
+    .join('\n');
   writeFile(path.join(OUT, 'assets', 'site.css'), css);
   copyDir(path.join(SRC, 'js'), path.join(OUT, 'assets', 'js'));
-  copyDir(path.join(SRC, 'assets', 'fonts'), path.join(OUT, 'assets', 'fonts'));
+  copyDir(path.join(SRC, 'assets', 'fonts'), path.join(OUT, 'assets', 'fonts'), (name) => !name.endsWith('.css'));
   copyDir(path.join(SRC, 'assets', 'img'), path.join(OUT, 'assets', 'img'));
   const hash = crypto.createHash('sha1').update(css);
   for (const f of fs.readdirSync(path.join(SRC, 'js'))) hash.update(fs.readFileSync(path.join(SRC, 'js', f)));
@@ -70,7 +73,7 @@ async function build() {
     const cover = media[p.slug][p.thumb];
     writeFile(path.join(OUT, 'posts', p.slug, 'index.html'), page({
       title: pageTitle(p),
-      description: p.summary?.problem || p.description || p.excerpt,
+      description: p.lead,
       path: p.url,
       image: cover ? `/posts/${p.slug}/${cover.src}` : undefined,
       active: { papers: 'papers', projects: 'projects', 'rookies-log': 'rookies', 'rookies-projects': 'rookies' }[p.series],
@@ -82,14 +85,14 @@ async function build() {
   }
 
   // home + series lists
-  const lists = [
+  const indexPages = [
     ['', { title: '', description: site.home.sub, active: 'home', body: pages.homePage(site, c, media), scripts: ['home'] }],
     ['papers/', { title: site.papers.label, description: site.papers.description, active: 'papers', body: pages.papersPage(site, c, media) }],
     ['projects/', { title: site.projects.label, description: site.projects.description, active: 'projects', body: pages.projectsPage(site, c, media), scripts: ['projects'] }],
     ['rookies/log/', { title: `${site.rookies.label} 일지`, description: site.rookies.log.description, active: 'rookies', body: pages.rookiesLogPage(site, c, media), scripts: ['log'] }],
     ['rookies/projects/', { title: `${site.rookies.label} 프로젝트`, description: site.rookies.projects.description, active: 'rookies', body: pages.rookiesProjectsPage(site, c, media) }],
   ];
-  for (const [dir, o] of lists) writeFile(path.join(OUT, dir, 'index.html'), page({ ...o, path: `/${dir}` }));
+  for (const [dir, o] of indexPages) writeFile(path.join(OUT, dir, 'index.html'), page({ ...o, path: `/${dir}` }));
   writeFile(path.join(OUT, '404.html'), page({ title: '페이지를 찾을 수 없음', description: '찾는 페이지가 없습니다.', path: '/404.html', body: pages.notFoundPage() }));
 
   // search index (visible posts only)
@@ -99,12 +102,12 @@ async function build() {
     s: seriesLabel(site, p),
     d: p.date,
     g: p.tags,
-    e: p.summary?.problem || p.description || p.excerpt,
+    e: p.lead,
   }));
   writeFile(path.join(OUT, 'search.json'), JSON.stringify(index));
 
   // crawler files
-  const urls = ['/', ...lists.slice(1).map(([d]) => `/${d}`), ...c.visible.map((p) => p.url)];
+  const urls = ['/', ...indexPages.slice(1).map(([d]) => `/${d}`), ...c.visible.map((p) => p.url)];
   writeFile(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${esc(site.url + u)}</loc></url>`).join('\n')}
@@ -113,7 +116,7 @@ ${urls.map((u) => `  <url><loc>${esc(site.url + u)}</loc></url>`).join('\n')}
   writeFile(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`);
   writeFile(path.join(OUT, '.nojekyll'), '');
 
-  console.log(`built ${c.all.length} posts + ${lists.length} pages in ${((Date.now() - started) / 1000).toFixed(1)}s -> ${path.relative(ROOT, OUT)}`);
+  console.log(`built ${c.all.length} posts + ${indexPages.length} pages in ${((Date.now() - started) / 1000).toFixed(1)}s -> ${path.relative(ROOT, OUT)}`);
 }
 
 module.exports = { build };

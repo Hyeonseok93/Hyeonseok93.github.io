@@ -18,7 +18,6 @@ button{font:inherit;color:inherit}
 img{display:block;max-width:100%}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 .w{max-width:1180px;margin:0 auto;padding:0 28px}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* ---------- header ---------- */
 .site-h{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);background:rgba(18,17,16,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
@@ -53,6 +52,10 @@ img{display:block;max-width:100%}
 .tags span{padding:3px 9px;border-radius:6px;font-size:12px;font-weight:600;color:var(--sub);background:var(--card2);border:1px solid var(--line)}
 .thumb{aspect-ratio:16/10;overflow:hidden;background:var(--card2)}
 .thumb img{width:100%;height:100%;object-fit:cover}
+/* 문제 / 방법 / 결과 summary of a paper */
+.qmr{display:grid;grid-template-columns:44px 1fr;gap:10px 14px;padding-top:16px;border-top:1px solid var(--line)}
+.qmr dt{font-size:13px;font-weight:700;color:var(--dim);padding-top:1px}
+.qmr dd{font-size:14.5px;line-height:1.65;color:var(--sub)}
 
 /* list page head */
 .phead{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;padding:44px 0 30px;border-bottom:1px solid var(--line)}
