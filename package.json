@@ -1,17 +1,12 @@
 {
-  "name": "notion-dashboard-blog",
+  "name": "hyeonseok93-blog",
   "version": "1.0.0",
-  "description": "Vite-based static blog for GitHub Pages with TailwindCSS.",
+  "description": "Static blog for GitHub Pages: content/ markdown -> dist/gh-pages via scripts/build.js",
   "scripts": {
-    "build:posts": "node scripts/build-posts.js",
-    "build:html:preview": "node build-html.js --target=preview",
-    "build:html:vite-index": "node build-html.js --target=vite-index",
-    "build:html:gh-pages": "node build-html.js --target=gh-pages && node scripts/validate-gh-pages.js",
-    "build:assets": "npm run build:html:vite-index && vite build && node scripts/prune-legacy-woff.js",
-    "dev": "npm run build:posts && npm run build:html:preview && vite",
-    "build:gh-pages": "npm run build:posts && npm run build:assets && npm run build:html:gh-pages",
-    "validate:gh-pages": "node scripts/validate-gh-pages.js",
-    "build:all": "npm run build:gh-pages"
+    "dev": "node scripts/dev.js",
+    "build": "node scripts/build.js",
+    "check": "node scripts/check.js",
+    "build:gh-pages": "node scripts/build.js && node scripts/check.js"
   },
   "keywords": [],
   "author": "Hyunm",
@@ -20,8 +15,10 @@
     "autoprefixer": "^10.4.19",
     "gray-matter": "^4.0.3",
     "marked": "^18.0.5",
+    "node-html-parser": "^9.0.4",
     "postcss": "^8.4.38",
     "sanitize-html": "^2.17.5",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.4",
     "vite": "^8.1.3"
   },

@@ -1,0 +1,83 @@
+{
+  "title": "Bulldog's House",
+  "author": "Hyeonseok Kim",
+  "url": "https://hyeonseok93.github.io",
+  "portfolio": "https://hyeonseok93-portfolio.vercel.app/",
+  "github": "https://github.com/Hyeonseok93",
+  "home": {
+    "headline": ["만든 것과 배운 것을", "시리즈로", "쌓아 두는 곳"],
+    "sub": "논문, 프로젝트, 그리고 루키즈 5기 46일의 기록"
+  },
+
+  "papers": {
+    "label": "논문 요약",
+    "field": "ICS 보안",
+    "description": "ICS(산업 제어 시스템) 보안 연구를 정리합니다. 각 글은 문제 · 방법 · 결과 요약으로 시작합니다.",
+    "link": "퍼징 연구는 이상 탐지 연구와 같은 1바이트 = 1토큰 방식으로 바이트 자리를 유지합니다.",
+    "summaries": {
+      "roberta-quadrant-mapping-ics": {
+        "problem": "제조사마다 통신 방식이 달라 바이트의 의미를 현장마다 정의하기 어렵고, 공격 라벨 데이터도 거의 없습니다.",
+        "method": "평소 패킷과 평소 로그만으로 RoBERTa를 각각 학습하고, 두 이상 점수를 네 칸 지도(사분면)에 올립니다.",
+        "result": "형식은 정상이고 값만 조작한 공격(FDIA)이 “패킷 정상 · 로그 이상”인 Q2에 모여, 패킷만으로는 놓칠 공격을 로그가 잡았습니다."
+      },
+      "roberta-ics-protocol-fuzzing": {
+        "problem": "Modbus/TCP처럼 형식이 엄격한 통신에서는 무작위 변이가 입구에서 걸러지고, 규격서 기반 템플릿은 손이 많이 갑니다.",
+        "method": "정상 패킷만으로 RoBERTa를 학습해 빈칸(<mask>)을 채워 새 패킷을 만들고, 온도로 변이 강도를 조절합니다.",
+        "result": "규격서 기반보다 서버 안쪽을 더 깊고 다양하게 검사했고, 랜덤 변이보다 형식을 지키며 의미 있게 탐색했습니다."
+      }
+    }
+  },
+
+  "projects": {
+    "label": "개인 프로젝트",
+    "description": "웹 앱, 데스크톱 앱, 크롬 확장으로 직접 만든 프로젝트 기록입니다.",
+    "kinds": ["웹 앱", "데스크톱 앱", "크롬 확장"],
+    "defaultKind": "데스크톱 앱",
+    "kindBySlug": {
+      "code-canary": "웹 앱",
+      "patience-flashcard": "웹 앱",
+      "mini-web-score-board": "웹 앱",
+      "mini-shorts-alert": "크롬 확장"
+    }
+  },
+
+  "rookies": {
+    "label": "루키즈 5기",
+    "org": "SK 쉴더스",
+    "log": {
+      "label": "일지",
+      "description": "SK 쉴더스 루키즈 5기 오프라인 세션 46일 동안의 기록입니다. 진단 대상 서비스 온데를 만들고, 직접 진단한 뒤, 자동 진단 플랫폼 아르고스를 개발했습니다.",
+      "hiddenTags": ["KDT", "SK Rookies", "SK shieldus", "국비지원", "루키즈 개발 5기"],
+      "phases": [
+        { "name": "기획 · 팀 세팅", "from": 1, "to": 5, "description": "개발 프로세스와 협업 규칙을 정하고, 진단 대상 서비스 이름을 온데로 확정했습니다." },
+        { "name": "온데 개발", "from": 6, "to": 14, "description": "진단 대상인 여행 플랫폼 온데의 프론트엔드·백엔드·인프라를 구현했습니다." },
+        { "name": "수동 진단 · 이행 점검", "from": 15, "to": 28, "description": "온데를 웹/API 기준으로 직접 진단하고 결과보고서와 이행 점검을 정리했습니다." },
+        { "name": "아르고스 개발", "from": 29, "to": 40, "description": "웹 취약점 자동 진단 플랫폼 아르고스의 진단 모듈, 증적, 결과서를 만들었습니다." },
+        { "name": "발표 · 배포 · 마감", "from": 41, "to": 46, "description": "최종 발표 자료를 마무리하고 CI/CD와 실배포 후 산출물을 제출했습니다." }
+      ]
+    },
+    "projects": {
+      "label": "프로젝트",
+      "description": "SK 쉴더스 루키즈 5기에서 진행한 미니 프로젝트 3개와 최종 프로젝트입니다. 교육 단계가 끝날 때마다 배운 기술로 하나씩 만들었습니다.",
+      "finalTopic": "클라우드 구축을 통한 취약점 진단 및 모의해킹",
+      "finalNote": "하나의 주제 아래 두 산출물로 나뉩니다. ONDE는 진단할 대상, ARGUS는 그 대상을 검사하는 플랫폼입니다.",
+      "track": [
+        { "slug": "rookies-showcase-mini1", "name": "CVS Event Comparator", "stage": "미니 1차", "after": "Python · Streamlit 교육 후",
+          "description": "CU · GS25 · 7-Eleven · emart24의 1+1 · 2+1 행사 상품을 모아 한눈에 비교하는 대시보드입니다.",
+          "stack": ["python", "streamlit", "groq", "rag"] },
+        { "slug": "rookies-showcase-mini2", "name": "MATE", "stage": "미니 2차", "after": "Spring Boot 교육 후",
+          "description": "모집 → 지원 → 수락/거절 → 팀 확정 → 팀 게시판까지 한곳에서 이어지는 팀원 매칭 플랫폼입니다.",
+          "stack": ["react", "spring-boot", "jpa", "jwt"] },
+        { "slug": "rookies-showcase-mini3", "name": "MACTA", "stage": "미니 3차", "after": "AWS · CI/CD 교육 후",
+          "description": "물품을 등록하고 마감 전까지 실시간으로 입찰하는 경매 플랫폼입니다. AWS · EKS · Argo CD로 배포했습니다.",
+          "stack": ["react", "spring-boot", "aws", "typescript"] },
+        { "slug": "rookies-showcase-final1", "name": "ONDE", "stage": "최종", "role": "진단 대상",
+          "description": "바이브 코딩으로 올린 여행 플랫폼. 취약점 진단과 모의해킹의 실증 대상입니다.",
+          "stack": ["spring-boot", "react", "vite", "aws"] },
+        { "slug": "rookies-showcase-final2", "name": "ARGUS", "stage": "최종", "role": "진단 플랫폼",
+          "description": "대상 API를 모으고 응답으로 걸러 낸 뒤, 항목별 모듈이 자동 판정하고 증적·결과서까지 이어지는 진단 플랫폼입니다.",
+          "stack": ["fastapi", "react", "vite", "zap"] }
+      ]
+    }
+  }
+}
