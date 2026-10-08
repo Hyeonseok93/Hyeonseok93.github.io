@@ -77,7 +77,7 @@ for (const file of files.filter((f) => f.endsWith('.css'))) {
 // every post has its page at the same URL as before
 const { all } = loadPosts(loadSite());
 for (const p of all) if (!fs.existsSync(path.join(OUT, 'posts', p.slug, 'index.html'))) problems.push(`no page for post ${p.slug}`);
-for (const must of ['index.html', '404.html', 'papers/index.html', 'projects/index.html', 'rookies/log/index.html', 'rookies/projects/index.html', 'posts/privacy-policy/index.html', 'search.json', 'sitemap.xml', '.nojekyll']) {
+for (const must of ['index.html', '404.html', 'papers/index.html', 'projects/index.html', 'rookies/log/index.html', 'rookies/projects/index.html', 'posts/privacy-policy/index.html', 'search.json', 'sitemap.xml']) {
   if (!fs.existsSync(path.join(OUT, must))) problems.push(`missing ${must}`);
 }
 

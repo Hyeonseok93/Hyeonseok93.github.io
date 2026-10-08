@@ -114,7 +114,6 @@ ${urls.map((u) => `  <url><loc>${esc(site.url + u)}</loc></url>`).join('\n')}
 </urlset>
 `);
   writeFile(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`);
-  writeFile(path.join(OUT, '.nojekyll'), '');
 
   console.log(`built ${c.all.length} posts + ${indexPages.length} pages in ${((Date.now() - started) / 1000).toFixed(1)}s -> ${path.relative(ROOT, OUT)}`);
 }
