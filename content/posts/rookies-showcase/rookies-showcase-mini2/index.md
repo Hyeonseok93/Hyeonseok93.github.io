@@ -13,6 +13,7 @@ tags:
   - jpa
   - jwt
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/SK-Rookies5-MINI2_MATE
 ---
 
 # 서론
@@ -22,8 +23,6 @@ thumbnail: thumbnail.png
 사이드 프로젝트·스터디 팀원을 찾으려면 여러 커뮤니티에 모집글을 올리고, 지원자 정보와 합류 현황을 따로 관리해야 합니다. **MATE**는 개발자·디자이너·기획자가 **모집 → 지원 → 수락/거절 → 팀 확정 → 팀 전용 게시판**까지 한곳에서 이어 갈 수 있도록 만든 매칭 플랫폼입니다.
 
 React(MUI) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·JPA 도메인·MariaDB를 중심으로 회원·모집글·지원서·멤버·게시판을 다룹니다.
-
-📦 **GitHub:** [SK-Rookies5-MINI2_MATE](https://github.com/Hyeonseok93/SK-Rookies5-MINI2_MATE)
 
 # 1. 메인 화면
 

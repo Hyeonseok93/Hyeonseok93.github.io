@@ -8,6 +8,7 @@ tags:
   - localstorage
   - web-app
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/MINI_WebScoreBoard
 ---
 
 # 서론
@@ -15,8 +16,6 @@ thumbnail: thumbnail.png
 여자친구와 둘이서 보드게임이나 카드게임을 즐길 때, 종이와 펜으로 점수를 적거나 복잡한 앱을 켜는 것이 번거로웠습니다. 앱스토어 설치나 백엔드 서버 없이 어떤 기기(태블릿, 노트북, 폰)에서든 브라우저 탭 하나로 즉시 점수를 카운트하고, 세트를 이길 때마다 각자 지정한 승리 테마곡(`VICTORY.mp3`)이 재생되어 게임의 몰입감을 높이고자 만들었습니다.
 
 **Web ScoreBoard**는 순수 HTML, CSS, JavaScript로 제작된 **보드게임용 반응형 웹 점수판**입니다. 브라우저를 새로고침해도 플레이어 이름과 세트 스코어가 유지되며, 팀별 커스텀 승리 축하 음악 등록 및 전적 히스토리 관리/JSON 백업을 지원합니다.
-
-📦 **GitHub:** [MINI_WebScoreBoard](https://github.com/Hyeonseok93/MINI_WebScoreBoard)
 
 # 1. 구조 및 특징
 

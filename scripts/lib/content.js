@@ -70,6 +70,10 @@ function loadPosts(site) {
         date: isoDate(data.date),
         tags: (Array.isArray(data.tags) ? data.tags : []).map((t) => String(t).trim()),
         hidden: data.hidden === true,
+        // project links shown in the info card under the title
+        repo: data.repo || '',
+        store: data.store || '',
+        deploy: data.deploy || null,
         thumb: THUMB_NAMES.find((n) => fs.existsSync(path.join(dir, n))) || '',
         html,
         excerpt: excerptOf(html),

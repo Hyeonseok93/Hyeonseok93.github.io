@@ -13,6 +13,10 @@ tags:
   - aws
   - onde
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/SK-Rookies5-FINAL_ONDE
+deploy:
+  domain: onde.click
+  live: false
 ---
 
 # 서론
@@ -46,9 +50,6 @@ thumbnail: thumbnail.png
 바이브 코딩은 서비스를 빨리 올리지만, 잘 돌아간다고 해서 취약점이 없는 것은 아닙니다. 그래서 **바이브 코딩으로 만든 코드에 어떤 취약점이 생기는지 검증할 대상**이 필요했고, 숙소 · 항공 · 렌터카 · 보험까지 이어지는 여행 플랫폼을 직접 올려 그 실증 대상으로 삼았습니다. **ONDE(온데)** 는 그 여행 예약 서비스입니다.
 
 React(Vite) 프론트와 Spring Boot REST API가 나뉘어 있고, MariaDB · Redis · JWT · Flyway를 중심으로 회원 · 예약 · 재고 · 결제 · 셀러/어드민을 다룹니다. 로컬 파일은 MinIO, 운영은 S3에 두고, 배포는 AWS · Terraform · GitHub Actions 위에 올렸습니다.
-
-📦 **GitHub:** [SK-Rookies5-FINAL_ONDE](https://github.com/Hyeonseok93/SK-Rookies5-FINAL_ONDE)  
-🌐 **배포:** `onde.click` — 최종 제출 이후 인프라를 내려 **현재는 접속되지 않습니다**
 
 # 1. 메인 화면
 

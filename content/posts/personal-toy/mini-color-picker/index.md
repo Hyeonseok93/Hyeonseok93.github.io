@@ -8,6 +8,7 @@ tags:
   - pyinstaller
   - desktop-app
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/MINI_ColorPicker
 ---
 
 # 서론
@@ -19,8 +20,6 @@ thumbnail: thumbnail.png
 <figure class="article-figure-center article-figure-center--wide">
   <img src="./fig1.png" alt="Color Picker 메인 화면 및 주요 기능 프리뷰" loading="lazy" />
 </figure>
-
-📦 **GitHub:** [MINI_ColorPicker](https://github.com/Hyeonseok93/MINI_ColorPicker)
 
 # 1. 왜 만들었나
 

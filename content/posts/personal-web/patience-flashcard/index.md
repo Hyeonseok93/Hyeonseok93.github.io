@@ -12,6 +12,7 @@ tags:
   - docker
   - jwt
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/WEB_Patience-Flashcard
 ---
 
 # 서론
@@ -21,8 +22,6 @@ thumbnail: thumbnail.png
 한 장씩만 넘기는 암기가 아니라, **여러 층(레벨)에 카드를 나눠 두고** “기억 / 까먹음 / 다음”으로 올려·내리는 **페이션스형 학습 보드**입니다. **Patience Flashcard**는 로그인 후 공용 시드 덱과 개인 덱을 고르고, 같은 엔진으로 학습·진행도를 저장합니다.
 
 지금은 React(Vite) 프론트와 Spring Boot API, PostgreSQL(유저·덱·카드·`study_progress`), 이메일 OTP 가입과 JWT(HttpOnly 쿠키)로 구성되어 있고, 로컬은 Docker Compose로 FE · BE · DB · Mailpit까지 한 번에 올립니다.
-
-📦 **GitHub:** [WEB_Patience-Flashcard](https://github.com/Hyeonseok93/WEB_Patience-Flashcard)
 
 # 1. 메인 화면
 

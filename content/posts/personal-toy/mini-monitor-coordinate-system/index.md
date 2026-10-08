@@ -8,6 +8,7 @@ tags:
   - pyinstaller
   - desktop-app
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/MINI_MonitorCoordinateSystem
 ---
 
 # 서론
@@ -19,8 +20,6 @@ thumbnail: thumbnail.png
 <figure class="article-figure-center article-figure-center--wide">
   <img src="./fig1.png" alt="Monitor Coordinate System 메인 화면 및 측정 프리뷰" loading="lazy" />
 </figure>
-
-📦 **GitHub:** [MINI_MonitorCoordinateSystem](https://github.com/Hyeonseok93/MINI_MonitorCoordinateSystem)
 
 # 1. 왜 만들었나
 

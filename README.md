@@ -114,6 +114,13 @@ tags:
   - react
 thumbnail: thumbnail.png
 hidden: false        # true면 목록 · 검색에서 빠지고 주소로만 열림
+
+# 프로젝트 글(개인 · 루키즈)만: 제목 아래 정보 카드에 표시
+repo: https://github.com/Hyeonseok93/저장소이름
+store: https://chromewebstore.google.com/detail/…   # 있으면
+deploy:                                             # 있으면
+  domain: example.com
+  live: false        # false면 "운영 종료"로 표시
 ---
 ```
 
@@ -126,7 +133,6 @@ hidden: false        # true면 목록 · 검색에서 빠지고 주소로만 열
 | 루키즈 일지 | 단계 범위(`rookies.log.phases`) 안의 Day면 그대로 |
 | 루키즈 프로젝트 | `rookies.projects.track`에 이름 · 단계 · 설명 · 스택 |
 
-본문 서론의 `📦 **GitHub:** [이름](링크)` 줄(과 `🌐 **배포:**` 줄)은 개인 · 루키즈 프로젝트 글에서 제목 아래 정보 카드로 옮겨집니다.
 
 <br />
 

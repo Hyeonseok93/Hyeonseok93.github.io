@@ -8,6 +8,7 @@ tags:
   - pyinstaller
   - desktop-app
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/MINI_ImageZoomer
 ---
 
 # 서론
@@ -21,8 +22,6 @@ thumbnail: thumbnail.png
 <figure class="article-figure-center article-figure-center--wide">
   <img src="./fig1.png" alt="Image Zoomer 메인 화면 및 픽셀 확대 프리뷰" loading="lazy" />
 </figure>
-
-📦 **GitHub:** [MINI_ImageZoomer](https://github.com/Hyeonseok93/MINI_ImageZoomer)
 
 # 1. 왜 만들었나
 

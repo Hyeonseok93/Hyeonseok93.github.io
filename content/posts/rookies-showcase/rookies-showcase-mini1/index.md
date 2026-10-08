@@ -12,6 +12,7 @@ tags:
   - groq
   - rag
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/SK-Rookies5-MINI1_CVS-EVENT-COMPARATOR
 ---
 
 # 서론
@@ -19,8 +20,6 @@ thumbnail: thumbnail.png
 **SK쉴더스 루키즈 5기**에서 Python · Streamlit · 바이브 코딩 교육을 마친 뒤 이어진 **첫 번째 미니 프로젝트**입니다.
 
 편의점 브랜드마다 행사 페이지가 갈라져 있어서, CU · GS25 · 7-Eleven · emart24에서 돌리는 **1+1 · 2+1** 같은 혜택을 한곳에서 비교하기 어렵습니다. 그래서 네 브랜드 행사 상품을 모아 **한눈에 보고 비교**할 수 있게 만든 통합 대시보드가 **CVS Event Comparator**입니다.
-
-📦 **GitHub:** [SK-Rookies5-MINI1_CVS-EVENT-COMPARATOR](https://github.com/Hyeonseok93/SK-Rookies5-MINI1_CVS-EVENT-COMPARATOR)
 
 # 1. 메인 화면
 

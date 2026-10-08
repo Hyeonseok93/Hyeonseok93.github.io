@@ -23,7 +23,9 @@ function rebuild() {
   if (building) { queued = true; return; }
   // fresh module copies so edited templates / data are picked up
   for (const id of Object.keys(require.cache)) if (id.startsWith(path.join(ROOT, 'scripts'))) delete require.cache[id];
-  building = require('./build').build()
+  // a syntax error in a build module throws on require; keep the server alive and wait for the fix
+  building = Promise.resolve()
+    .then(() => require('./build').build())
     .catch((err) => console.error(err))
     .finally(() => {
       building = null;

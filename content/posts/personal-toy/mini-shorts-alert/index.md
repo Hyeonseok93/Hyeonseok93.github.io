@@ -8,6 +8,8 @@ tags:
   - content-script
   - privacy
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/MINI_ShortsAlert
+store: https://chromewebstore.google.com/detail/short-alert/bidpnigcgfoepmgjgngmcfbkodgmjnpj
 ---
 
 # 서론
@@ -19,9 +21,6 @@ YouTube Shorts나 Instagram Reels·Stories는 **짧은 영상 + 무한 스크롤
 <figure class="article-figure-center article-figure-center--wide">
   <img src="./fig1.png" alt="Shorts Alert 플로팅 위젯과 YouTube Shorts 화면" loading="lazy" />
 </figure>
-
-📦 **GitHub:** [MINI_ShortsAlert](https://github.com/Hyeonseok93/MINI_ShortsAlert)  
-🛒 **Chrome Web Store:** [Short Alert](https://chromewebstore.google.com/detail/short-alert/bidpnigcgfoepmgjgngmcfbkodgmjnpj)
 
 # 1. 왜 만들었나
 

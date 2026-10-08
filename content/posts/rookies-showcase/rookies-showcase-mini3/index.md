@@ -13,6 +13,10 @@ tags:
   - aws
   - typescript
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/SK-Rookies5-MINI3_MACTA
+deploy:
+  domain: macta.store
+  live: false
 ---
 
 # 서론
@@ -22,9 +26,6 @@ thumbnail: thumbnail.png
 개인이 경매 물품을 등록하고, 다른 사용자가 마감 전까지 **실시간으로 입찰**하는 서비스를 만드는 것이 목표였습니다. **MACTA**는 그 흐름을 한곳에서 이어 가도록 만든 경매 플랫폼입니다.
 
 React(Vite) 프론트와 Spring Boot REST API가 나뉘어 있고, JWT 인증·낙관적 락 기반 입찰·스케줄러 마감·결제/배송 흐름을 중심으로 합니다. 배포는 AWS · EKS · GitOps(Argo CD) 위에 올렸습니다.
-
-📦 **GitHub:** [SK-Rookies5-MINI3_MACTA](https://github.com/Hyeonseok93/SK-Rookies5-MINI3_MACTA)  
-🌐 **배포:** `macta.store` — 미니 프로젝트 종료 후 인프라를 내려 **현재는 접속되지 않습니다**
 
 # 1. 메인 화면
 

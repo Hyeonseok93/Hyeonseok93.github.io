@@ -22,7 +22,7 @@ const tocLabel = (t) =>
 function renderArticle(post, sizes) {
   // parse <pre> as elements (node-html-parser keeps it as raw text by default)
   const root = parse(post.html, { blockTextElements: { script: true, noscript: true, style: true } });
-  const result = { repo: null, deploy: null, toc: [] };
+  const result = { toc: [] };
 
   // images: point at the WebP copy and add width/height; the first two load eagerly
   root.querySelectorAll('img').forEach((img, i) => {
@@ -49,17 +49,6 @@ function renderArticle(post, sizes) {
       f.insertAdjacentHTML('beforeend', `<figcaption>${esc(img.getAttribute('alt'))}</figcaption>`);
     }
   });
-
-  // "📦 GitHub: …" (and "🌐 배포: …") line moves into the info card under the title
-  if (post.series === 'projects' || post.series === 'rookies-projects') {
-    const gh = root.querySelectorAll('p').find((p) => /GitHub:/.test(p.text) && p.querySelector('a[href*="github.com"]'));
-    if (gh) {
-      const a = gh.querySelector('a[href*="github.com"]');
-      result.repo = { href: a.getAttribute('href'), name: a.text.trim() };
-      if (/배포:/.test(gh.text)) result.deploy = { domain: gh.querySelector('code')?.text.trim() || '', down: /접속되지 않습니다/.test(gh.text) };
-      gh.remove();
-    }
-  }
 
   // a "핵심 요약" section at the top becomes a summary card
   const head = root.childNodes.find((n) => n.nodeType === 1);

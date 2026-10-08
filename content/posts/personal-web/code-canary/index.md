@@ -12,6 +12,7 @@ tags:
   - osv
   - aws
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/WEB_Code-Canary
 ---
 
 # 서론
@@ -21,8 +22,6 @@ thumbnail: thumbnail.png
 그래서 **수집 → 정제 → 분석·시각화**까지 한 번에 이어지게 만들었습니다. **Code Canary**는 NVD·OSV 피드를 Medallion(**bronze → silver → gold**)으로 올린 뒤, 공개 Explorer와 운영자용 Roost 콘솔에서 탐색·집계·파이프라인 실행까지 묶은 **취약점 인텔리전스 웹**입니다.
 
 React(Vite) 프론트와 Spring Boot API, Python Worker가 나뉘어 있고, PostgreSQL · Redis · Docker Compose(로컬) · Terraform · AWS ECS(배포)를 중심으로 대시보드 · 탐색 · 인증 · 잡 큐를 다룹니다.
-
-📦 **GitHub:** [WEB_Code-Canary](https://github.com/Hyeonseok93/WEB_Code-Canary)
 
 # 1. 메인 화면
 

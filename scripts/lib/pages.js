@@ -150,11 +150,11 @@ function postHead(site, c, p, art) {
     const same = c.projects.filter((x) => x.kind === p.kind);
     ser = `<a href="/projects/">${esc(site.projects.label)}</a><span>›</span><span>${esc(p.kind)}</span>${same.length > 1 ? `<i>${same.indexOf(p) + 1} / ${same.length}</i>` : ''}`;
     title = `${esc(p.name)}${p.subtitle ? `<span class="st">${esc(p.subtitle)}</span>` : ''}`;
-    info = infoCard([['종류', `<b>${esc(p.kind)}</b>`]], p.tags, art);
+    info = infoCard([['종류', `<b>${esc(p.kind)}</b>`]], p.tags, p);
   } else if (p.series === 'rookies-projects') {
     ser = `<a href="/rookies/projects/">${esc(site.rookies.label)} · ${esc(site.rookies.projects.label)}</a><span>›</span><span>${esc(p.stage)}</span>${p.role ? `<i>${esc(p.role)}</i>` : ''}<i>${p.index + 1} / ${c.track.length}</i>`;
     title = `${esc(p.name)}<span class="st">${esc(p.stageTitle)}</span>`;
-    info = infoCard(p.after ? [['진행 시점', `<b>${esc(p.after)}</b>`]] : [], p.stack, art);
+    info = infoCard(p.after ? [['진행 시점', `<b>${esc(p.after)}</b>`]] : [], p.stack, p);
   }
   const tags = p.series === 'papers' || p.series === 'rookies-log' ? p.tags : [];
   return `${ser ? `<div class="ser">${ser}</div>` : ''}
@@ -163,11 +163,14 @@ function postHead(site, c, p, art) {
       ${info}`;
 }
 
-function infoCard(cells, stack, art) {
-  const repo = art.repo
-    ? `<a class="gh" href="${esc(art.repo.href)}" target="_blank" rel="noopener"><small>GitHub</small><b>${esc(art.repo.name)} ↗</b>${art.deploy?.domain ? `<span class="dn">${esc(art.deploy.domain)}${art.deploy.down ? ' · 운영 종료' : ''}</span>` : ''}</a>`
-    : '';
-  return `<div class="info">${cells.map(([k, v]) => `<div><small>${k}</small>${v}</div>`).join('')}<div class="stack"><small>스택</small>${tagList(stack)}</div>${repo}</div>`;
+/** Info card under a project title: kind or stage, stack, store and repository (from frontmatter). */
+function infoCard(cells, stack, p) {
+  const link = (cls, label, href, text, note = '') =>
+    `<a class="${cls}" href="${esc(href)}" target="_blank" rel="noopener"><small>${label}</small><b>${esc(text)} ↗</b>${note}</a>`;
+  const deploy = p.deploy?.domain ? `<span class="dn">${esc(p.deploy.domain)}${p.deploy.live === false ? ' · 운영 종료' : ''}</span>` : '';
+  const store = p.store ? link('gh', 'Chrome Web Store', p.store, '스토어에서 보기') : '';
+  const repo = p.repo ? link('gh', 'GitHub', p.repo, p.repo.replace(/\/+$/, '').split('/').pop(), deploy) : '';
+  return `<div class="info">${cells.map(([k, v]) => `<div><small>${k}</small>${v}</div>`).join('')}<div class="stack"><small>스택</small>${tagList(stack)}</div>${store}${repo}</div>`;
 }
 
 function postBottom(site, c, p, media) {

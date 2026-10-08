@@ -8,6 +8,7 @@ tags:
   - vite
   - windows
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/MINI_NetSentinel
 ---
 
 # 서론
@@ -19,8 +20,6 @@ thumbnail: thumbnail.png
 <figure class="article-figure-center article-figure-center--wide">
   <img src="./fig1.png" alt="NetSentinel 메인 프리뷰 — Network Monitor 대시보드" loading="lazy" />
 </figure>
-
-📦 **GitHub:** [MINI_NetSentinel](https://github.com/Hyeonseok93/MINI_NetSentinel)
 
 # 1. 왜 만들었나
 

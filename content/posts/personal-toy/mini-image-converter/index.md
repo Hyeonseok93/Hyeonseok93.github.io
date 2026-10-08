@@ -8,6 +8,7 @@ tags:
   - pyinstaller
   - desktop-app
 thumbnail: thumbnail.png
+repo: https://github.com/Hyeonseok93/MINI_ImageConverter
 ---
 
 # 서론
@@ -19,8 +20,6 @@ thumbnail: thumbnail.png
 <figure class="article-figure-center article-figure-center--wide">
   <img src="./fig1.png" alt="Image Converter 메인 화면 및 일괄 변환 프리뷰" loading="lazy" />
 </figure>
-
-📦 **GitHub:** [MINI_ImageConverter](https://github.com/Hyeonseok93/MINI_ImageConverter)
 
 # 1. 왜 만들었나
 
