@@ -10,11 +10,7 @@
 </p>
 
 <p align="center">
-  나만의 블로그를 만들고 GitHub Pages에 배포하기 위한 저장소입니다.
-</p>
-
-<p align="center">
-  <strong>✨ 들어오셔서 확인해보세요!!! ✨</strong>
+  논문, 프로젝트, 그리고 루키즈 5기 기록을 시리즈로 모아 두는 블로그입니다.
 </p>
 
 <br />
@@ -35,57 +31,24 @@
     <img src=".github/readme/badges/light/javascript.png" alt="JavaScript" height="28" />
   </picture>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/vite.png" />
-    <img src=".github/readme/badges/light/vite.png" alt="Vite" height="28" />
-  </picture>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/tailwindcss.png" />
-    <img src=".github/readme/badges/light/tailwindcss.png" alt="Tailwind CSS" height="28" />
-  </picture>
-  <picture>
     <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/githubactions.png" />
     <img src=".github/readme/badges/light/githubactions.png" alt="GitHub Actions" height="28" />
-  </picture>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/badges/dark/vercel.png" />
-    <img src=".github/readme/badges/light/vercel.png" alt="Vercel" height="28" />
   </picture>
 </p>
 
 <br />
 
-## 💻 Run & Build Commands
+## 💻 Commands
 
-<table align="center">
-  <thead>
-    <tr>
-      <th align="left">명령어</th>
-      <th align="left">용도</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>npm install</code></td>
-      <td>의존성 설치</td>
-    </tr>
-    <tr>
-      <td><code>npm run dev</code></td>
-      <td>로컬 개발 (Vite HMR). 시작 시 <code>build:posts</code> 포함</td>
-    </tr>
-    <tr>
-      <td><code>npm run build:posts</code></td>
-      <td><code>content/posts/**</code> → 글 HTML + <code>posts-manifest</code> 생성</td>
-    </tr>
-    <tr>
-      <td><code>npm run build:gh-pages</code></td>
-      <td>배포용 빌드 → <code>dist/gh-pages/</code> (<code>build:posts</code> 포함). <code>main</code> push 시 Actions도 동일</td>
-    </tr>
-  </tbody>
-</table>
+| 명령어 | 용도 |
+|---|---|
+| `npm install` | 의존성 설치 |
+| `npm run dev` | 빌드 후 `http://localhost:4173` 미리보기. `content/`, `src/`, `scripts/`가 바뀌면 다시 빌드 |
+| `npm run build` | `content/` → `dist/gh-pages/` 생성 |
+| `npm run check` | 빌드 결과 검사 (없는 파일 · 깨진 링크 · 외부 리소스 · 글 주소) |
+| `npm run build:gh-pages` | build + check. `main` push 시 GitHub Actions가 실행 |
 
-<p align="center">
-  <sub>PowerShell에서 <code>npm.ps1</code> 실행 정책 오류가 나면 <code>npm.cmd run …</code> 을 사용합니다.</sub>
-</p>
+> PowerShell에서 `npm.ps1` 실행 정책 오류가 나면 `npm.cmd run …` 을 사용합니다.
 
 <br />
 
@@ -93,143 +56,81 @@
 
 ```text
 Hyeonseok93.github.io/
-┣━━ 📂 .github/readme/                # README 전용 에셋
-┃   ┣━━ 📂 badges/dark/               # README 뱃지 (다크)
-┃   ┗━━ 📂 badges/light/              # README 뱃지 (라이트)
 ┣━━ 📂 content/
-┃   ┗━━ 📂 posts/                     # 글 원본 (category/slug/index.md)
-┣━━ 📂 scripts/                       # 빌드/생성/검증 스크립트
-┃   ┣━━ 📄 build-posts.js             # 글 HTML + manifest 생성
-┃   ┣━━ 📄 generate-sources.js        # CategoryTree · Article 셸 생성
-┃   ┣━━ 📄 template-engine.js         # 레이아웃 컴파일 엔진
-┃   ┗━━ 📄 validate-gh-pages.js       # gh-pages 결과 검증
-┣━━ 📂 src/                           # 대시보드/글 UI 소스
-┃   ┣━━ 📂 components/                # HTML 컴포넌트
-┃   ┣━━ 📂 features/                  # 기능별 모듈
-┃   ┣━━ 📂 styles/                    # 스타일 조각
-┃   ┣━━ 📂 templates/                 # 템플릿 원본
-┃   ┗━━ 📂 data/
-┃       ┗━━ 📄 categories.json        # 카테고리 라벨/트리
-┣━━ 📂 public/
-┃   ┗━━ 📂 posts/                     # 생성된 글 HTML (gitignore)
-┣━━ 📂 dist/                          # 빌드 산출물
-┃   ┗━━ 📂 gh-pages/                  # GitHub Pages 배포 산출물
-┗━━ 📄 build-html.js                  # 타깃별 HTML 출력 (index/dist)
+┃   ┣━━ 📄 site.json                  # 시리즈 정보 (일지 단계, 프로젝트 종류, 논문 요약, 루키즈 트랙)
+┃   ┗━━ 📂 posts/{category}/{slug}/   # 글 원본 (index.md + 이미지)
+┣━━ 📂 scripts/
+┃   ┣━━ 📄 build.js                   # 전체 빌드
+┃   ┣━━ 📄 check.js                   # 빌드 결과 검사
+┃   ┣━━ 📄 dev.js                     # 로컬 미리보기 서버
+┃   ┗━━ 📂 lib/                       # 글 읽기 · 본문 가공 · 이미지(WebP) · 페이지 템플릿
+┣━━ 📂 src/
+┃   ┣━━ 📂 css/                       # base · home · list · post (하나로 합쳐 배포)
+┃   ┣━━ 📂 js/                        # 검색, 필터, 목차 등 페이지 스크립트
+┃   ┗━━ 📂 assets/                    # 폰트(Pretendard, Fira Code), 아이콘, 마스코트
+┗━━ 📂 dist/gh-pages/                 # 배포 산출물 (gitignore)
 ```
 
----
+### 주소
+
+| 페이지 | 주소 |
+|---|---|
+| 홈 | `/` |
+| 논문 요약 | `/papers/` |
+| 개인 프로젝트 | `/projects/` |
+| 루키즈 5기 일지 / 프로젝트 | `/rookies/log/`, `/rookies/projects/` |
+| 글 | `/posts/{slug}/` |
 
 <br />
 
 ## 📄 Writing Posts
 
-아래 순서대로 작성하면 됩니다.
-
-### 1) 폴더 구조
+### 1) 폴더
 
 ```text
 content/posts/
-┣━━ 📂 category-name/                  # 카테고리 ID (categories.json과 일치)
-┃   ┗━━ 📂 post-slug/                  # 포스트 slug (URL 폴더명)
-┃       ┣━━ 📄 index.md                # 본문 (필수)
-┃       ┣━━ 🖼️ thumbnail.png           # 목록/상단 썸네일 (선택)
-┃       ┣━━ 🖼️ fig1.png                # 본문 이미지 (선택, 같은 폴더에 배치)
-┃       ┗━━ 🖼️ fig2.png
-┗━━ ...
+┣━━ 📂 papers/                 # 논문 요약
+┣━━ 📂 personal-web/           # 개인 프로젝트 (웹)
+┣━━ 📂 personal-toy/           # 개인 프로젝트 (그 외)
+┣━━ 📂 rookies-offline/        # 루키즈 5기 일지 (slug 끝이 dayN)
+┣━━ 📂 rookies-showcase/       # 루키즈 5기 프로젝트
+┗━━ 📂 legal/                  # 개인정보 처리방침 등 (hidden)
+    ┗━━ 📂 {slug}/
+        ┣━━ 📄 index.md
+        ┣━━ 🖼️ thumbnail.png   # 카드 · 표지 이미지
+        ┗━━ 🖼️ fig1.png        # 본문 이미지, 본문에서는 ./fig1.png
 ```
 
-- **카테고리 폴더명** → `src/data/categories.json`의 ID와 동일
-- **포스트 폴더명** → URL slug (`/posts/post-slug/`)
-- **본문 이미지** → 별도 `images/` 폴더 없이 포스트 폴더에 두고, 본문에서는 `./fig1.png`처럼 상대 경로로 참조
+이미지는 PNG/JPG 원본을 그대로 두면 빌드할 때 WebP로 바꿔서 배포합니다 (카드용 640px, 본문 · 표지 최대 1600px).
 
-### 2) 작성 순서
-
-1. `content/posts/{category}/{slug}/` 폴더 생성
-2. `index.md` 작성 + 필요하면 `thumbnail.png`, `fig1.png` 등 같은 폴더에 추가
-3. `npm run dev` 또는 `npm run build:gh-pages`로 확인 후 push
-
-> [!TIP]
-> 빌드/개발 명령을 실행하면 `public/posts/`, `src/data/posts-manifest.js`가 자동 생성되며(gitignore 대상),  
-> 글 미리보기는 `npm run dev` 실행 후 `http://localhost:5173/posts/{slug}/`에서 확인할 수 있습니다.
-
-### 3) frontmatter(메타데이터) 예시
-
-`index.md` 상단에 아래처럼 메타데이터를 넣어주면 됩니다.
+### 2) frontmatter
 
 ```markdown
 ---
-title: 글 제목
+title: "[TOY] 이름 — 한 줄 설명"
 date: 2026-07-07
-tags: [tag1, tag2]
-thumbnail: thumbnail.png   # 생략 시 폴더 안 thumbnail.* 자동 탐색
+tags:
+  - electron
+  - react
+thumbnail: thumbnail.png
+hidden: false        # true면 목록 · 검색에서 빠지고 주소로만 열림
 ---
 ```
 
-본문 첫 부분은 카테고리 목록 요약(최대 3줄)으로 자동 표시됩니다.
+### 3) 시리즈별로 함께 고칠 곳 (`content/site.json`)
 
-- frontmatter의 `category` / `slug`는 생략 가능 (폴더 구조 우선)
+| 새 글 | site.json |
+|---|---|
+| 개인 프로젝트 | 웹 앱 · 크롬 확장이면 `projects.kindBySlug`에 추가 (없으면 데스크톱 앱) |
+| 논문 요약 | `papers.summaries`에 문제 · 방법 · 결과 한 줄씩 |
+| 루키즈 일지 | 단계 범위(`rookies.log.phases`) 안의 Day면 그대로 |
+| 루키즈 프로젝트 | `rookies.projects.track`에 이름 · 단계 · 설명 · 스택 |
 
----
-
-<br />
-
-## 🚀 Deploy (GitHub Pages)
-
-`main` 브랜치에 push하면 GitHub Actions가 `npm run build:gh-pages`를 실행하고 `dist/gh-pages/`를 자동 배포합니다.
-
-GitHub Pages 설정: **Settings → Pages → Source: GitHub Actions**
-
----
+본문 서론의 `📦 **GitHub:** [이름](링크)` 줄(과 `🌐 **배포:**` 줄)은 개인 · 루키즈 프로젝트 글에서 제목 아래 정보 카드로 옮겨집니다.
 
 <br />
 
-## 🧭 Build Pipeline
+## 🚀 Deploy
 
-이 프로젝트는 **글 원본(Markdown) + 템플릿**을 합쳐 GitHub Pages용 결과물을 만들어냅니다.
-
-1. **원본 준비**
-   - 글 원본: `content/posts/`
-   - 카테고리 구조: `src/data/categories.json`
-   - 공통 레이아웃: `src/templates/article-shell.source.html`, `src/layout.html`
-2. **생성 단계**
-   - `scripts/generate-sources.js`가 카테고리/아티클 관련 생성 파일을 갱신
-   - `scripts/build-posts.js`가 글 HTML과 manifest를 생성
-3. **출력 단계**
-   - GitHub Pages 출력: `dist/gh-pages/`
-
----
-
-<br />
-
-## 🔧 Where to Edit
-
-<table align="center">
-  <thead>
-    <tr>
-      <th align="left">바꾸고 싶은 내용</th>
-      <th align="left">수정할 파일</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>카테고리 트리/이름</td>
-      <td><code>src/data/categories.json</code></td>
-    </tr>
-    <tr>
-      <td>글 본문/썸네일/이미지</td>
-      <td><code>content/posts/{category}/{slug}/</code></td>
-    </tr>
-    <tr>
-      <td>글 페이지 공통 구조</td>
-      <td><code>src/templates/article-shell.source.html</code></td>
-    </tr>
-    <tr>
-      <td>홈/사이드바/레이아웃 구조</td>
-      <td><code>src/layout.html</code>, <code>src/components/</code></td>
-    </tr>
-    <tr>
-      <td>빌드 동작 자체</td>
-      <td><code>scripts/template-engine.js</code>, <code>scripts/build-posts.js</code></td>
-    </tr>
-  </tbody>
-</table>
+`main`에 push하면 GitHub Actions가 `npm run build:gh-pages`를 실행하고 `dist/gh-pages/`를 배포합니다.
+(Settings → Pages → Source: GitHub Actions)

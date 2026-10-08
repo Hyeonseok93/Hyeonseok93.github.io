@@ -50,8 +50,15 @@ function homePage(site, c, media) {
   const seriesCount = 4;
 
   return `<div class="w">
-  <section class="hello"><div><h1>${esc(l1)}<br><em>${esc(l2)}</em> ${esc(l3)}</h1><p>${esc(site.home.sub)}</p></div>
-    ${stat([['글', c.visible.length], ['시리즈', seriesCount], ['일지', c.days.length]])}</section>
+  <section class="hello">
+    <div class="intro"><p class="welcome">${esc(site.home.welcome)} <span aria-hidden="true">🐶</span></p>
+      <h1>${esc(l1)}<br><em>${esc(l2)}</em> ${esc(l3)}</h1><p class="sub">${esc(site.home.sub)}</p>
+      ${stat([['글', c.visible.length], ['시리즈', seriesCount], ['일지', c.days.length]])}</div>
+    <picture class="mascot">
+      <source srcset="/assets/img/greeting-still.webp" media="(prefers-reduced-motion: reduce)">
+      <img src="/assets/img/greeting.webp" width="400" height="225" alt="노트북 앞에서 손을 흔드는 불도그 마스코트">
+    </picture>
+  </section>
   ${shelf(esc(site.papers.label), `<span>${esc(site.papers.field)} 연구 ${c.papers.length}편</span>`, '/papers/', papers.map((p) => card(p, '논문', p.title)).join(''))}
   ${shelf(esc(site.projects.label), `<div class="chips" data-filter>${chips}</div>`, '/projects/', projects.map((p) => card(p, p.kind, p.title)).join(''), 'personal')}
   <section class="group"><div class="ghd"><h2>${esc(site.rookies.label)}</h2><span>${esc(site.rookies.org)} · ${esc(site.rookies.log.label)} ${c.days.length} · ${esc(site.rookies.projects.label)} ${c.track.length}</span></div>

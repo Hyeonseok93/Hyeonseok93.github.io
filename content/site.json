@@ -5,6 +5,7 @@
   "portfolio": "https://hyeonseok93-portfolio.vercel.app/",
   "github": "https://github.com/Hyeonseok93",
   "home": {
+    "welcome": "Welcome to the Bulldog's House!",
     "headline": ["만든 것과 배운 것을", "시리즈로", "쌓아 두는 곳"],
     "sub": "논문, 프로젝트, 그리고 루키즈 5기 46일의 기록"
   },

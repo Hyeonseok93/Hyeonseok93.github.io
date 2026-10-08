@@ -1,9 +1,14 @@
 /* ---------- home ---------- */
-.hello{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;margin:0 -28px;padding:44px 28px 34px;border-radius:0 0 24px 24px;background:radial-gradient(60% 120% at 0% 0%,rgba(240,145,58,.10),transparent 60%)}
-.hello h1{font-size:40px;line-height:1.25;letter-spacing:-.035em}
+.hello{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;margin:0 -28px;padding:40px 28px 0;border-radius:0 0 24px 24px;border-bottom:1px solid var(--line);background:radial-gradient(60% 120% at 0% 0%,rgba(240,145,58,.10),transparent 60%),radial-gradient(40% 90% at 85% 100%,rgba(240,145,58,.08),transparent 70%)}
+.hello .intro{padding-bottom:34px}
+.hello .welcome{font-size:14px;font-weight:800;letter-spacing:.01em;color:var(--accent)}
+.hello h1{margin-top:10px;font-size:40px;line-height:1.25;letter-spacing:-.035em}
 .hello h1 em{font-style:normal;color:var(--accent)}
-.hello p{margin-top:12px;font-size:16px;color:var(--sub)}
+.hello .sub{margin-top:12px;font-size:16px;color:var(--sub)}
+.hello .stat{margin-top:26px;text-align:left}
 .hello .stat b{font-size:30px}
+/* the mascot sits on the bottom edge of the intro, desk on the line */
+.mascot img{display:block;width:400px;height:auto;margin-bottom:-1px}
 
 /* shelves: one horizontal row of cards per series */
 .shelf{margin:26px 0 8px}
@@ -51,11 +56,13 @@
 .entries b{font-size:14.5px;font-weight:600;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .15s}
 .entries time{font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
 
-@media(max-width:860px){.hello{grid-template-columns:1fr}.hello .stat{text-align:left}}
+/* narrower: the mascot sits next to the numbers, still on the bottom line */
+@media(max-width:860px){.hello{grid-template-columns:1fr;row-gap:0}.hello .intro{padding-bottom:0}.mascot{justify-self:end;margin-top:-96px;pointer-events:none}.mascot img{width:260px}}
 @media(max-width:760px){
   .phases{overflow-x:auto}.phases button{flex:0 0 150px}
   .entries{grid-template-columns:1fr;padding:6px 16px 12px}
   .shelf .hd{flex-wrap:wrap;row-gap:10px}.shelf .hd .chips{order:3;width:100%;margin-left:0}}
 @media(max-width:640px){
-  .hello{margin:0 -18px;padding:32px 18px 28px}.hello h1{font-size:30px}.hello .stat b{font-size:26px}
+  .hello{margin:0 -18px;padding:20px 18px 0}.hello h1{font-size:30px}.hello .stat b{font-size:26px}.hello .stat{gap:20px;padding-bottom:24px}.mascot{margin-top:-84px}.mascot img{width:190px}
   .row{grid-auto-columns:220px}.ghd{flex-wrap:wrap;row-gap:2px}.ghd h2{font-size:23px}}
+@media(max-width:360px){.mascot{margin-top:-68px}.mascot img{width:156px}}
