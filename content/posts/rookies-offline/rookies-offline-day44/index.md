@@ -15,8 +15,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 > **"Day 43에서 Networking·Frontend까지 올린 ARGUS 인프라 위에, 오늘은 Storage & Secrets·Backend EC2·CI/ECR까지 이어 붙였습니다. 같은 날 최종 발표 PPT도 인프라 비교·자동/수동 역할 분담·개선 방향까지 다듬고 시연 영상으로 마감했습니다. 파트 표 기준으로 이제 남은 건 CD & 배포 테스트뿐입니다."**

@@ -24,10 +24,6 @@ function renderArticle(post, sizes) {
   const root = parse(post.html, { blockTextElements: { script: true, noscript: true, style: true } });
   const result = { repo: null, deploy: null, toc: [] };
 
-  // a leading horizontal rule is a leftover of the old frontmatter layout
-  const first = root.childNodes.find((n) => n.nodeType === 1);
-  if (first?.tagName === 'HR') first.remove();
-
   // images: point at the WebP copy and add width/height; the first two load eagerly
   root.querySelectorAll('img').forEach((img, i) => {
     const src = (img.getAttribute('src') || '').replace(/^\.\//, '');

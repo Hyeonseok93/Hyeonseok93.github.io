@@ -14,8 +14,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 **SK쉴더스 루키즈 5기**에서 Python · Streamlit · 바이브 코딩 교육을 마친 뒤 이어진 **첫 번째 미니 프로젝트**입니다.

@@ -14,8 +14,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 > **"Day 39에서 섹션별 PDF 결과서·다운로드를 붙인 뒤, 오늘은 실서버 가동을 앞두고 아르고스(Argus)를 AWS 프라이빗 서브넷에 두는 배포 구조를 정리했습니다. 로컬 `docker-compose`와 `config.docker.yaml`에 남아 있던 localhost·사설 IP·`host.docker.internal` 값을 AWS VPC 기준으로 어떻게 바꿔야 하는지, EC2·ALB·보안 그룹은 어떻게 잡을지 코드와 함께 적어 둡니다."**

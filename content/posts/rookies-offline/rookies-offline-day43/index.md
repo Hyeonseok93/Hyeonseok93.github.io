@@ -14,8 +14,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 > **"Day 42 멘토링에서 정리한 발표 구성을 기준으로, 오늘은 최종 발표 PPT를 한 번 더 다듬고 미뤄 두었던 ARGUS AWS 인프라를 실제로 시작했습니다. PPT는 Argus가 무엇을 보고 무엇을 점검하는지, 왜 자동이어야 하고 엔진을 어떻게 나눴는지가 화면으로 보이도록 손봤고, 인프라는 Networking & Edge와 Frontend EC2를 Terraform으로 올렸습니다."**

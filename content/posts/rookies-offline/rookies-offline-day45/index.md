@@ -15,8 +15,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 > **"Day 44에서 Storage·Backend·CI까지 붙인 뒤 남은 CD를 오늘은 마무리했습니다. Infra에 SSM 배포 워크플로를 올리고, Merge `dev` push → ECR 빌드 → GitHub App → Infra `repository_dispatch` → 자동 배포까지 연결했습니다. 수동 배포와 자동 배포 모두 success였고, `rookies-argus.click` HTTPS 스모크도 통과했습니다."**

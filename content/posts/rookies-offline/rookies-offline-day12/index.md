@@ -15,8 +15,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 > **"프론트엔드와 백엔드 연결 상태를 점검하고, 데이터 무결성을 위해 스키마를 크게 수정했습니다. Flyway 중복 마이그레이션 문제를 해결하고 PortOne 실결제 경로 연동을 이어갔으며, 인프런 보안 학습을 바탕으로 SQL Injection 심화 공격(UNION/BLIND)과 CSRF 토큰 교차 검증 방어 구조를 정리했습니다."**

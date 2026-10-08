@@ -14,8 +14,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 > **"오늘은 진단 결과를 화면에서만 보던 것에서 한 걸음 더 가서, 섹션별 PDF 결과서를 Diagnosis에서 받을 수 있게 맞춘 날입니다. Day 38에서 Findings·증적 UI와 아직 꺼져 있던 다운로드 버튼을 둔 뒤, 오늘은 `backend/report/` 아래에 섹션 결과서 코드를 올리고 그 버튼을 실제로 연결했습니다."**

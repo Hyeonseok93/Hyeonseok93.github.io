@@ -14,8 +14,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 > **"Mock 데이터를 제거한 뒤 실제 백엔드 API 엔드포인트를 연결했습니다. 프론트엔드 API 예외 처리, BOLA(Broken Object Level Authorization) 취약점을 막기 위한 백엔드 인증 리팩터링, 마스터 데이터 준비, KMS에서 AWS Secrets Manager로의 인프라 변경까지 진행했습니다."**

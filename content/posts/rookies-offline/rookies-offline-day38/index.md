@@ -13,8 +13,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 > **"오늘은 아르고스(Argus) 대시보드 UI를 처음으로 글로 남깁니다. Day 37에서 Playwright 증적 캡처를 붙인 뒤, Attack Surface에서 ONDE 전용 하드코딩을 빼고 Diagnosis에서 섹션별 Findings·`!` 안내·결과 증적까지 한 화면에서 보이게 다듬었습니다."**

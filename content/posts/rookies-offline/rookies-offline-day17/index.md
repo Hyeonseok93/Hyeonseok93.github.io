@@ -15,8 +15,6 @@ tags:
 thumbnail: thumbnail.png
 ---
 
----
-
 # 서론
 
 > **"온데(onde)를 AWS에 올리고 Windows Server 연결까지 맞춘 뒤, 마이페이지 명세서 PDF API에 LFI·SSRF 진단용 코드를 심어 두었습니다. 2차 대면 멘토링용으로는 로그인 Body 토큰 중복, Nginx 스캔 범위, ZAP·Semgrep 현업 사용 여부 질문 세 가지를 정리했습니다."**
