@@ -70,12 +70,12 @@ async function build() {
   // posts
   for (const p of c.all) {
     const art = renderArticle(p, media[p.slug]);
-    const cover = media[p.slug][p.thumb];
+    const share = media[p.slug].og;
     writeFile(path.join(OUT, 'posts', p.slug, 'index.html'), page({
       title: pageTitle(p),
       description: p.lead,
       path: p.url,
-      image: cover ? `/posts/${p.slug}/${cover.src}` : undefined,
+      image: share && { ...share, src: `/posts/${p.slug}/${share.src}` },
       active: { papers: 'papers', projects: 'projects', 'rookies-log': 'rookies', 'rookies-projects': 'rookies' }[p.series],
       article: true,
       body: pages.postPage(site, c, p, art, media),

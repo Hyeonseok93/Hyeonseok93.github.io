@@ -29,11 +29,11 @@
 /* ---------- article body ---------- */
 .prose{font-size:16.5px;line-height:1.85;color:#ddd5ca;word-break:keep-all;overflow-wrap:anywhere}
 .prose>*+*{margin-top:18px}
-.prose h1{margin-top:60px;padding-top:28px;border-top:1px solid var(--line);font-size:25px;line-height:1.4;letter-spacing:-.03em;color:var(--ink)}
-.prose>h1:first-child{margin-top:34px;padding-top:0;border-top:0}
-.prose h2{margin-top:38px;font-size:20px;line-height:1.45;letter-spacing:-.02em;color:var(--ink)}
-.prose h3{margin-top:28px;font-size:17.5px;line-height:1.5;color:var(--ink)}
-.prose h4{margin-top:22px;font-size:16.5px;color:var(--ink)}
+.prose h2{margin-top:60px;padding-top:28px;border-top:1px solid var(--line);font-size:25px;line-height:1.4;letter-spacing:-.03em;color:var(--ink)}
+.prose>h2:first-child{margin-top:34px;padding-top:0;border-top:0}
+.prose h3{margin-top:38px;font-size:20px;line-height:1.45;letter-spacing:-.02em;color:var(--ink)}
+.prose h4{margin-top:28px;font-size:17.5px;line-height:1.5;color:var(--ink)}
+.prose h5{margin-top:22px;font-size:16.5px;color:var(--ink)}
 .prose strong,.prose b{color:var(--ink);font-weight:700}
 .prose a{color:var(--accent);text-decoration:underline;text-decoration-color:rgba(240,145,58,.4);text-underline-offset:3px}
 .prose ul,.prose ol{padding-left:22px}
@@ -94,7 +94,7 @@
 .prose .key ul{list-style:none;padding:0;margin-top:6px}
 .prose .key li{padding:14px 0;font-size:15.5px;line-height:1.8}
 .prose .key li+li{margin-top:0;border-top:1px solid var(--line)}
-.prose .key+h1{margin-top:52px}
+.prose .key+h2{margin-top:52px}
 
 /* ---------- toc (wide screens) ---------- */
 .toc{position:sticky;top:100px;align-self:start}
@@ -212,7 +212,7 @@
   .extra{grid-template-columns:1fr}}
 @media(max-width:640px){
   .post{padding-top:28px}.post h1.t{font-size:26px}.post h1.t .st{font-size:17px}
-  .prose{font-size:16px}.prose h1{font-size:22px}.prose h2{font-size:18.5px}
+  .prose{font-size:16px}.prose h2{font-size:22px}.prose h3{font-size:18.5px}
   .prose blockquote{padding:14px 16px}.prose pre{font-size:13px}
   .meta .tags{margin-left:0}.cover{border-radius:14px}
   .info>*+*{border-left:0;border-top:1px solid var(--line)}.info>*{flex-basis:100%}

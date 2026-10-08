@@ -15,7 +15,7 @@ const SEARCH_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
  * @param {string} o.title      page title (site name is appended)
  * @param {string} o.description
  * @param {string} o.path       absolute path, e.g. /papers/
- * @param {string} [o.image]    absolute path of the share image
+ * @param {{src:string,width:number,height:number}} [o.image] share image (default: the profile picture)
  * @param {string} [o.active]   tab key
  * @param {string} o.body       html inside <main>
  * @param {string[]} [o.scripts] extra page scripts under /assets/js/
@@ -24,7 +24,7 @@ const SEARCH_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
 function layout(site, assetVersion, o) {
   const fullTitle = o.title ? `${o.title} | ${site.title}` : site.title;
   const url = site.url + o.path;
-  const image = site.url + (o.image || '/assets/img/profile-512.png');
+  const image = o.image || { src: '/assets/img/profile-512.png', width: 512, height: 512 };
   const tabs = TABS.map(([key, label, href]) => `<a href="${href}"${key === o.active ? ' aria-current="page"' : ''}>${label}</a>`).join('');
   const scripts = ['site', ...(o.scripts || [])].map((s) => `<script src="/assets/js/${s}.js?v=${assetVersion}" defer></script>`).join('\n');
   return `<!doctype html>
@@ -41,8 +41,10 @@ function layout(site, assetVersion, o) {
 <meta property="og:title" content="${esc(o.title || site.title)}">
 <meta property="og:description" content="${esc(o.description)}">
 <meta property="og:url" content="${esc(url)}">
-<meta property="og:image" content="${esc(image)}">
-<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="${esc(site.url + image.src)}">
+<meta property="og:image:width" content="${image.width}">
+<meta property="og:image:height" content="${image.height}">
+<meta name="twitter:card" content="${o.image ? 'summary_large_image' : 'summary'}">
 <link rel="icon" href="/assets/img/favicon-64.png">
 <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 <link rel="stylesheet" href="/assets/site.css?v=${assetVersion}">

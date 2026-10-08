@@ -43,6 +43,12 @@ for (const file of htmlFiles) {
       else if (!fs.existsSync(resolve(file, ref))) problems.push(`${rel}: missing ${sel} ${ref}`);
     }
   }
+  // the share image must exist (it is an absolute URL on this site)
+  const og = root.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
+  if (!og.startsWith('https://hyeonseok93.github.io/') || !fs.existsSync(resolve(file, og.replace('https://hyeonseok93.github.io', '')))) {
+    problems.push(`${rel}: bad og:image ${og}`);
+  }
+
   // internal links must resolve (page or file, and #anchor on the same page)
   for (const a of root.querySelectorAll('a[href]')) {
     const href = a.getAttribute('href');

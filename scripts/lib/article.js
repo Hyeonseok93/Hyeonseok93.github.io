@@ -24,6 +24,11 @@ function renderArticle(post, sizes) {
   const root = parse(post.html, { blockTextElements: { script: true, noscript: true, style: true } });
   const result = { toc: [] };
 
+  // the page title is the only <h1>; the post's own "#" sections start at <h2> (deepest first so nothing moves twice)
+  root.querySelectorAll('h1, h2, h3, h4, h5').reverse().forEach((h) => {
+    h.tagName = `H${Number(h.tagName[1]) + 1}`;
+  });
+
   // images: point at the WebP copy and add width/height; the first two load eagerly
   root.querySelectorAll('img').forEach((img, i) => {
     const src = (img.getAttribute('src') || '').replace(/^\.\//, '');
@@ -52,7 +57,7 @@ function renderArticle(post, sizes) {
 
   // a "핵심 요약" section at the top becomes a summary card
   const head = root.childNodes.find((n) => n.nodeType === 1);
-  if (head?.tagName === 'H1' && head.text.trim() === '핵심 요약') {
+  if (head?.tagName === 'H2' && head.text.trim() === '핵심 요약') {
     const list = head.nextElementSibling;
     if (list?.tagName === 'UL') {
       list.remove();
@@ -76,16 +81,16 @@ function renderArticle(post, sizes) {
   // tables scroll sideways instead of squeezing
   root.querySelectorAll('table').forEach((t) => t.replaceWith(`<div class="tbl">${t.toString()}</div>`));
 
-  // toc: section headings plus the next level the post actually uses (h2, or h3 when it skips h2)
-  const subTag = root.querySelector('h2') ? 'H2' : 'H3';
-  const heads = root.querySelectorAll('h1, h2, h3').filter((h) => h.tagName === 'H1' || h.tagName === subTag);
-  const numbered = heads.some((h) => h.tagName === 'H1' && /^\d+\./.test(h.text.trim()));
+  // toc: section headings (h2) plus the next level the post actually uses (h3, or h4 when it skips h3)
+  const subTag = root.querySelector('h3') ? 'H3' : 'H4';
+  const heads = root.querySelectorAll('h2, h3, h4').filter((h) => h.tagName === 'H2' || h.tagName === subTag);
+  const numbered = heads.some((h) => h.tagName === 'H2' && /^\d+\./.test(h.text.trim()));
   let n = 0;
   heads.forEach((h, i) => {
     const id = `sec-${i}`;
     h.setAttribute('id', id);
     const text = h.text.trim();
-    if (h.tagName === 'H1') {
+    if (h.tagName === 'H2') {
       n += 1;
       const num = numbered ? (text.match(/^(\d+)\./) || [])[1] : String(n);
       result.toc.push({ id, label: tocLabel(text), num: num ? pad2(num) : '·', subs: [] });
